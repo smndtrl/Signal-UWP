@@ -1,0 +1,76 @@
+﻿<Page
+    x:Class="TextSecure.Views.View"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TextSecure.Views"
+    xmlns:locals="using:Signal.Views"
+    xmlns:database="using:TextSecure.database"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+    <Grid x:Name="LayoutRoot" Loaded="LayoutRoot_Loaded">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveStates"
+                              CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="540" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" Width="320" />
+            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--<Grid Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+            <TextBlock Text="My Items" Margin="24,8,8,8"
+                       Style="{ThemeResource TitleTextBlockStyle}" />
+            <Button x:Name="button" Content="Button" Margin="245,8,0,8" Click="button_Click"/>
+        </Grid>-->
+
+        <locals:ThreadView x:Name="masterFrame"  Grid.Row="2" Margin="0"/>
+        <locals:MessageView x:Name="detailFrame" Grid.Column="1" Grid.RowSpan="2" Loaded="detailFrame_Loaded"/>
+        <!--<Frame x:Name="conversationListFrame" Grid.Row="1"
+            BorderThickness="1,0,0,0"
+            Padding="0,0" Foreground="{x:Null}" Background="#FFE8ADAD">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <PaneThemeTransition Edge="Bottom"></PaneThemeTransition>
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>-->
+
+        
+        <!--<Frame x:Name="detailFrame" Grid.Column="1"
+            Grid.RowSpan="2"
+            BorderThickness="1,0,0,0"
+            Padding="24,0" Foreground="{x:Null}" Background="#FFE8ADAD">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <PaneThemeTransition Edge="Bottom"></PaneThemeTransition>
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>-->
+    </Grid>
+</Page>

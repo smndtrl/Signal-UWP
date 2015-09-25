@@ -1,0 +1,162 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    x:Class="Signal.Views.MessageView"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="AttachmentButton" TargetType="Button">
+            <Setter Property="BorderThickness" Value="5" />
+            <Setter Property="Foreground" Value="Blue" />
+            <Setter Property="BorderBrush" >
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="Yellow" Offset="0.0" />
+                        <GradientStop Color="Red" Offset="0.25" />
+                        <GradientStop Color="Blue" Offset="0.75" />
+                        <GradientStop Color="LimeGreen" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SendMessageTextBox" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Background" Value="#FFFFFFFF"/>
+                <Setter Property="Foreground" Value="#FF000000"/>
+                <Setter Property="Padding" Value="2"/>
+                <!--<Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFA3AEB9" Offset="0"/>
+                            <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                            <GradientStop Color="#FF718597" Offset="0.375"/>
+                            <GradientStop Color="#FF617584" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>-->
+            </Style>
+        <DataTemplate x:Key="MessageBubbleLeft">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Path Data="m 16,10 l 0,-8 l 16,8 l 0,0"
+        			Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}"
+        			Margin="0,0,10,0"
+        			HorizontalAlignment="Left"
+        			Grid.Row="1"/>
+
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,10,0,0" Padding="10" Background="{ThemeResource MessageBubbleBackgroundThemeBrush}">
+                    <TextBlock Text="{Binding Body}" />
+                    <TextBlock Text="{Binding DateSent, Converter={StaticResource DateConverter}}" TextWrapping="NoWrap"/>
+                </StackPanel>
+
+
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="MessageBubbleRight">
+            <Grid HorizontalAlignment="Right">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Column="1" Margin="10,0,0,0" Padding="10" Background="{ThemeResource MessageBubbleBackgroundThemeBrush}">
+                    <TextBlock Text="{Binding Body}" />
+                    <TextBlock Text="{Binding DateSent, Converter={StaticResource DateConverter}}" TextWrapping="NoWrap"/>
+                </StackPanel>
+
+                <Path Data="m 16,0 l 16,8 l 0,-8 l -16,0"
+        			Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}"
+        			Margin="0,0,10,0"
+        			HorizontalAlignment="Right"
+        			Grid.Row="2" Grid.Column="2"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="MessageTemplate">
+            <Grid x:Name="MessageGrid" Padding="10" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="ImageColumn" Width="Auto"/>
+                    <ColumnDefinition x:Name="TextColumn"  Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior x:Name="IsOutgoingTrueDataTrigger" Binding="{Binding IsOutgoing}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="ContentTemplate" TargetObject="{Binding ElementName=contentPresenter}" Value="{StaticResource MessageBubbleRight}"/>
+                        <Core:ChangePropertyAction PropertyName="HorizontalAlignment" TargetObject="{Binding ElementName=MessageGrid}" Value="Right"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ImageBorder}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior x:Name="IsOutgoingFalseDataTrigger" Binding="{Binding IsOutgoing}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="ContentTemplate" TargetObject="{Binding ElementName=contentPresenter}" Value="{StaticResource MessageBubbleLeft}"/>
+                        <Core:ChangePropertyAction PropertyName="HorizontalAlignment" TargetObject="{Binding ElementName=MessageGrid}" Value="Left"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <Border x:Name="ImageBorder" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="32" Height="32" VerticalAlignment="Top">
+                    <Image Height="32" Width="32"/>
+                </Border>
+                <!--<StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="" Style="{StaticResource TitleTextBlockStyle}"/>
+                    <TextBlock Text="{Binding body}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
+                </StackPanel>-->
+                <ContentPresenter x:Name="contentPresenter" Grid.Column="2" ContentTemplate="{StaticResource MessageBubbleRight}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+
+    <Page.DataContext>
+        <Binding Source="{StaticResource Locator}"/>
+    </Page.DataContext>
+
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ListView 
+			x:Name="listView"
+            ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{Binding Message.Messages}"
+			IncrementalLoadingTrigger="Edge" IncrementalLoadingThreshold="0" DataFetchSize="0.2"
+			HorizontalContentAlignment="Stretch" IsItemClickEnabled="True"
+			SelectionMode="None" local:ItemClickCommand.Command="{Binding Thread.NavigateCommand}"
+                  >
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        
+        <Grid Grid.Row="1" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                x:Name="button" 
+                Content="Button" 
+                VerticalAlignment="Stretch" d:LayoutOverrides="Height"
+                Command="{Binding Message.SendCommand}"/>
+
+            <TextBox Grid.Column="2" 
+                     x:Uid="MessageTextBox"
+                     x:Name="textBox" 
+                     TextWrapping="Wrap" 
+                     Text="{Binding Message.MessageText, Mode=TwoWay}" d:LayoutOverrides="Width, Height"
+                     Style="{StaticResource SendMessageTextBox}"/>
+        </Grid>
+
+
+
+    </Grid>
+</Page>

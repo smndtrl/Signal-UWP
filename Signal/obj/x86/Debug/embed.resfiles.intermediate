@@ -1,0 +1,13 @@
+App.xbf
+MainPage.xbf
+Resources\Templates.xbf
+Views\ContactsOverviewPage.xbf
+Views\ContactView.xbf
+Views\ExtendedSplash.xbf
+Views\MessageView.xbf
+Views\NewConversationView.xbf
+Views\RegistrationView.xbf
+Views\ThreadAddView.xbf
+Views\ThreadView.xbf
+Views\VerificationView.xbf
+Views\View.xbf

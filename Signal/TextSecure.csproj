@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{995AB3EB-5AD4-4CC6-8B5F-41A856EC2A1D}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Signal</RootNamespace>
+    <AssemblyName>Signal</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>Signal_StoreKey.pfx</PackageCertificateKeyFile>
+    <ApplicationInsightsResourceId>/subscriptions/540d2d1d-a70d-43fc-acfb-009d942767c2/resourcegroups/Default-ApplicationInsights-CentralUS/providers/microsoft.insights/components/Signal</ApplicationInsightsResourceId>
+    <PackageCertificateThumbprint>3711D0EF9CCB1D23578AF379B776CF4971A1D4CE</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="MultilingualResources\TextSecure.de.xlf" />
+    <None Include="project.json" />
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="contacts\ContactAccessor.cs" />
+    <Compile Include="crypto\IdentityKeyUtil.cs" />
+    <Compile Include="crypto\PreKeyUtil.cs" />
+    <Compile Include="crypto\storage\TextSecureAxolotlStore.cs" />
+    <Compile Include="crypto\storage\TextSecureIdentityKeyStore.cs" />
+    <Compile Include="crypto\storage\TextSecurePreKeyStore.cs" />
+    <Compile Include="crypto\storage\TextSecureSessionStore.cs" />
+    <Compile Include="database\CanonicalAddressDatabase.cs" />
+    <Compile Include="database\ContactsDatabase.cs" />
+    <Compile Include="database\EF\ThreadDatabase.cs" />
+    <Compile Include="database\interfaces\IThreadDatabase.cs" />
+    <Compile Include="database\SignalContext.cs" />
+    <Compile Include="database\DatabaseFactory.cs" />
+    <Compile Include="database\GroupDatabase.cs" />
+    <Compile Include="database\IDataService.cs" />
+    <Compile Include="database\IdentityDatabase.cs" />
+    <Compile Include="database\loaders\BaseLoader.cs" />
+    <Compile Include="database\loaders\DirectoryCollection.cs" />
+    <Compile Include="database\loaders\MessageCollection.cs" />
+    <Compile Include="database\loaders\ThreadCollection.cs" />
+    <Compile Include="database\loaders\ContactCollection.cs" />
+    <Compile Include="database\loaders\IdentityLoader.cs" />
+    <Compile Include="database\loaders\IncrementalCollection.cs" />
+    <Compile Include="database\mappings\IdentityKeyMapping.cs" />
+    <Compile Include="database\mappings\PreKeyRecordMapping.cs" />
+    <Compile Include="database\mappings\SessionStoreMapping.cs" />
+    <Compile Include="database\MessageDatabase.cs" />
+    <Compile Include="database\MessageTypes.cs" />
+    <Compile Include="database\models\DisplayRecord.cs" />
+    <Compile Include="database\models\MessageRecord.cs" />
+    <Compile Include="database\models\SmsMessageRecord.cs" />
+    <Compile Include="database\TextMessageDatabase.cs" />
+    <Compile Include="database\TextSecureDirectory.cs" />
+    <Compile Include="database\SQLite\ThreadDatabase.cs" />
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageSender.cs" />
+    <Compile Include="messages\IncomingEncryptedMessage.cs" />
+    <Compile Include="messages\IncomingEndSessionMessage.cs" />
+    <Compile Include="messages\IncomingTextMessage.cs" />
+    <Compile Include="messages\OutgoingEncryptedMessage.cs" />
+    <Compile Include="messages\OutgoingEndSessionMessage.cs" />
+    <Compile Include="messages\OutgoingKeyExchangeMessage.cs" />
+    <Compile Include="messages\OutgoingMediaMessage.cs" />
+    <Compile Include="messages\OutgoingPrekeyBundleMessage.cs" />
+    <Compile Include="messages\OutgoingTextMessage.cs" />
+    <Compile Include="Migrations\20150919091458_FirstMigration.cs" />
+    <Compile Include="Migrations\20150919091458_FirstMigration.designer.cs">
+      <DependentUpon>20150919091458_FirstMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20150923194910_SecondMigration.cs" />
+    <Compile Include="Migrations\20150923194910_SecondMigration.designer.cs">
+      <DependentUpon>20150923194910_SecondMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ContextModelSnapshot.cs" />
+    <Compile Include="Model\Contact.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\Thread.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="push\TextSecureCommunicationFactory.cs" />
+    <Compile Include="push\TextSecurePushTrustStore.cs" />
+    <Compile Include="recipient\Recipient.cs" />
+    <Compile Include="recipient\RecipientFactory.cs" />
+    <Compile Include="recipient\RecipientProvider.cs" />
+    <Compile Include="recipient\Recipients.cs" />
+    <Compile Include="Resources\ContactPictureConverter.cs" />
+    <Compile Include="Resources\DateConverter.cs" />
+    <Compile Include="Resources\IdentityLoader.cs" />
+    <Compile Include="Tasks\Library\TaskDispatcher.cs" />
+    <Compile Include="Tasks\Library\TaskQueue.cs" />
+    <Compile Include="Tasks\Library\TaskStorage.cs" />
+    <Compile Include="Tasks\Library\TaskWorker.cs" />
+    <Compile Include="Tasks\MeintenanceTask.cs" />
+    <Compile Include="Tasks\CleanPreKeysTask.cs" />
+    <Compile Include="Tasks\RefreshPreKeysTask.cs" />
+    <Compile Include="Tasks\RegistrationTask.cs" />
+    <Compile Include="Tasks\Library\TaskActivity.cs" />
+    <Compile Include="Tasks\Library\TaskContext.cs" />
+    <Compile Include="Tasks\ReceiveTask.cs" />
+    <Compile Include="Tasks\SendTask.cs" />
+    <Compile Include="Tasks\PushContentReceiveTask.cs" />
+    <Compile Include="Tasks\PushDecryptTask.cs" />
+    <Compile Include="Tasks\TextSendTask.cs" />
+    <Compile Include="util\Base64.cs" />
+    <Compile Include="util\DirectoryHelper.cs" />
+    <Compile Include="util\GroupUtil.cs" />
+    <Compile Include="util\Helper.cs" />
+    <Compile Include="util\Hex.cs" />
+    <Compile Include="util\LRUCache.cs" />
+    <Compile Include="util\MessageSender.cs" />
+    <Compile Include="util\PushHelper.cs" />
+    <Compile Include="util\TaskHelper.cs" />
+    <Compile Include="util\TextSecurePreferences.cs" />
+    <Compile Include="util\Util.cs" />
+    <Compile Include="ViewModel\ContactViewModel.cs" />
+    <Compile Include="ViewModel\MessageViewModel.cs" />
+    <Compile Include="ViewModel\DirectoryViewModel.cs" />
+    <Compile Include="ViewModel\ThreadViewModel.cs" />
+    <Compile Include="ViewModel\RegistrationViewModel.cs" />
+    <Compile Include="ViewModel\ViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\ContactsOverviewPage.xaml.cs">
+      <DependentUpon>ContactsOverviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ContactView.xaml.cs">
+      <DependentUpon>ContactView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailBase.cs" />
+    <Compile Include="Views\ExtendedSplash.xaml.cs">
+      <DependentUpon>ExtendedSplash.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemClickCommand.cs" />
+    <Compile Include="Views\MessageView.xaml.cs">
+      <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewConversationView.xaml.cs">
+      <DependentUpon>NewConversationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThreadAddView.xaml.cs">
+      <DependentUpon>ThreadAddView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThreadView.xaml.cs">
+      <DependentUpon>ThreadView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RegistrationView.xaml.cs">
+      <DependentUpon>RegistrationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VerificationView.xaml.cs">
+      <DependentUpon>VerificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\View.xaml.cs">
+      <DependentUpon>View.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="Service References\Application Insights\ConnectedService.json" />
+    <None Include="Signal_StoreKey.pfx" />
+    <None Include="Signal_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ContactsOverviewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ContactView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExtendedSplash.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewConversationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ThreadAddView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThreadView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RegistrationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\VerificationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libaxolotl\libaxolotl.csproj">
+      <Project>{7f46463c-899e-48ca-b56c-abc386545f29}</Project>
+      <Name>libaxolotl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libtextsecure\libtextsecure.csproj">
+      <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>
+      <Name>libtextsecure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SignalTasks\TextSecureTasks.csproj">
+      <Project>{e1a09fe7-a62f-4b2b-a4e4-fc3eff4220ae}</Project>
+      <Name>TextSecureTasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
+      <Name>BehaviorsXamlSDKManaged</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,49 @@
+﻿<Application
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal"
+    xmlns:resource="using:Signal.Resources"
+    xmlns:viewmodel="using:Signal.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+    x:Class="Signal.App"
+    RequestedTheme="Light">
+
+    <Application.Resources>
+
+        <ResourceDictionary>
+            <!--<local:ContactPictureConverter x:Key="ContactPictureConverter" />
+            <views:NarrowMessageView x:Key="detailView" />-->
+
+            
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Templates.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="Black" />
+                    <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="SystemColorButtonFaceColor">#ff2090ea</Color>
+                    <Color x:Key="SystemColorButtonTextColor">#ff000000</Color>
+                    <Color x:Key="SystemColorGrayTextColor">#ff6d6d6d</Color>
+                    <Color x:Key="SystemColorHighlightColor">#ff2090ea</Color>
+                    <Color x:Key="SystemColorHighlightTextColor">#ffffffff</Color>
+                    <Color x:Key="SystemColorHotlightColor">#ff0066CC</Color>
+                    <Color x:Key="SystemColorWindowColor">#ffffffff</Color>
+                    <Color x:Key="SystemColorWindowTextColor">#ff000000</Color>
+
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="White" />
+                    <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
+                    <!-- Own definitions -->
+                    <SolidColorBrush x:Key="MessageBubbleBackgroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            
+            <resource:DateConverter x:Key="DateConverter" />
+            <viewmodel:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

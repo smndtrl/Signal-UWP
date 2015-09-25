@@ -1,0 +1,126 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    x:Class="Signal.Views.ThreadView"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="TextTrimming" Value="None"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+            <Setter Property="TextLineBounds" Value="Full"/>
+        </Style>
+        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style x:Key="RecipientNameUnreadTextBlockStyle" BasedOn="{StaticResource TitleTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+
+        <DataTemplate x:Key="ThreadTemplate">
+            <Grid Padding="10">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior x:Name="ReadFalseDataTrigger" Binding="{Binding Read}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="Style" Value="{StaticResource RecipientNameUnreadTextBlockStyle}" TargetObject="{Binding ElementName=RecipientNameTextBlock}"/>
+                        <Core:ChangePropertyAction PropertyName="Style" Value="{StaticResource LastMessageUnreadTextBlockStyle}" TargetObject="{Binding ElementName=LastMessageTextBlock}"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="64" Height="64">
+                    <Image Height="64" Width="64"/>
+                </Border>
+                <Grid Grid.Column="1" Margin="10,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="RecipientNameTextBlock" 
+                                Text="{Binding Recipients.ShortString}"  Style="{StaticResource TitleTextBlockStyle}">
+                    </TextBlock>
+                    <TextBlock x:Name="DateTextBlock" 
+                               Grid.Column="2"
+                               Text="{Binding Date, Converter={StaticResource DateConverter}}" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    </TextBlock>
+
+                    <TextBlock x:Name="LastMessageTextBlock" 
+                               Grid.Row="2" Grid.ColumnSpan="2"
+                               Text="{Binding Body}" TextWrapping="NoWrap">
+                    </TextBlock>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <CollectionViewSource x:Key="threadCvs" Source="{Binding Thread.Threads}">
+        </CollectionViewSource>
+    </Page.Resources>
+    
+    <Page.DataContext>
+        <Binding Source="{StaticResource Locator}"/>
+    </Page.DataContext>
+
+    <Grid x:Name="grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.ColumnSpan="2" Background="{ThemeResource ApplicationForegroundThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--<Button Style="{StaticResource NavigationBackButtonNormalStyle}"
+				VerticalAlignment="Center"/>
+            <TextBlock Text="TextSecure Thread" 
+				VerticalAlignment="Center"
+				Style="{ThemeResource TitleTextBlockStyle}" 
+				Grid.Column="1"/>-->
+            <CommandBar Grid.ColumnSpan="2">
+                <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="Select Items">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton x:Name="AddItemBtn" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
+                <!--<AppBarButton x:Name="DeleteItemBtn" Label="Delete Item" Icon="Delete" />
+                <AppBarButton x:Name="CancelSelectionBtn" Label="Cancel" Icon="Cancel"/>-->
+            </CommandBar>
+        </Grid>
+
+        <ListView Grid.Row="1" Grid.ColumnSpan="2"
+			x:Name="listView"
+			Margin="0" d:LayoutOverrides="LeftPosition, RightPosition, TopPosition, BottomPosition"
+			ItemsSource="{Binding Source={StaticResource threadCvs}}"
+			IncrementalLoadingTrigger="Edge" IncrementalLoadingThreshold="0" DataFetchSize="0.5"
+                  IsItemClickEnabled="True"
+			SelectionMode="Single" SelectedItem="{Binding Main.SelectedThread, Mode=TwoWay}" ItemTemplate="{StaticResource ThreadTemplate}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+    </Grid>
+</Page>

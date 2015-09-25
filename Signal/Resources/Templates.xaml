@@ -1,0 +1,78 @@
+﻿<ResourceDictionary     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:local="using:TextSecure"
+                    xmlns:views="using:TextSecure.Views">
+    
+    
+    <Style x:Key="test" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="appbar_3d_obj" Width="76" Height="76">
+                        <Path Width="40" Height="40" Canvas.Left="18" Canvas.Top="18" Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 18,21.7037L 43.9259,18L 58,25.4074L 58,54.2963L 32.8148,58L 18,49.1111L 18,21.7037 Z "/>
+                    </Canvas>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>   
+    </Style>
+    
+    <!--<DataTemplate  x:Key="DetailContentTemplate2" x:DataType="views:TestContact">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+
+
+            <ListView Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="views:TestContact">
+                        <StackPanel>
+                            <TextBlock Margin="0,8" Style="{ThemeResource TitleTextBlockStyle}"
+                           HorizontalAlignment="Left" Text="{x:Bind name}"/>
+
+                            <TextBlock Margin="0,9" HorizontalAlignment="Left" MaxWidth="560"
+                           Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind number}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Items>
+                    <ListViewItem>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="DetailColumn" Width="9*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Rectangle Fill="Red" Grid.RowSpan="2"></Rectangle>
+                            <TextBlock  Text="{x:Bind name}" />
+                            <TextBlock  Text="{x:Bind number}" Margin="0,17,0,-0.333"></TextBlock>
+
+                            <Path Data="m 0,0 l 16,0 l 0,16 l -16,-16" Fill="Red" Margin="0,0,5,0" Grid.Row="2" HorizontalAlignment="Right"></Path>
+                        </Grid>
+
+                    </ListViewItem>
+                </ListView.Items>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <StackPanel>
+                <TextBox x:Name="textBox" Grid.Row="2" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Bottom"/>
+                <Button Click="Button_Click"/>
+            </StackPanel>
+
+
+        </Grid>
+    </DataTemplate>-->
+</ResourceDictionary>

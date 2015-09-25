@@ -1,0 +1,98 @@
+﻿<Page
+    x:Class="Signal.Views.ThreadAddView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+    xmlns:model="using:Signal.Model"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <Binding Source="{Binding Directory, Source={StaticResource Locator}}"/>
+    </Page.DataContext>
+
+    <Page.Resources>
+        <CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}"/>
+        <DataTemplate x:Key="DirectoryItemNarrow" x:DataType="model:Contact">
+            <Grid Background="#FFC55151">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Width="32" Height="32"/>
+                
+                <TextBlock Grid.Column="2" Text="{x:Bind number}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveStates">
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="540" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="ItemsWrapGrid.MaximumRowsOrColumns" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <ListView Grid.Row="0"
+            ItemsSource="{Binding Source={StaticResource directoryCvs}}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
+            HorizontalContentAlignment="Stretch"
+                  SelectedItem="{Binding SelectedContact, Mode=TwoWay}"
+            >
+            
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <!--<GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid x:Name="ItemsWrapGrid" MaximumRowsOrColumns="2" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8" Background="#FFD6AEAE"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>-->
+        </ListView>
+
+        <Grid Grid.Row="1" Padding="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                x:Name="button" 
+                Content="Button" 
+                VerticalAlignment="Stretch" d:LayoutOverrides="Height"
+                Command="{x:Bind ViewModel.AddCommand}"/>
+
+
+        </Grid>
+
+    </Grid>
+</Page>
