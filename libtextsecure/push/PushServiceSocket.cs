@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using libtextsecure.messages.multidevice;
+using Windows.Web.Http.Filters;
 
 namespace libtextsecure.push
 {
@@ -49,8 +50,11 @@ namespace libtextsecure.push
         private static readonly String CREATE_ACCOUNT_DEBUG_PATH = "/v1/accounts/test/code/{0}";
         private static readonly String CREATE_ACCOUNT_SMS_PATH = "/v1/accounts/sms/code/{0}";
         private static readonly String CREATE_ACCOUNT_VOICE_PATH = "/v1/accounts/voice/code/{0}";
-        private static readonly String VERIFY_ACCOUNT_PATH = "/v1/accounts/code/{0}";
+        private static readonly String VERIFY_ACCOUNT_CODE_PATH = "/v1/accounts/code/{0}";
+        private static readonly String VERIFY_ACCOUNT_TOKEN_PATH = "/v1/accounts/token/{0}";
         private static readonly String REGISTER_WNS_PATH = "/v1/accounts/wns/";
+        private static readonly String REQUEST_TOKEN_PATH = "/v1/accounts/token";
+        private static readonly String SET_ACCOUNT_ATTRIBUTES = "/v1/accounts/attributes";
 
         private static readonly String PREKEY_METADATA_PATH = "/v2/keys/";
         private static readonly String PREKEY_PATH = "/v2/keys/{0}";
@@ -73,18 +77,20 @@ namespace libtextsecure.push
         private readonly String serviceUrl;
         //private readonly TrustManager[] trustManagers;
         private readonly CredentialsProvider credentialsProvider;
+        private readonly string userAgent;
 
-        public PushServiceSocket(String serviceUrl, TrustStore trustStore, CredentialsProvider credentialsProvider)
+        public PushServiceSocket(String serviceUrl, TrustStore trustStore, CredentialsProvider credentialsProvider, string userAgent)
         {
             this.serviceUrl = serviceUrl;
             this.credentialsProvider = credentialsProvider;
+            this.userAgent = userAgent;
             //this.trustManagers = BlacklistingTrustManager.createFor(trustStore);
         }
 
         public async Task<bool> createAccount(bool voice) //throws IOException
         {
 #if DEBUG
-            String path = CREATE_ACCOUNT_DEBUG_PATH;
+            String path = CREATE_ACCOUNT_SMS_PATH;// CREATE_ACCOUNT_DEBUG_PATH;
 #else
             String path = voice ? CREATE_ACCOUNT_VOICE_PATH : CREATE_ACCOUNT_SMS_PATH;
 #endif
@@ -92,14 +98,37 @@ namespace libtextsecure.push
             return true;
         }
 
-        public async Task<bool> verifyAccount(String verificationCode, String signalingKey,
-                                  bool supportsSms, uint registrationId)
-        //throws IOException
+        public async Task<bool> verifyAccountCode(String verificationCode, String signalingKey,
+                                   uint registrationId, bool voice)
         {
-            AccountAttributes signalingKeyEntity = new AccountAttributes(signalingKey, supportsSms, registrationId);
-            await makeRequest(string.Format(VERIFY_ACCOUNT_PATH, verificationCode),
+            AccountAttributes signalingKeyEntity = new AccountAttributes(signalingKey, registrationId, voice, "DEBUG DEVICE", true);
+            await makeRequest(string.Format(VERIFY_ACCOUNT_CODE_PATH, verificationCode),
                 "PUT", JsonUtil.toJson(signalingKeyEntity));
             return true;
+        }
+
+        public async Task<bool> verifyAccountToken(String verificationToken, String signalingKey,
+                                   uint registrationId, bool voice)
+        {
+            AccountAttributes signalingKeyEntity = new AccountAttributes(signalingKey, registrationId, voice, "DEBUG DEVICE", true);
+            await makeRequest(string.Format(VERIFY_ACCOUNT_TOKEN_PATH, verificationToken),
+                "PUT", JsonUtil.toJson(signalingKeyEntity));
+            return true;
+        }
+
+        public async Task<bool> setAccountAttributes(string signalingKey, uint registrationId,
+                                  bool voice, bool fetchesMessages)
+        {
+            AccountAttributes accountAttributesEntity = new AccountAttributes(signalingKey, registrationId, voice, "DEBUG DEVICE", fetchesMessages);
+            await makeRequest(SET_ACCOUNT_ATTRIBUTES,
+                "PUT", JsonUtil.toJson(accountAttributesEntity));
+            return true;
+        }
+
+        public async Task<String> getAccountVerificationToken()// throws IOException
+        {
+            String responseText = await makeRequest(REQUEST_TOKEN_PATH, "GET", null);
+            return JsonUtil.fromJson<AuthorizationToken>(responseText).Token;
         }
 
         public async Task<String> getNewDeviceVerificationCode()// throws IOException
@@ -521,7 +550,7 @@ namespace libtextsecure.push
             try
             {
                 responseCode = connection.StatusCode;
-                responseMessage = await connection.Content.ReadAsString();
+                responseMessage = await connection.Content.ReadAsStringAsync();
             }
             catch (Exception ioe)
             {
@@ -540,7 +569,7 @@ namespace libtextsecure.push
                 case HttpStatusCode.Conflict: // 409
                     try
                     {
-                        response = await connection.Content.ReadAsString();
+                        response = await connection.Content.ReadAsStringAsync();
                     }
                     catch (/*IO*/Exception e)
                     {
@@ -550,7 +579,7 @@ namespace libtextsecure.push
                 case HttpStatusCode.Gone: // 410
                     try
                     {
-                        response = await connection.Content.ReadAsString();  //Util.readFully(connection.getErrorStream());
+                        response = await connection.Content.ReadAsStringAsync();  //Util.readFully(connection.getErrorStream());
                     }
                     catch (/*IO*/Exception e)
                     {
@@ -560,7 +589,7 @@ namespace libtextsecure.push
                 case HttpStatusCode.LengthRequired://411:
                     try
                     {
-                        response = await connection.Content.ReadAsString();  //Util.readFully(connection.getErrorStream());
+                        response = await connection.Content.ReadAsStringAsync();  //Util.readFully(connection.getErrorStream());
                     }
                     catch (Exception e)
                     {
@@ -578,7 +607,7 @@ namespace libtextsecure.push
                                                              responseMessage);
             }
 
-            response = await connection.Content.ReadAsString();
+            response = await connection.Content.ReadAsStringAsync();
             return response;
         }
 
@@ -592,10 +621,15 @@ namespace libtextsecure.push
                 Uri url = new Uri(String.Format("{0}{1}", serviceUrl, urlFragment));
                 //Log.w(TAG, "Push service URL: " + serviceUrl);
                 //Log.w(TAG, "Opening URL: " + url);
-
+                var filter = new HttpBaseProtocolFilter();
+#if DEBUG
+                filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
+                filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
+                filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
+#endif
                 //HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 
-                HttpClient connection = new HttpClient();
+                HttpClient connection = new HttpClient(filter);
 
                 /*if (ENFORCE_SSL)
                 {
@@ -611,6 +645,11 @@ namespace libtextsecure.push
                 if (credentialsProvider.GetPassword() != null)
                 {
                     headers.Add("Authorization", getAuthorizationHeader());
+                }
+
+                if (userAgent != null)
+                {
+                    headers.Add("X-Signal-Agent", userAgent);
                 }
 
                 /*if (body != null)
@@ -633,13 +672,13 @@ namespace libtextsecure.push
                 switch (method)
                 {
                     case "POST":
-                        return await connection.Post(url, content);
+                        return await connection.PostAsync(url, content);
                     case "PUT":
-                        return await connection.Put(url, content);
+                        return await connection.PutAsync(url, content);
                     case "DELETE":
-                        return await connection.Delete(url);
+                        return await connection.DeleteAsync(url);
                     case "GET":
-                        return await connection.Get(url);
+                        return await connection.GetAsync(url);
                     default:
                         throw new Exception("Unknown method: " + method);
                 }

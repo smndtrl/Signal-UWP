@@ -216,30 +216,13 @@ namespace libtextsecure.messages
 
         private byte[] getPlaintext(byte[] ciphertext, byte[] cipherKey) //throws IOException
         {
-            // try
-            //{
             byte[] ivBytes = new byte[IV_LENGTH];
             System.Buffer.BlockCopy(ciphertext, IV_OFFSET, ivBytes, 0, ivBytes.Length);
-            /*IvParameterSpec iv = new IvParameterSpec(ivBytes);
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, cipherKey, iv);*/
+            byte[] message = new byte[ciphertext.Length - VERSION_LENGTH - IV_LENGTH - MAC_SIZE];
+            System.Buffer.BlockCopy(ciphertext, CIPHERTEXT_OFFSET, message, 0, message.Length);
 
-
-
-            return Decrypt.aesCbcPkcs5(ciphertext, cipherKey, ivBytes);
-            /*cipher.doFinal(ciphertext, CIPHERTEXT_OFFSET,
-                                      ciphertext.length - VERSION_LENGTH - IV_LENGTH - MAC_SIZE);*/
-            //}
-            /*catch (/*NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException e)
-            {
-                throw new Exception(e.Message);
-            }
-            catch (BadPaddingException e)
-            {
-                Log.w(TAG, e);
-                throw new IOException("Bad padding?");
-            }*/
+            return Decrypt.aesCbcPkcs5(message, cipherKey, ivBytes);
         }
 
         private void verifyMac(byte[] ciphertext, byte[] macKey)// throws IOException
@@ -258,7 +241,7 @@ namespace libtextsecure.messages
 
                 //mac.update(ciphertext, 0, ciphertext.Length - MAC_SIZE);
 
-                byte[] ourMacFull = Sign.sha256sum(macKey, ciphertext);
+                byte[] ourMacFull = Sign.sha256sum(macKey, sign);
                 byte[] ourMacBytes = new byte[MAC_SIZE];
                 System.Buffer.BlockCopy(ourMacFull, 0, ourMacBytes, 0, ourMacBytes.Length);
 
@@ -273,7 +256,8 @@ namespace libtextsecure.messages
                     throw new Exception("Invalid MAC compare!");
                 }
             }
-            catch (/*NoSuchAlgorithmException | InvalidKey*/Exception e)
+            catch (InvalidKeyException e) { }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }

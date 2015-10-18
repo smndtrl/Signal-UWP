@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -11,7 +13,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Signal.database.loaders
 {
-    public abstract class IncrementalCollection<T> : ObservableCollection<T>/* where T : IComparable<T>*/, ISupportIncrementalLoading
+    public abstract class IncrementalCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading where T : INotifyPropertyChanged
     {
 
         public bool HasMoreItems
@@ -23,7 +25,7 @@ namespace Signal.database.loaders
         }
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return Info.Run((c) => LoadMoreItemsAsync(c, count));
+            return AsyncInfo.Run((c) => LoadMoreItemsAsync(c, count));
         }
 
         // private
@@ -36,6 +38,7 @@ namespace Signal.database.loaders
 
                 foreach (var item in items)
                 {
+                    item.PropertyChanged += (s, e) => { Debug.WriteLine("property changed"); };
                     Add(item);
                 }
 

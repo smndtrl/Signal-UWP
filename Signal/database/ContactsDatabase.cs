@@ -40,25 +40,6 @@ namespace TextSecure.database
     {
 
 
-        public const String TABLE_NAME = "contacts";
-        public static readonly String ID = "_id";
-        public static readonly String NAME = "name";
-        public static readonly String NUMBER_TYPE = "number_type";
-        public static readonly String NUMBER = "number";
-        public static readonly String LABEL = "label";
-        public static readonly String TYPE = "type";
-
-        [Table(TABLE_NAME)]
-        public class ContactTable
-        {
-            [PrimaryKey]
-            public string _id { get; set; }
-            public string name { get; set; }
-            public uint number_type { get; set; }
-            public string number { get; set; }
-            public string label { get; set; }
-            public uint type { get; set; }
-        }
 
         /* private static final String   FILTER_SELECTION   = NAME_COLUMN + " LIKE ? OR " + NUMBER_COLUMN + " LIKE ?";
    private static final String   CONTACT_LIST_SORT  = NAME_COLUMN + " COLLATE NOCASE ASC";
@@ -83,17 +64,15 @@ namespace TextSecure.database
 
         SQLiteConnection conn;
 
-        public ContactsDatabase()
+        public ContactsDatabase(SQLiteConnection conn)
         {
-            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "test.db"));
-            conn.CreateTable<ContactTable>();
-
-            loadPushUsers();
+            this.conn = conn;
+            conn.CreateTable<Contact>();
         }
 
         public int Count()
         {
-            return conn.Table<ContactTable>().Count();
+            return conn.Table<Contact>().Count();
         }
 
         public void close()
@@ -101,9 +80,13 @@ namespace TextSecure.database
             //dbHelper.close();
         }
 
-        public async Task<List<ContactTable>> getContacts()
+        public async Task<List<Contact>> getContacts()
         {
-            return conn.Table<ContactTable>().Where(t => true).ToList();
+
+            loadPushUsers();
+
+            var list = conn.Table<Contact>().Where(t => true).ToList();
+            return list;
         }
 
         /*public Cursor query(String filter, boolean pushOnly)
@@ -252,7 +235,7 @@ namespace TextSecure.database
             List<ContactAccessor.ContactData> pushUsers = await ContactAccessor.getInstance().getContactsWithPush();
             foreach (ContactAccessor.ContactData user in pushUsers)
             {
-                var contact = new ContactTable()
+                /*var contact = new ContactTable()
                 {
                     _id = user.id,
                     name = user.name,
@@ -261,8 +244,24 @@ namespace TextSecure.database
                     label = "",
                     type = PUSH_TYPE,
 
+                };*/
+
+                var contact = new Contact()
+                {
+                    label = "label",
+                    number = user.numbers[0],
+                    name = user.name
                 };
-                conn.InsertOrReplace(contact);
+
+                Debug.WriteLine($"Found push {contact.name} with {contact.number}");
+
+                try
+                {
+                    var list = conn.Table<Contact>().Where(t => t.number == contact.number).ToList();
+                    if (list.Count == 0) conn.Insert(contact);
+                }
+                catch (SQLiteException e) { } //assumes duplicate key
+
                 /*ContentValues values = new ContentValues();
                 values.put(ID_COLUMN, user.id);
                 values.put(NAME_COLUMN, user.name);

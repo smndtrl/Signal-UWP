@@ -49,6 +49,7 @@ namespace libtextsecure
         private readonly AxolotlStore store;
         private readonly TextSecureAddress localAddress;
         private readonly May<EventListener> eventListener;
+        private readonly string userAgent;
 
         /**
          * Construct a TextSecureMessageSender.
@@ -64,9 +65,9 @@ namespace libtextsecure
         public TextSecureMessageSender(String url, TrustStore trustStore,
                                        String user, String password,
                                        AxolotlStore store,
-                                       May<EventListener> eventListener)
+                                       May<EventListener> eventListener, String userAgent)
         {
-            this.socket = new PushServiceSocket(url, trustStore, new StaticCredentialsProvider(user, password, null));
+            this.socket = new PushServiceSocket(url, trustStore, new StaticCredentialsProvider(user, password, null), userAgent);
             this.store = store;
             this.localAddress = new TextSecureAddress(user);
             this.eventListener = eventListener;
@@ -106,7 +107,7 @@ namespace libtextsecure
 
             if (message.isEndSession())
             {
-                store.deleteAllSessions(recipient.getNumber());
+                store.DeleteAllSessions(recipient.getNumber());
 
                 if (eventListener.HasValue)
                 {
@@ -383,11 +384,18 @@ namespace libtextsecure
 
             ulong attachmentId = await socket.sendAttachment(attachmentData);
 
-            return AttachmentPointer.CreateBuilder()
+            var builder = AttachmentPointer.CreateBuilder()
                                     .SetContentType(attachment.getContentType())
                                     .SetId(attachmentId)
                                     .SetKey(ByteString.CopyFrom(attachmentKey))
-                                    .Build();
+                                    .SetSize((uint)attachment.getLength());
+
+            if (attachment.getPreview().HasValue)
+            {
+                builder.SetThumbnail(ByteString.CopyFrom(attachment.getPreview().ForceGetValue()));
+            }
+
+            return builder.Build();
         }
 
 
@@ -404,7 +412,7 @@ namespace libtextsecure
                 messages.Add(await getEncryptedMessage(socket, recipient, TextSecureAddress.DEFAULT_DEVICE_ID, plaintext, legacy));
             }
 
-            foreach (uint deviceId in store.getSubDeviceSessions(recipient.getNumber()))
+            foreach (uint deviceId in store.GetSubDeviceSessions(recipient.getNumber()))
             {
                 messages.Add(await getEncryptedMessage(socket, recipient, deviceId, plaintext, legacy));
             }
@@ -417,7 +425,7 @@ namespace libtextsecure
             AxolotlAddress axolotlAddress = new AxolotlAddress(recipient.getNumber(), deviceId);
             TextSecureCipher cipher = new TextSecureCipher(localAddress, store);
 
-            if (!store.containsSession(axolotlAddress))
+            if (!store.ContainsSession(axolotlAddress))
             {
                 try
                 {
@@ -458,7 +466,7 @@ namespace libtextsecure
             {
                 foreach (uint extraDeviceId in mismatchedDevices.getExtraDevices())
                 {
-                    store.deleteSession(new AxolotlAddress(recipient.getNumber(), extraDeviceId));
+                    store.DeleteSession(new AxolotlAddress(recipient.getNumber(), extraDeviceId));
                 }
 
                 foreach (uint missingDeviceId in mismatchedDevices.getMissingDevices())
@@ -486,7 +494,7 @@ namespace libtextsecure
         {
             foreach (uint staleDeviceId in staleDevices.getStaleDevices())
             {
-                store.deleteSession(new AxolotlAddress(recipient.getNumber(), staleDeviceId));
+                store.DeleteSession(new AxolotlAddress(recipient.getNumber(), staleDeviceId));
             }
         }
 

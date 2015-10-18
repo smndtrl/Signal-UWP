@@ -1,20 +1,22 @@
-﻿/** 
- * Copyright (C) 2015 smndtrl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+﻿
 
+using Signal.Database;
+/** 
+* Copyright (C) 2015 smndtrl
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
@@ -39,6 +41,11 @@ namespace TextSecure.database
         private GroupDatabase groupDatabase;
         private MessageDatabase messageDatabase;
         private TextMessageDatabase textMessageDatabase;
+        private PushDatabase pushDatabase;
+
+        private ContactsDatabase contactDatabase;
+        private CanonicalAddressDatabase addressDatabase;
+        private TextSecureDirectory directoryDatabase;
 
         private SQLiteConnection connection;
 
@@ -79,6 +86,26 @@ namespace TextSecure.database
             return getInstance().textMessageDatabase;
         }
 
+        public static ContactsDatabase getContactsDatabase()
+        {
+            return getInstance().contactDatabase;
+        }
+
+        public static CanonicalAddressDatabase getCanonicalAddressDatabase()
+        {
+            return getInstance().addressDatabase;
+        }
+
+        public static TextSecureDirectory getDirectoryDatabase()
+        {
+            return getInstance().directoryDatabase;
+        }
+
+        public static PushDatabase getPushDatabase()
+        {
+            return getInstance().pushDatabase;
+        }
+
         private DatabaseFactory()
         {
 
@@ -88,11 +115,16 @@ namespace TextSecure.database
             /*    var sync = new SQLiteConnection(APPDB_PATH);
             connection = new SQLiteConnection(APPDB_PATH);*/
 
-            identityDatabase = new IdentityDatabase();
+            identityDatabase = new IdentityDatabase(connection);
             threadDatabase = new ThreadDatabase(connection);
             groupDatabase = new GroupDatabase(connection);
             messageDatabase = new MessageDatabase(connection);
             textMessageDatabase = new TextMessageDatabase(connection);
+
+            contactDatabase = new ContactsDatabase(connection);
+            addressDatabase = new CanonicalAddressDatabase(connection);
+            directoryDatabase = new TextSecureDirectory(connection);
+            pushDatabase = new PushDatabase(connection);
         }
     }
 

@@ -7,6 +7,7 @@ using libtextsecure.messages.multidevice;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal.database.models;
+using Signal.Database;
 using Signal.Tasks.Library;
 using Strilanc.Value;
 using System;
@@ -40,15 +41,15 @@ namespace Signal.Tasks
             throw new NotImplementedException("PushDecryptTask Execute");
         }
 
-        protected override async Task<string> Execute()
+        protected override async Task<string> ExecuteAsync()
         {
-            /*PushDatabase database = DatabaseFactory.getPushDatabase();
-            TextSecureEnvelope envelope = database.get(messageId);
-            Optional<Long> optionalSmsMessageId = smsMessageId > 0 ? Optional.of(smsMessageId) :
-                                                                         Optional.< Long > absent();
+            PushDatabase database = DatabaseFactory.getPushDatabase();
+            TextSecureEnvelope envelope = database.GetEnvelope(messageId);
+            /*Optional<Long> optionalSmsMessageId = smsMessageId > 0 ? Optional.of(smsMessageId) :
+                                                                         Optional.< Long > absent();*/
 
-            //handleMessage(/*masterSecret,/envelope/*, optionalSmsMessageId);*/
-            //database.delete(messageId);
+            handleMessage(/*masterSecret,*/envelope/*, optionalSmsMessageId*/);
+            database.Delete(messageId);
 
             return "";
         }

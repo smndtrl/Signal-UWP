@@ -30,7 +30,7 @@ namespace Signal.Database.EF
             thread.Date = Util.GetDateTime((double) date);
             thread.Type = type;
 
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
         public async Task UpdateSnippet(long threadId, string snippet, long date, long type)
         {
@@ -40,14 +40,14 @@ namespace Signal.Database.EF
             thread.Date = Util.GetDateTime((double)date);
             thread.Type = type;
 
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task SetRead(long threadId)
         {
             var thread = context.Threads.Where(t => t.ThreadId == threadId).First();
             thread.Read = true;
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task SetAllThreadsRead()
@@ -58,14 +58,14 @@ namespace Signal.Database.EF
                 thread.Read = true;
             });
             
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task SetUnread(long threadId)
         {
             var thread = context.Threads.Where(t => t.ThreadId == threadId).First();
             thread.Read = false;
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public Task<long> GetThreadIdFor(Recipients recipients)
@@ -81,7 +81,7 @@ namespace Signal.Database.EF
 
             try
             {
-                var query = context.Threads.Where(t => t.Recipients == recipients);
+                var query = context.Threads.Where(t => t.RecipientIds == recipientsList);// TODO: recipient refactor
                 var first = query.Count() == 0 ? null : query.First();
 
                 if (query != null && first != null)
@@ -101,10 +101,14 @@ namespace Signal.Database.EF
 
         private async Task<long> CreateThreadForRecipients(Recipients recipients, int recipientCount, int distributionType)
         {
+            long[] recipientIds = getRecipientIds(recipients);
+            string recipientsList = getRecipientsAsString(recipientIds);
+
             var thread = new Thread()
             {
                 Date = DateTime.Now,
-                Recipients = recipients.getRecipientsList(),
+                RecipientIds = recipientsList,
+                //Recipients = recipients.getRecipientsList(),
                 Count = 0
             };
 
@@ -114,7 +118,7 @@ namespace Signal.Database.EF
             }
 
             context.Add(thread);
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return thread.ThreadId;
         }
@@ -124,7 +128,7 @@ namespace Signal.Database.EF
             var thread = context.Threads.Where(t => t.ThreadId == threadId).First();
             context.Threads.Remove(thread);
 
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteThreads(ICollection<long> threadIds)
@@ -132,7 +136,7 @@ namespace Signal.Database.EF
             var threads = context.Threads.Where(t => threadIds.Contains(t.ThreadId));
             context.Threads.RemoveRange(threads);
 
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteAllThreads()
@@ -140,7 +144,7 @@ namespace Signal.Database.EF
             var threads = context.Threads.Where(t => true);
             context.Threads.RemoveRange(threads);
 
-            await context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

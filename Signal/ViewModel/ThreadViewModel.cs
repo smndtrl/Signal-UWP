@@ -1,17 +1,21 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
 using Signal.Model;
+using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
+using Windows.UI.Xaml.Controls;
 
 namespace Signal.ViewModel
 {
@@ -26,7 +30,16 @@ namespace Signal.ViewModel
             _navigationService = navService;
             Threads = new ThreadCollection(service);
 
-            //NavigateCommand = new RelayCommand<ThreadDatabase.Thread>(ShowThread);
+            Messenger.Default.Register<AddThreadMessage>(
+                this,
+                message =>
+                {
+                    var thread = DatabaseFactory.getThreadDatabase().Get(message.ThreadId);
+                    //SelectedThread = message.NewValue;
+                    Threads.Add(thread);
+                    Debug.WriteLine("ThreadViewModel got new Thread");
+                }
+            );
         }
 
         ObservableCollection<Thread> _Threads;
@@ -40,19 +53,68 @@ namespace Signal.ViewModel
             }
         }
 
-        private RelayCommand<MessageDatabase.MessageTable> _addCommand;
-        public RelayCommand<MessageDatabase.MessageTable> AddCommand
+        private RelayCommand _addCommand;
+        public RelayCommand AddCommand
         {
             get
             {
-                return _addCommand ?? (_addCommand = new RelayCommand<MessageDatabase.MessageTable>(
-                   p =>
+                return _addCommand ?? (_addCommand = new RelayCommand(
+                  () =>
                 {
                     _navigationService.NavigateTo("DirectoryPageKey");
+                   
                 },
-                    p => true));
+                    () => true));
             }
         }
+
+
+        private RelayCommand<Thread> _deleteCommand;
+        public RelayCommand<Thread> DeleteCommand
+        {
+            get
+            {
+                return _deleteCommand ?? (_deleteCommand = new RelayCommand<Thread>(
+                  thread =>
+                  {
+                      Debug.WriteLine($"Should delete {thread.Recipients.ShortString}");
+
+                      DatabaseFactory.getThreadDatabase().DeleteConversation(thread.ThreadId);
+                      //deleteConversations(selectedConversations);
+
+                      /*var menuFlyoutItem = sender as MenuFlyoutItem;
+                      if (menuFlyoutItem != null)
+                      {
+                          var thread = menuFlyoutItem.DataContext as Thread;
+                          if (thread != null)
+                          {
+                              Debug.WriteLine($"Should delete {thread.Recipients.ShortString}");
+
+                          }
+                      }*/
+
+
+                  },
+                   obj => true));
+            }
+        }
+
+        private RelayCommand _flyoutCommand;
+        public RelayCommand FlyoutCommand
+        {
+            get
+            {
+                return _flyoutCommand ?? (_flyoutCommand = new RelayCommand(
+                  () =>
+                  {
+                      Debug.WriteLine($"Show flyout");
+
+                  },
+                   () => true));
+            }
+        }
+
+
 
         /* private void ShowThread(ThreadDatabase.Thread thread)
          {

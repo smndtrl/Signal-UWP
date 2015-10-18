@@ -20,6 +20,7 @@ using libaxolotl.ecc;
 using libaxolotl.state;
 using libaxolotl.util;
 using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.crypto.storage;
-using TextSecure.database.mappings;
 using Windows.Security.Cryptography;
 
 namespace TextSecure.crypto
@@ -36,6 +36,8 @@ namespace TextSecure.crypto
     public class PreKeyUtil
     {
         public static readonly uint BATCH_SIZE = 100;
+
+        public static SQLiteConnection conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), TextSecureAxolotlStore.AXOLOTLDB_PATH);
 
         private static Task<PreKeyRecord> generatePreKey(uint preKeyId)
         {
@@ -50,7 +52,7 @@ namespace TextSecure.crypto
 
         public static async Task<List<PreKeyRecord>> generatePreKeys()
         {
-            PreKeyStore preKeyStore = new TextSecurePreKeyStore();
+            PreKeyStore preKeyStore = new TextSecurePreKeyStore(conn);
             List<PreKeyRecord> records = new List<PreKeyRecord>();
             uint preKeyIdOffset = getNextPreKeyId();
 
@@ -60,7 +62,7 @@ namespace TextSecure.crypto
 
                 PreKeyRecord record = await generatePreKey(preKeyId);
 
-                preKeyStore.storePreKey(preKeyId, record);
+                preKeyStore.StorePreKey(preKeyId, record);
                 records.Add(record);
             }
 
@@ -84,14 +86,14 @@ namespace TextSecure.crypto
         {
             try
             {
-                SignedPreKeyStore signedPreKeyStore = new TextSecurePreKeyStore();
+                SignedPreKeyStore signedPreKeyStore = new TextSecurePreKeyStore(conn);
                 uint signedPreKeyId = getNextSignedPreKeyId();
                 /*ECKeyPair keyPair = Curve.generateKeyPair();
                 byte[] signature = Curve.calculateSignature(identityKeyPair.getPrivateKey(), keyPair.getPublicKey().serialize());
                 SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, KeyHelper.getTime(), keyPair, signature);*/
                 SignedPreKeyRecord record = await generateSignedPreKey(identityKeyPair, signedPreKeyId);
 
-                signedPreKeyStore.storeSignedPreKey(signedPreKeyId, record);
+                signedPreKeyStore.StoreSignedPreKey(signedPreKeyId, record);
                 setNextSignedPreKeyId((signedPreKeyId + 1) % Medium.MAX_VALUE);
 
                 return record;
@@ -107,78 +109,46 @@ namespace TextSecure.crypto
             return Task.Run(() =>
             {
 
-                PreKeyStore preKeyStore = new TextSecurePreKeyStore();
+                PreKeyStore preKeyStore = new TextSecurePreKeyStore(conn);
 
-                if (preKeyStore.containsPreKey(Medium.MAX_VALUE))
+                if (preKeyStore.ContainsPreKey(Medium.MAX_VALUE))
                 {
                     try
                     {
                         //return preKeyStore.loadPreKey(Medium.MAX_VALUE);
-                        return preKeyStore.loadPreKey(Medium.MAX_VALUE);
+                        return preKeyStore.LoadPreKey(Medium.MAX_VALUE);
                     }
                     catch (InvalidKeyIdException e)
                     {
                         //Log.w("PreKeyUtil", e);
-                        preKeyStore.removePreKey(Medium.MAX_VALUE);
+                        preKeyStore.RemovePreKey(Medium.MAX_VALUE);
                     }
                 }
 
                 ECKeyPair keyPair = Curve.generateKeyPair();
                 PreKeyRecord record = new PreKeyRecord(Medium.MAX_VALUE, keyPair);
 
-                preKeyStore.storePreKey(Medium.MAX_VALUE, record);
+                preKeyStore.StorePreKey(Medium.MAX_VALUE, record);
 
                 return record;
             });
         }
 
         private static void setNextPreKeyId(uint id)
-        { // for now do this
-            SQLiteConnection conn = new SQLiteConnection(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, TextSecurePreKeyStore.PREKEY_DIRECTORY), false);
-
-            var preKey = new PreKeyRecordIndexMapping { id = 1, next = id };
+        {
+            var preKey = new PreKeyIndex() { PreyKeyIndex = 1, Next = id };
             conn.Update(preKey);
-
-            /*try
-            {
-                File nextFile = new File(getPreKeysDirectory(context), PreKeyIndex.FILE_NAME);
-                FileOutputStream fout = new FileOutputStream(nextFile);
-                fout.write(JsonUtils.toJson(new PreKeyIndex(id)).getBytes());
-                fout.close();
-            }
-            catch (IOException e)
-            {
-                Log.w("PreKeyUtil", e);
-            }*/
         }
 
         private static void setNextSignedPreKeyId(uint id)
         {
-            SQLiteConnection conn = new SQLiteConnection(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, TextSecurePreKeyStore.PREKEY_DIRECTORY));
-            var signedPreKey = new SignedPreKeyRecordIndexMapping { id = 1, next = id };
+            var signedPreKey = new SignedPreKeyIndex { SignedPreyKeyIndex = 1, Next = id };
             conn.Update(signedPreKey);
-
-
-
-            //conn.Execute($"update SignedPreKeyRecordMappings SET next = true WHERE id = {id}");
-            //conn.Update();
-            /*try
-            {
-                File nextFile = new File(getSignedPreKeysDirectory(context), SignedPreKeyIndex.FILE_NAME);
-                FileOutputStream fout = new FileOutputStream(nextFile);
-                fout.write(JsonUtils.toJson(new SignedPreKeyIndex(id)).getBytes());
-                fout.close();
-            }
-            catch (IOException e)
-            {
-                Log.w("PreKeyUtil", e);
-            }*/
         }
 
         private static uint getNextPreKeyId()
         {
-            SQLiteConnection conn = new SQLiteConnection(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, TextSecurePreKeyStore.PREKEY_DIRECTORY));
-            var query = conn.Table<PreKeyRecordIndexMapping>().Where(v => v.id == 1);
+            var query = conn.Table<PreKeyIndex>().Where(v => v.PreyKeyIndex == 1);
 
             if (query.Count() == 0)
             {
@@ -186,34 +156,14 @@ namespace TextSecure.crypto
             } else
             {
                 var preKey = query.First();
-                return preKey.id;
+                return preKey.PreyKeyIndex;
             }
             
-            /*try
-            {
-                File nextFile = new File(getPreKeysDirectory(context), PreKeyIndex.FILE_NAME);
-
-                if (!nextFile.exists())
-                {
-                    return Util.getSecureRandom().nextInt(Medium.MAX_VALUE);
-                }
-                else
-                {
-                    InputStreamReader reader = new InputStreamReader(new FileInputStream(nextFile));
-                    PreKeyIndex index = JsonUtils.fromJson(reader, PreKeyIndex.class);
-        reader.close();
-        return index.nextPreKeyId;
-      }
-} catch (IOException e) {
-      Log.w("PreKeyUtil", e);
-      return Util.getSecureRandom().nextInt(Medium.MAX_VALUE);
-    }*/
         }
 
         private static uint getNextSignedPreKeyId()
         {
-            SQLiteConnection conn = new SQLiteConnection(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, TextSecurePreKeyStore.PREKEY_DIRECTORY));
-            var query = conn.Table<PreKeyRecordMapping>().Where(v => v.id == 1);
+            var query = conn.Table<SignedPreKeyIndex>().Where(v => v.SignedPreyKeyIndex == 1);
             
 
             if (query.Count() == 0)
@@ -223,27 +173,8 @@ namespace TextSecure.crypto
             else
             {
                 var preKey = query.First();
-                return preKey.id;
+                return preKey.SignedPreyKeyIndex;
             }
-            /* try
-             {
-                 File nextFile = new File(getSignedPreKeysDirectory(context), SignedPreKeyIndex.FILE_NAME);
-
-                 if (!nextFile.exists())
-                 {
-                     return Util.getSecureRandom().nextInt(Medium.MAX_VALUE);
-                 }
-                 else
-                 {
-                     InputStreamReader reader = new InputStreamReader(new FileInputStream(nextFile));
-                     SignedPreKeyIndex index = JsonUtils.fromJson(reader, SignedPreKeyIndex.class);
-         reader.close();
-         return index.nextSignedPreKeyId;
-       }
- } catch (IOException e) {
-       Log.w("PreKeyUtil", e);
-       return Util.getSecureRandom().nextInt(Medium.MAX_VALUE);
-     }*/
         }
         /*
         private static File getPreKeysDirectory(Context context)

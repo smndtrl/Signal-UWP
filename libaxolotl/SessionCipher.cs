@@ -84,7 +84,7 @@ namespace libaxolotl
         {
             lock (SESSION_LOCK)
             {
-                SessionRecord sessionRecord = sessionStore.loadSession(remoteAddress);
+                SessionRecord sessionRecord = sessionStore.LoadSession(remoteAddress);
                 SessionState sessionState = sessionRecord.getSessionState();
                 ChainKey chainKey = sessionState.getSenderChainKey();
                 MessageKeys messageKeys = chainKey.getMessageKeys();
@@ -102,7 +102,7 @@ namespace libaxolotl
                 if (sessionState.hasUnacknowledgedPreKeyMessage())
                 {
                     SessionState.UnacknowledgedPreKeyMessageItems items = sessionState.getUnacknowledgedPreKeyMessageItems();
-                    uint localRegistrationId = sessionState.getLocalRegistrationId();
+                    uint localRegistrationId = sessionState.GetLocalRegistrationId();
 
                     ciphertextMessage = new PreKeyWhisperMessage(sessionVersion, localRegistrationId, items.getPreKeyId(),
                                                                  items.getSignedPreKeyId(), items.getBaseKey(),
@@ -111,7 +111,7 @@ namespace libaxolotl
                 }
 
                 sessionState.setSenderChainKey(chainKey.getNextChainKey());
-                sessionStore.storeSession(remoteAddress, sessionRecord);
+                sessionStore.StoreSession(remoteAddress, sessionRecord);
                 return ciphertextMessage;
             }
         }
@@ -163,17 +163,17 @@ namespace libaxolotl
         {
             lock (SESSION_LOCK)
             {
-                SessionRecord sessionRecord = sessionStore.loadSession(remoteAddress);
+                SessionRecord sessionRecord = sessionStore.LoadSession(remoteAddress);
                 May<uint> unsignedPreKeyId = sessionBuilder.process(sessionRecord, ciphertext);
                 byte[] plaintext = decrypt(sessionRecord, ciphertext.getWhisperMessage());
 
                 callback.handlePlaintext(plaintext);
 
-                sessionStore.storeSession(remoteAddress, sessionRecord);
+                sessionStore.StoreSession(remoteAddress, sessionRecord);
 
                 if (unsignedPreKeyId.HasValue)
                 {
-                    preKeyStore.removePreKey(unsignedPreKeyId.ForceGetValue());
+                    preKeyStore.RemovePreKey(unsignedPreKeyId.ForceGetValue());
                 }
 
                 return plaintext;
@@ -222,17 +222,17 @@ namespace libaxolotl
             lock (SESSION_LOCK)
             {
 
-                if (!sessionStore.containsSession(remoteAddress))
+                if (!sessionStore.ContainsSession(remoteAddress))
                 {
                     throw new NoSessionException($"No session for: {remoteAddress}");
                 }
 
-                SessionRecord sessionRecord = sessionStore.loadSession(remoteAddress);
+                SessionRecord sessionRecord = sessionStore.LoadSession(remoteAddress);
                 byte[] plaintext = decrypt(sessionRecord, ciphertext);
 
                 callback.handlePlaintext(plaintext);
 
-                sessionStore.storeSession(remoteAddress, sessionRecord);
+                sessionStore.StoreSession(remoteAddress, sessionRecord);
 
                 return plaintext;
             }
@@ -315,7 +315,7 @@ namespace libaxolotl
         {
             lock (SESSION_LOCK)
             {
-                SessionRecord record = sessionStore.loadSession(remoteAddress);
+                SessionRecord record = sessionStore.LoadSession(remoteAddress);
                 return record.getSessionState().getRemoteRegistrationId();
             }
         }
@@ -324,12 +324,12 @@ namespace libaxolotl
         {
             lock (SESSION_LOCK)
             {
-                if (!sessionStore.containsSession(remoteAddress))
+                if (!sessionStore.ContainsSession(remoteAddress))
                 {
                     throw new Exception($"No session for {remoteAddress}!"); // IllegalState
                 }
 
-                SessionRecord record = sessionStore.loadSession(remoteAddress);
+                SessionRecord record = sessionStore.LoadSession(remoteAddress);
                 return record.getSessionState().getSessionVersion();
             }
         }

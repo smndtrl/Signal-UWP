@@ -29,7 +29,7 @@ namespace libaxolotl.state.impl
         private readonly IDictionary<uint, byte[]> store = new Dictionary<uint, byte[]>();
 
 
-        public PreKeyRecord loadPreKey(uint preKeyId)
+        public PreKeyRecord LoadPreKey(uint preKeyId)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace libaxolotl.state.impl
         }
 
 
-        public void storePreKey(uint preKeyId, PreKeyRecord record)
+        public void StorePreKey(uint preKeyId, PreKeyRecord record)
         {
             if (store.ContainsKey(preKeyId)) // mimic Java HashMap
             {
@@ -59,13 +59,13 @@ namespace libaxolotl.state.impl
         }
 
 
-        public bool containsPreKey(uint preKeyId)
+        public bool ContainsPreKey(uint preKeyId)
         {
             return store.ContainsKey(preKeyId);
         }
 
 
-        public void removePreKey(uint preKeyId)
+        public void RemovePreKey(uint preKeyId)
         {
             store.Remove(preKeyId);
         }

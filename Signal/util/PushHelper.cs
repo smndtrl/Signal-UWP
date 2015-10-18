@@ -1,6 +1,7 @@
 ﻿
 
 using Signal;
+using Strilanc.Value;
 /** 
 * Copyright (C) 2015 smndtrl
 * 
@@ -194,9 +195,9 @@ namespace TextSecure.util
         }
 
         // This method checks the freshness of each channel, and returns as necessary 
-        public IAction RenewAll(bool force)
+        public IAsyncAction RenewAll(bool force)
         {
-            return Task.WhenAll(OpenChannelAndUpload().AsTask()).AsAction();
+            return Task.WhenAll(OpenChannelAndUpload().AsTask()).AsAsyncAction();
         }
 
         // Instead of using the async and await keywords, actual Tasks will be returned. 
@@ -212,7 +213,7 @@ namespace TextSecure.util
             IAsyncOperation<PushNotificationChannel> channelOperation;
             //if (isPrimaryTile)
             //{
-            channelOperation = PushNotificationChannelManager.CreatePushNotificationChannelForApplication();
+            channelOperation = PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
             /*}
             else
             {
@@ -245,6 +246,7 @@ namespace TextSecure.util
                     {
                         var account = App.Current.accountManager;
                         success = account.setWnsId(newChannel.Uri).Result;
+                        success = account.setWnsId(May<string>.NoValue).Result;
 
                     }
                     catch (Exception e)
@@ -278,7 +280,7 @@ namespace TextSecure.util
                     //UpdateUrl(url, newChannel.Uri, itemId, isPrimaryTile);
                     
                 return new ChannelAndWebResponse { Channel = newChannel, WebResponse = webResponse };
-            }).AsOperation();
+            }).AsAsyncOperation();
         }
     }
 }

@@ -39,6 +39,7 @@ using Windows.UI;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Signal.Views;
+using Bezysoftware.Navigation.BackButton;
 //using TextSecure.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -69,6 +70,8 @@ namespace TextSecure
             //DirectoryHelper.refreshDirectory();
 
             rootFrame = new Frame();
+            BackButtonManager.RegisterFrame(rootFrame, true, true, true);
+
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)

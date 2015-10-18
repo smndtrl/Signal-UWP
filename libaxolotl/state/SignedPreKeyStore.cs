@@ -34,14 +34,14 @@ namespace libaxolotl.state
          * @return the corresponding SignedPreKeyRecord.
          * @throws InvalidKeyIdException when there is no corresponding SignedPreKeyRecord.
          */
-        SignedPreKeyRecord loadSignedPreKey(uint signedPreKeyId);
+        SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId);
 
         /**
          * Load all local SignedPreKeyRecords.
          *
          * @return All stored SignedPreKeyRecords.
          */
-        List<SignedPreKeyRecord> loadSignedPreKeys();
+        List<SignedPreKeyRecord> LoadSignedPreKeys();
 
         /**
          * Store a local SignedPreKeyRecord.
@@ -49,19 +49,19 @@ namespace libaxolotl.state
          * @param signedPreKeyId the ID of the SignedPreKeyRecord to store.
          * @param record the SignedPreKeyRecord.
          */
-        void storeSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record);
+        void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record);
 
         /**
          * @param signedPreKeyId A SignedPreKeyRecord ID.
          * @return true if the store has a record for the signedPreKeyId, otherwise false.
          */
-        bool containsSignedPreKey(uint signedPreKeyId);
+        bool ContainsSignedPreKey(uint signedPreKeyId);
 
         /**
          * Delete a SignedPreKeyRecord from local storage.
          *
          * @param signedPreKeyId The ID of the SignedPreKeyRecord to remove.
          */
-        void removeSignedPreKey(uint signedPreKeyId);
+        void RemoveSignedPreKey(uint signedPreKeyId);
     }
 }

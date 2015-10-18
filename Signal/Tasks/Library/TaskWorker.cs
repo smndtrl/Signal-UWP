@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,11 +42,13 @@ namespace Signal.Tasks.Library
         {
             foreach (UntypedTaskActivity instance in taskActivityObjects)
             {
-                queue.Add(instance);
+                Debug.WriteLine($"Adding Task {instance.GetType()}");
                 instance.onAdded();
+                queue.Add(instance);
+                
             }
 
-            queue.CompleteAdding();
+            //queue.CompleteAdding();
 
             return this;
         }

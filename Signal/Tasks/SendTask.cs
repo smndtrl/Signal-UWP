@@ -9,7 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
+using Signal.Util;
 using TextSecure.util;
 
 namespace Signal.Tasks
@@ -21,19 +22,19 @@ namespace Signal.Tasks
             throw new NotImplementedException("SendTask onAdded");
         }
 
-        protected override string ExecuteAsync()
+        protected override string Execute()
         {
             throw new NotImplementedException("SendTask Execure");
         }
 
         protected TextSecureAddress getPushAddress(String number)
         {
-            String e164number = Util.canonicalizeNumber(number);
-            String relay = TextSecureDirectory.getInstance().getRelay(e164number);
-            return new TextSecureAddress(e164number, relay.Equals("") ? May<string>.NoValue : new May<string>(relay));
+            String e164number = Utils.canonicalizeNumber(number);
+            String relay = DatabaseFactory.getDirectoryDatabase().getRelay(e164number);
+            return new TextSecureAddress(e164number, relay == null ? May<string>.NoValue : new May<string>(relay));
         }
 
         protected TextSecureMessageSender messageSender = new TextSecureMessageSender(TextSecureCommunicationFactory.PUSH_URL, new TextSecurePushTrustStore(), TextSecurePreferences.getLocalNumber(), TextSecurePreferences.getPushServerPassword(), new TextSecureAxolotlStore(),
-                                                                                   May<TextSecureMessageSender.EventListener>.NoValue);
+                                                                                   May<TextSecureMessageSender.EventListener>.NoValue, App.CurrentVersion);
     }
 }

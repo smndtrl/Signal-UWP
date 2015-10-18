@@ -37,7 +37,7 @@ namespace libtextsecure.push
         [JsonProperty]
         private String number;
         [JsonProperty]
-        private bool supportsSms;
+        private bool voice;
 
         public ContactTokenDetails() { }
 
@@ -58,11 +58,11 @@ namespace libtextsecure.push
         }
 
         /**
-         * @return Whether this contact supports receiving encrypted SMS.
+         * @return Whether this contact supports secure voice calls.
          */
-        public bool isSupportsSms()
+        public bool isVoice()
         {
-            return supportsSms;
+            return voice;
         }
 
         public void setNumber(String number)

@@ -56,8 +56,8 @@ namespace libaxolotl_test
             CollectionAssert.AreEqual(alicePlaintext, Encoding.UTF8.GetBytes("sample message"));
             CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
 
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             Assert.IsFalse(isSessionIdEqual(aliceStore, bobStore));
 
@@ -109,7 +109,7 @@ namespace libaxolotl_test
             byte[] bobPlaintext = bobSessionCipher.decrypt(new PreKeyWhisperMessage(messageForBob.serialize()));
 
             CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             CiphertextMessage aliceResponse = aliceSessionCipher.encrypt(Encoding.UTF8.GetBytes("second message"));
 
@@ -162,8 +162,8 @@ namespace libaxolotl_test
             CollectionAssert.AreEqual(alicePlaintext, Encoding.UTF8.GetBytes("sample message"));
             CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
 
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             Assert.IsFalse(isSessionIdEqual(aliceStore, bobStore));
 
@@ -222,8 +222,8 @@ namespace libaxolotl_test
             CollectionAssert.AreEqual(alicePlaintext, Encoding.UTF8.GetBytes("sample message"));
             CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
 
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             Assert.IsFalse(isSessionIdEqual(aliceStore, bobStore));
 
@@ -303,8 +303,8 @@ namespace libaxolotl_test
                 CollectionAssert.AreEqual(alicePlaintext, Encoding.UTF8.GetBytes("sample message"));
                 CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
 
-                Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
-                Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+                Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+                Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
                 Assert.IsFalse(isSessionIdEqual(aliceStore, bobStore));
             }
@@ -394,8 +394,8 @@ namespace libaxolotl_test
                 CollectionAssert.AreEqual(alicePlaintext, Encoding.UTF8.GetBytes("sample message"));
                 CollectionAssert.AreEqual(bobPlaintext, Encoding.UTF8.GetBytes("hey there"));
 
-                Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
-                Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+                Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+                Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
 
                 Assert.IsFalse(isSessionIdEqual(aliceStore, bobStore));
             }
@@ -451,8 +451,8 @@ namespace libaxolotl_test
 
         private bool isSessionIdEqual(AxolotlStore aliceStore, AxolotlStore bobStore)
         {
-            return Enumerable.SequenceEqual(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getAliceBaseKey(),
-                                 bobStore.loadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey());
+            return Enumerable.SequenceEqual(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getAliceBaseKey(),
+                                 bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey());
         }
 
         private PreKeyBundle createAlicePreKeyBundle(AxolotlStore aliceStore)

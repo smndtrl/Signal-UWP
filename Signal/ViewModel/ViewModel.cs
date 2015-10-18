@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.Model;
@@ -9,15 +10,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
+using Windows.UI.Xaml;
 
 namespace Signal.ViewModel
 {
-    public class ViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         private readonly INavigationService _navigationService;
         private readonly IDataService _dataService;
 
-        public ViewModel(IDataService service, INavigationService navService)
+        public MainViewModel(IDataService service, INavigationService navService)
         {
             _dataService = service;
             _navigationService = navService;
@@ -41,5 +43,21 @@ namespace Signal.ViewModel
                 RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
             }
         }
+
+        private RelayCommand _narrowStateCommand;
+        public RelayCommand NarrowStateCommand
+        {
+            get
+            {
+                return _narrowStateCommand ?? (_narrowStateCommand = new RelayCommand(
+                    () =>
+                   {
+                       _navigationService.NavigateTo("MessagePageKey");
+
+                   },
+                    () => true));
+            }
+        }
+
     }
 }

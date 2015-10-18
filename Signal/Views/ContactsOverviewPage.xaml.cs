@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
 using Windows.ApplicationModel.Contacts;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -57,7 +57,7 @@ namespace TextSecure.Views
 
         private void loadContacts()
         {
-            var directory = TextSecureDirectory.getInstance();
+            var directory = DatabaseFactory.getDirectoryDatabase();
 
             //directory.getActiveNumbers,
 

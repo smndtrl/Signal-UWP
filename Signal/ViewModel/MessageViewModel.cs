@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
 using Signal.Model;
+using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,6 +51,16 @@ namespace Signal.ViewModel
                 }
             );
 
+            Messenger.Default.Register<AddMessageMessage>(
+               this,
+               msg =>
+               {
+                   Debug.WriteLine($"New Message for Thread {msg.ThreadId}: #{msg.MessageId}");
+                   var message = DatabaseFactory.getTextMessageDatabase().Get(msg.MessageId);
+                   Cache[msg.ThreadId].Add(message);
+               }
+           );
+
         }
 
         public const string SelectedThreadPropertyName = "SelectedThread";
@@ -71,7 +82,8 @@ namespace Signal.ViewModel
                 {
                     Debug.WriteLine($"Cache hit for Thread {_selectedThread.ThreadId}");
                     Messages = Cache[_selectedThread.ThreadId];
-                } else
+                }
+                else
                 {
                     Debug.WriteLine($"Cache miss for Thread {_selectedThread.ThreadId}");
                     var collection = new MessageCollection(_dataService, _selectedThread.ThreadId);
@@ -79,7 +91,7 @@ namespace Signal.ViewModel
                     Messages = collection;
                 }
 
-                
+
                 RaisePropertyChanged(SelectedThreadPropertyName);
             }
         }
@@ -107,22 +119,44 @@ namespace Signal.ViewModel
             }
         }
 
-        private RelayCommand<MessageDatabase.MessageTable> _sendCommand;
-        public RelayCommand<MessageDatabase.MessageTable> SendCommand
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand
         {
             get
             {
-                return _sendCommand ?? (_sendCommand = new RelayCommand<MessageDatabase.MessageTable>( async
-                    p =>
-                    {
-                        /*var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
+                return _sendCommand ?? (_sendCommand = new RelayCommand(async
+                   () =>
+                   {
+                       var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
                         MessageText = "";
 
-                        await MessageSender.send(message, SelectedThread.ThreadId);
-                        */
-                        Debug.WriteLine($"Sending:");
-                    },
-                    p => true));
+                       await MessageSender.send(message, SelectedThread.ThreadId);
+
+                       Debug.WriteLine($"Sending:");
+                   },
+                    () => true));
+            }
+        }
+
+        /*
+         * Messages
+         */
+
+        public RelayCommand<Message> DeleteCommand;
+
+        private RelayCommand<Message> _updateCommand;
+        public RelayCommand<Message> UpdateCommand
+        {
+            get
+            {
+                return _updateCommand ?? (_updateCommand = new RelayCommand<Message>(
+                   message =>
+                {
+                    DatabaseFactory.getTextMessageDatabase().Test(message.MessageId);
+
+                    Debug.WriteLine($"Marked as sent:");
+                },
+                    message => true));
             }
         }
     }

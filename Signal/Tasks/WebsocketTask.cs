@@ -3,6 +3,7 @@ using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal.database.models;
+using Signal.Push;
 using Signal.Tasks.Library;
 using System;
 using System.Collections.Generic;
@@ -11,47 +12,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
+using Signal.Push;
 using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class PushContentReceiveTask : ReceiveTask
+    class WebsocketTask : SendTask
     {
-        private string data;
 
-        public PushContentReceiveTask()
+        public WebsocketTask()
         {
-        }
-
-        public PushContentReceiveTask(string data)
-        {
-            this.data = data;
         }
 
         public override void onAdded()
         {
+
         }
 
         protected override string Execute()
         {
-            throw new NotImplementedException("PushContentReceiveTask Execute");
+            throw new NotImplementedException("TextSendTask Execute happened");
         }
 
         protected override async Task<string> ExecuteAsync()
         {
+            /*var messageReceiver = TextSecureCommunicationFactory.createReceiver();
+            var pipe = messageReceiver.createMessagePipe();
+            var callback = new MessageReceiverCallback();
             try
             {
-                String sessionKey = TextSecurePreferences.getSignalingKey();
-                TextSecureEnvelope envelope = new TextSecureEnvelope(data, sessionKey);
-
-                handle(envelope, true);
+                pipe.read(60, callback);
             }
-            catch (/*IOException | InvalidVersion*/Exception e) {
-                Debug.WriteLine($"{this.GetType().Name}: Error: {e.Message}");
-            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }*/
 
             return "";
         }
+
 
     }
 

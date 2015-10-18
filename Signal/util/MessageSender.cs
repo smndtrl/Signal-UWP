@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.messages;
 using TextSecure.recipient;
-using TextSecure.push;
+using Signal.Push;
 using libtextsecure;
 using Strilanc.Value;
 using libtextsecure.push;
@@ -296,7 +296,7 @@ namespace TextSecure.util
         */
         private static async Task<bool> isPushDestination(String destination)
         {
-            TextSecureDirectory directory = TextSecureDirectory.getInstance();
+            TextSecureDirectory directory = DatabaseFactory.getDirectoryDatabase();
 
             try
             {

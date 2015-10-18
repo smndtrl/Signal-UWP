@@ -31,13 +31,14 @@ namespace Signal.ViewModel
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
-                SimpleIoc.Default.Register<IDataService, Design>();
+                //SimpleIoc.Default.Register<IDataService, Design>();
+                SimpleIoc.Default.Register<IDataService, Sqlite>();
             } else
             {
-                SimpleIoc.Default.Register<IDataService, Real>();
+                SimpleIoc.Default.Register<IDataService, Sqlite>();
             }
 
-            SimpleIoc.Default.Register<ViewModel>();
+            SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<RegistrationViewModel>();
             SimpleIoc.Default.Register<ThreadViewModel>();
             SimpleIoc.Default.Register<ContactViewModel>();
@@ -46,9 +47,9 @@ namespace Signal.ViewModel
 
         }
 
-        public ViewModel Main
+        public MainViewModel Main
         {
-            get { return ServiceLocator.Current.GetInstance<ViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<MainViewModel>(); }
         }
 
         public MessageViewModel Message

@@ -98,10 +98,10 @@ namespace TextSecure.contacts
             try
             {
 
-                List<String> pushNumbers = await TextSecureDirectory.getInstance().getActiveNumbers();
+                List<String> pushNumbers = await DatabaseFactory.getDirectoryDatabase().getActiveNumbers();
                 List<ContactData> lookupData = new List<ContactData>();
 
-                var contactStore = await ContactManager.RequestStore();
+                var contactStore = await ContactManager.RequestStoreAsync();
 
 
 
@@ -109,7 +109,7 @@ namespace TextSecure.contacts
                 {
                     //Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(pushNumber));
                     //Cursor lookupCursor = resolver.query(uri, inProjection, null, null, null);
-                    var contacts = await contactStore.FindContacts(pushNumber);
+                    var contacts = await contactStore.FindContactsAsync(pushNumber);
 
 
                     if (contacts.First() != null)

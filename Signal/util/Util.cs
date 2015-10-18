@@ -21,12 +21,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TextSecure.util;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 
-namespace TextSecure.util
+namespace Signal.Util
 {
-    public class Util
+    public class Utils
     {
         public static String getSecret(uint size)
         {
@@ -49,37 +50,7 @@ namespace TextSecure.util
             String localNumber = TextSecurePreferences.getLocalNumber();
             return PhoneNumberFormatter.formatNumber(number, localNumber);
         }
-
-        public static long GetTimeInMilliseconds()
-        {
-            return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-        }
-
-        public static long GetUnixTimestamp()
-        {
-            return (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-        }
-
-        public static long GetUnixTimestamp(DateTime dateTime)
-        {
-            return (long)(dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
-        }
-
-        public static DateTime GetDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-        public static DateTime GetDateTimeMili(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
+        
     }
 
 

@@ -37,18 +37,18 @@ namespace libaxolotl.state.impl
             this.localRegistrationId = localRegistrationId;
         }
 
-        public /*override*/ IdentityKeyPair getIdentityKeyPair()
+        public /*override*/ IdentityKeyPair GetIdentityKeyPair()
         {
             return identityKeyPair;
         }
 
 
-        public /*override*/ uint getLocalRegistrationId()
+        public /*override*/ uint GetLocalRegistrationId()
         {
             return localRegistrationId;
         }
 
-        public /*override*/ bool saveIdentity(String name, IdentityKey identityKey)
+        public /*override*/ bool SaveIdentity(String name, IdentityKey identityKey)
         {
             if (trustedKeys.ContainsKey(name)) //mimic HashMap update behaviour
             {
@@ -58,7 +58,7 @@ namespace libaxolotl.state.impl
             return true;
         }
 
-        public /*override*/ bool isTrustedIdentity(String name, IdentityKey identityKey)
+        public /*override*/ bool IsTrustedIdentity(String name, IdentityKey identityKey)
         {
             IdentityKey trusted;
             trustedKeys.TryGetValue(name, out trusted); // get(name)

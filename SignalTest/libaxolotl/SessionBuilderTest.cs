@@ -23,7 +23,7 @@ namespace libaxolotl_test
         public void handlePlaintext(byte[] plaintext, String originalMessage, AxolotlStore bobStore)
         {
             //assertTrue(originalMessage.equals(new String(plaintext)));
-            //assertFalse(bobStore.containsSession(ALICE_ADDRESS));
+            //assertFalse(bobStore.ContainsSession(ALICE_ADDRESS));
         }
     }
     [TestClass]
@@ -49,8 +49,8 @@ namespace libaxolotl_test
 
             aliceSessionBuilder.process(bobPreKey);
 
-            Assert.IsTrue(aliceStore.containsSession(BOB_ADDRESS));
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 2);
+            Assert.IsTrue(aliceStore.ContainsSession(BOB_ADDRESS));
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 2);
 
             String originalMessage = "L'homme est condamné à être libre";
             SessionCipher aliceSessionCipher = new SessionCipher(aliceStore, BOB_ADDRESS);
@@ -64,8 +64,8 @@ namespace libaxolotl_test
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage);
 
-            Assert.IsTrue(bobStore.containsSession(ALICE_ADDRESS));
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 2);
+            Assert.IsTrue(bobStore.ContainsSession(ALICE_ADDRESS));
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 2);
             //Assert.IsTrue(originalMessage.Equals(plaintext));
             CollectionAssert.AreEqual(Encoding.UTF8.GetBytes(originalMessage), plaintext);
 
@@ -144,8 +144,8 @@ namespace libaxolotl_test
 
             aliceSessionBuilder.process(bobPreKey);
 
-            Assert.IsTrue(aliceStore.containsSession(BOB_ADDRESS));
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(aliceStore.ContainsSession(BOB_ADDRESS));
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             String originalMessage = "L'homme est condamné à être libre";
             SessionCipher aliceSessionCipher = new SessionCipher(aliceStore, BOB_ADDRESS);
@@ -160,9 +160,9 @@ namespace libaxolotl_test
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage/*, new DecryptionCallbackTest().handlePlaintext({ 0x55}, originalMessage, bobStore)*/);
 
-            Assert.IsTrue(bobStore.containsSession(ALICE_ADDRESS));
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey() != null);
+            Assert.IsTrue(bobStore.ContainsSession(ALICE_ADDRESS));
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey() != null);
 			String plaintextString = Encoding.UTF8.GetString(plaintext, 0, plaintext.Length);
 			Assert.IsTrue(originalMessage.Equals(plaintextString));
 
@@ -469,8 +469,8 @@ namespace libaxolotl_test
             KeyExchangeMessage response = aliceSessionBuilder.process(new KeyExchangeMessage(bobKeyExchangeMessageBytes));
 
             Assert.IsTrue(response == null);
-            Assert.IsTrue(aliceStore.containsSession(BOB_ADDRESS));
-            Assert.IsTrue(bobStore.containsSession(ALICE_ADDRESS));
+            Assert.IsTrue(aliceStore.ContainsSession(BOB_ADDRESS));
+            Assert.IsTrue(bobStore.ContainsSession(ALICE_ADDRESS));
 
             runInteraction(aliceStore, bobStore);
 
@@ -545,8 +545,8 @@ namespace libaxolotl_test
 
             aliceSessionBuilder.process(bobPreKey);
 
-            Assert.IsTrue(aliceStore.containsSession(BOB_ADDRESS));
-            Assert.IsTrue(aliceStore.loadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(aliceStore.ContainsSession(BOB_ADDRESS));
+            Assert.IsTrue(aliceStore.LoadSession(BOB_ADDRESS).getSessionState().getSessionVersion() == 3);
 
             String originalMessage = "L'homme est condamné à être libre";
             SessionCipher aliceSessionCipher = new SessionCipher(aliceStore, BOB_ADDRESS);
@@ -563,9 +563,9 @@ namespace libaxolotl_test
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage);
 
-            Assert.IsTrue(bobStore.containsSession(ALICE_ADDRESS));
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
-            Assert.IsTrue(bobStore.loadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey() != null);
+            Assert.IsTrue(bobStore.ContainsSession(ALICE_ADDRESS));
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getSessionVersion() == 3);
+            Assert.IsTrue(bobStore.LoadSession(ALICE_ADDRESS).getSessionState().getAliceBaseKey() != null);
             //Assert.IsTrue(originalMessage.Equals(plaintext));
             CollectionAssert.AreEqual(Encoding.UTF8.GetBytes(originalMessage), plaintext);
         }

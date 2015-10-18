@@ -46,11 +46,11 @@ namespace TextSecure.database.loaders
         {
             if (max_count == -1)
             {
-                var identities = DatabaseFactory.getIdentityDatabase().getIdentities();
+                var identities = DatabaseFactory.getIdentityDatabase().GetIdentities();
                 max_count = identities.Count;
             }
 
-            var list = await DatabaseFactory.getIdentityDatabase().getIdentities();
+            var list = DatabaseFactory.getIdentityDatabase().GetIdentities();
             _count += list.Count();
             Debug.WriteLine($"Loaded {list.Count} identities");
             return (IList < object > )list;

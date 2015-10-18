@@ -26,11 +26,17 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class MessageView : Page
     {
+        public MessageViewModel ViewModel
+        {
+            get
+            {
+                return (MessageViewModel)DataContext;
+            }
+        }
+
         public MessageView()
         {
             this.InitializeComponent();
-
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
         /*override void OnNavigatedTo(NavigationEventArgs e)
@@ -125,7 +131,7 @@ namespace Signal.Views
             // Page above us will be our master view.
             // Make sure we are using the "drill out" animation in this transition.
 
-            Frame.GoBack(new DrillInNavigationTransitionInfo());
+            //Frame.GoBack(new DrillInNavigationTransitionInfo());
         }
 
         private void DetailPage_BackRequested(object sender, BackRequestedEventArgs e)

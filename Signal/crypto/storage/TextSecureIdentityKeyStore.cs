@@ -23,42 +23,45 @@ using System.Text;
 using System.Threading.Tasks;
 using libaxolotl;
 using SQLite;
-using TextSecure.database.mappings;
 using System.IO;
 using TextSecure.database;
 using TextSecure.util;
 using TextSecure.recipient;
+using Signal.Database;
+using SQLite.Net;
 
 namespace TextSecure.crypto.storage
 {
     public class TextSecureIdentityKeyStore : IdentityKeyStore
     {
-        public TextSecureIdentityKeyStore()
+        private SQLiteConnection conn;
+        public TextSecureIdentityKeyStore(SQLiteConnection conn)
         {
+            this.conn = conn;
         }
 
-        public IdentityKeyPair getIdentityKeyPair()
+        public IdentityKeyPair GetIdentityKeyPair()
         {
-            return IdentityKeyUtil.getIdentityKeyPair();
+            return IdentityKeyUtil.GetIdentityKeyPair();
         }
 
-        public uint getLocalRegistrationId()
+        public uint GetLocalRegistrationId()
         {
-            return (uint)TextSecurePreferences.getLocalRegistrationId();
+            return (uint)TextSecurePreferences.GetLocalRegistrationId();
         }
 
-        public bool saveIdentity(string name, IdentityKey identityKey)
+        public bool SaveIdentity(string name, IdentityKey identityKey)
         {
             long recipientId = RecipientFactory.getRecipientsFromString(name, true).getPrimaryRecipient().getRecipientId();
-            DatabaseFactory.getIdentityDatabase().saveIdentity(recipientId, identityKey);
+            DatabaseFactory.getIdentityDatabase().SaveIdentity(recipientId, identityKey);
             return true;
         }
 
-        public bool isTrustedIdentity(string name, IdentityKey identityKey)
+        public bool IsTrustedIdentity(string name, IdentityKey identityKey)
         {
             long recipientId = RecipientFactory.getRecipientsFromString(name, true).getPrimaryRecipient().getRecipientId();
             return DatabaseFactory.getIdentityDatabase()
-                                  .isValidIdentity(recipientId, identityKey); 
+                                  .IsValidIdentity(recipientId, identityKey); 
         }
     }
 }

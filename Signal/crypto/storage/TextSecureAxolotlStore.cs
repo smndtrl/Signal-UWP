@@ -25,6 +25,9 @@ using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using libaxolotl;
 using TextSecure.crypto.storage;
+using Signal.Database;
+using System.IO;
+using SQLite.Net;
 
 namespace TextSecure
 {
@@ -35,108 +38,113 @@ namespace TextSecure
         private readonly IdentityKeyStore identityKeyStore;
         private readonly SessionStore sessionStore;
 
+        public static string AXOLOTLDB_PATH = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "axolotl.db");
+        private SQLiteConnection connection;
+
         public TextSecureAxolotlStore()
         {
-            this.preKeyStore = new TextSecurePreKeyStore();
-            this.signedPreKeyStore = new TextSecurePreKeyStore();
-            this.identityKeyStore = new TextSecureIdentityKeyStore();
-            this.sessionStore = new TextSecureSessionStore();
+            connection = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), AXOLOTLDB_PATH);
+
+            this.preKeyStore = new TextSecurePreKeyStore(connection);
+            this.signedPreKeyStore = new TextSecurePreKeyStore(connection);
+            this.identityKeyStore = new TextSecureIdentityKeyStore(connection);
+            this.sessionStore = new TextSecureSessionStore(connection);
         }
 
-        public bool containsPreKey(uint preKeyId)
+        public bool ContainsPreKey(uint preKeyId)
         {
-            return preKeyStore.containsPreKey(preKeyId);
+            return preKeyStore.ContainsPreKey(preKeyId);
         }
 
-        public bool containsSession(AxolotlAddress address)
+        public bool ContainsSession(AxolotlAddress address)
         {
-            return sessionStore.containsSession(address);
+            return sessionStore.ContainsSession(address);
         }
 
-        public bool containsSignedPreKey(uint signedPreKeyId)
+        public bool ContainsSignedPreKey(uint signedPreKeyId)
         {
-            return signedPreKeyStore.containsSignedPreKey(signedPreKeyId);
+            return signedPreKeyStore.ContainsSignedPreKey(signedPreKeyId);
         }
 
-        public void deleteAllSessions(string name)
+        public void DeleteAllSessions(string name)
         {
-            sessionStore.deleteAllSessions(name);
+            sessionStore.DeleteAllSessions(name);
         }
 
-        public void deleteSession(AxolotlAddress address)
+        public void DeleteSession(AxolotlAddress address)
         {
-            sessionStore.deleteSession(address);
+            sessionStore.DeleteSession(address);
         }
 
-        public IdentityKeyPair getIdentityKeyPair()
+        public IdentityKeyPair GetIdentityKeyPair()
         {
-            return identityKeyStore.getIdentityKeyPair();
+            return identityKeyStore.GetIdentityKeyPair();
         }
 
-        public uint getLocalRegistrationId()
+        public uint GetLocalRegistrationId()
         {
-            return identityKeyStore.getLocalRegistrationId();
+            return identityKeyStore.GetLocalRegistrationId();
         }
 
-        public List<uint> getSubDeviceSessions(string name)
+        public List<uint> GetSubDeviceSessions(string name)
         {
-            return sessionStore.getSubDeviceSessions(name);
+            return sessionStore.GetSubDeviceSessions(name);
         }
 
-        public bool isTrustedIdentity(string name, IdentityKey identityKey)
+        public bool IsTrustedIdentity(string name, IdentityKey identityKey)
         {
-            return identityKeyStore.isTrustedIdentity(name, identityKey);
+            return identityKeyStore.IsTrustedIdentity(name, identityKey);
         }
 
-        public PreKeyRecord loadPreKey(uint preKeyId)
+        public PreKeyRecord LoadPreKey(uint preKeyId)
         {
-            return preKeyStore.loadPreKey(preKeyId);
+            return preKeyStore.LoadPreKey(preKeyId);
         }
 
-        public SessionRecord loadSession(AxolotlAddress address)
+        public SessionRecord LoadSession(AxolotlAddress address)
         {
-            return sessionStore.loadSession(address);
+            return sessionStore.LoadSession(address);
         }
 
-        public SignedPreKeyRecord loadSignedPreKey(uint signedPreKeyId)
+        public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
-            return signedPreKeyStore.loadSignedPreKey(signedPreKeyId);
+            return signedPreKeyStore.LoadSignedPreKey(signedPreKeyId);
         }
 
-        public List<SignedPreKeyRecord> loadSignedPreKeys()
+        public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
-            return signedPreKeyStore.loadSignedPreKeys();
+            return signedPreKeyStore.LoadSignedPreKeys();
         }
 
-        public void removePreKey(uint preKeyId)
+        public void RemovePreKey(uint preKeyId)
         {
-            preKeyStore.removePreKey(preKeyId);
+            preKeyStore.RemovePreKey(preKeyId);
         }
 
-        public void removeSignedPreKey(uint signedPreKeyId)
+        public void RemoveSignedPreKey(uint signedPreKeyId)
         {
-            signedPreKeyStore.removeSignedPreKey(signedPreKeyId);
+            signedPreKeyStore.RemoveSignedPreKey(signedPreKeyId);
         }
 
-        public bool saveIdentity(string name, IdentityKey identityKey)
+        public bool SaveIdentity(string name, IdentityKey identityKey)
         {
-            identityKeyStore.saveIdentity(name, identityKey);
+            identityKeyStore.SaveIdentity(name, identityKey);
             return true;
         }
 
-        public void storePreKey(uint preKeyId, PreKeyRecord record)
+        public void StorePreKey(uint preKeyId, PreKeyRecord record)
         {
-            preKeyStore.storePreKey(preKeyId, record);
+            preKeyStore.StorePreKey(preKeyId, record);
         }
 
-        public void storeSession(AxolotlAddress address, SessionRecord record)
+        public void StoreSession(AxolotlAddress address, SessionRecord record)
         {
-            sessionStore.storeSession(address, record);
+            sessionStore.StoreSession(address, record);
         }
 
-        public void storeSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
+        public void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
         {
-            signedPreKeyStore.storeSignedPreKey(signedPreKeyId, record);
+            signedPreKeyStore.StoreSignedPreKey(signedPreKeyId, record);
         }
     }
 }

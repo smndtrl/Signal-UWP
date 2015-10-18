@@ -1,10 +1,12 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
 using Signal.Model;
+using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,7 +57,7 @@ namespace Signal.ViewModel
         }
 
         // broadcast
-        public const string SelectedRecipientsPropertyName = "SelectedRecipients";
+        /*public const string SelectedRecipientsPropertyName = "SelectedRecipients";
         private Recipients _selectedRecipients = null;
         public Recipients SelectedRecipients
         {
@@ -71,7 +73,7 @@ namespace Signal.ViewModel
                 _selectedRecipients = value;
                 RaisePropertyChanged(SelectedRecipientsPropertyName, oldValue, _selectedRecipients, true);
             }
-        }
+        }*/
 
         // commands
         private RelayCommand<Contact> _addCommand;
@@ -79,19 +81,21 @@ namespace Signal.ViewModel
         {
             get
             {
-                return _addCommand ?? (_addCommand = new RelayCommand<Contact>(
+                return _addCommand ?? (_addCommand = new RelayCommand<Contact>( 
                    p => { addCommandInternal(); },
                    p => SelectedContact != null
                    ));
             }
         }
 
-        private void addCommandInternal()
+        private async void addCommandInternal()
         {
 
             Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.number, true);
 
-            SelectedRecipients = recipients;
+            var threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients, 0);
+
+            Messenger.Default.Send(new AddThreadMessage() { ThreadId = threadId });
 
             //_navigationService.NavigateTo("MasterDetail");
             _navigationService.GoBack();

@@ -16,8 +16,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.crypto;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
 using TextSecure.recipient;
+using Signal.Util;
 using TextSecure.util;
 
 namespace Signal.ViewModel
@@ -106,13 +107,13 @@ namespace Signal.ViewModel
         }
 
 
-        private RelayCommand<MessageDatabase.MessageTable> _verifyCommand;
-        public RelayCommand<MessageDatabase.MessageTable> VerifyCommand
+        private RelayCommand _verifyCommand;
+        public RelayCommand VerifyCommand
         {
             get
             {
-                return _verifyCommand ?? (_verifyCommand = new RelayCommand<MessageDatabase.MessageTable>(async
-                   p =>
+                return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
+                   () =>
                 {
                     IsBusy = true;
 
@@ -127,17 +128,17 @@ namespace Signal.ViewModel
 
                     IsBusy = false;
                 },
-                    p => true));
+                    () => true));
             }
         }
 
-        private RelayCommand<MessageDatabase.MessageTable> _registerCommand;
-        public RelayCommand<MessageDatabase.MessageTable> RegisterCommand
+        private RelayCommand _registerCommand;
+        public RelayCommand RegisterCommand
         {
             get
             {
-                return _registerCommand ?? (_registerCommand = new RelayCommand<MessageDatabase.MessageTable>(async
-                   p =>
+                return _registerCommand ?? (_registerCommand = new RelayCommand(async
+                   () =>
                 {
                     
                     number = $"+{CountryCode}{PhoneNumber}";
@@ -145,8 +146,8 @@ namespace Signal.ViewModel
 
 
 
-                    password = Util.getSecret(18);
-                    signalingKey = Util.getSecret(52);
+                    password = Utils.getSecret(18);
+                    signalingKey = Utils.getSecret(52);
 
                     State = (int)RegistrationState.Registering;
                     IsBusy = true;
@@ -168,7 +169,7 @@ namespace Signal.ViewModel
                     IsBusy = false;
 
                 },
-                    p => {
+                    () => {
                         PhoneNumberFormatter.isValidNumber(getNumber());
                         return true;
                         }));
@@ -189,20 +190,20 @@ namespace Signal.ViewModel
                 var registrationId = KeyHelper.generateRegistrationId(false);
                 TextSecurePreferences.setLocalRegistrationId((int)registrationId);
 
-                await App.Current.accountManager.verifyAccount(receivedSmsVerificationCode, signalingKey, false, registrationId);
+                await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
                 await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
                 State = (int)RegistrationState.Verified;
 
                 Recipient self = RecipientFactory.getRecipientsFromString(number, false).getPrimaryRecipient();
                 IdentityKeyUtil.generateIdentityKeys();
-                IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair();
+                IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair();
                 List<PreKeyRecord> records = await PreKeyUtil.generatePreKeys();
                 PreKeyRecord lastResort = await PreKeyUtil.generateLastResortKey();
                 SignedPreKeyRecord signedPreKey = await PreKeyUtil.generateSignedPreKey(identityKey);
 
                 await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
-                DatabaseFactory.getIdentityDatabase().saveIdentity(self.getRecipientId(), identityKey.getPublicKey());
+                DatabaseFactory.getIdentityDatabase().SaveIdentity(self.getRecipientId(), identityKey.getPublicKey());
                 State = (int)RegistrationState.Generated;
 
                 await DirectoryHelper.refreshDirectory(App.Current.accountManager, TextSecurePreferences.getLocalNumber());
@@ -242,7 +243,7 @@ namespace Signal.ViewModel
         private void markAsVerified(String number, String password, String signalingKey)
         {
             TextSecurePreferences.setVerifying(false);
-            TextSecurePreferences.setPushRegistered(true);
+            TextSecurePreferences.setPushRegistered(false);
             TextSecurePreferences.setLocalNumber(number);
             TextSecurePreferences.setPushServerPassword(password);
             TextSecurePreferences.setSignalingKey(signalingKey);

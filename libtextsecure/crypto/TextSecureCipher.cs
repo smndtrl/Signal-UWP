@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using Google.ProtocolBuffers;
 using libaxolotl;
 using libaxolotl.protocol;
@@ -23,6 +23,7 @@ using libtextsecure.messages;
 using libtextsecure.messages.multidevice;
 using libtextsecure.push;
 using libtextsecure.util;
+using Strilanc.Value;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -154,7 +155,9 @@ namespace libtextsecure.crypto
                 attachments.AddLast(new TextSecureAttachmentPointer(pointer.Id,
                                                                 pointer.ContentType,
                                                                 pointer.Key.ToByteArray(),
-                                                                envelope.getRelay()));
+                                                                envelope.getRelay(),
+                                                                pointer.HasSize ? new May<uint>(pointer.Size) : May<uint>.NoValue,
+                                                                pointer.HasThumbnail ? new May<byte[]>(pointer.Thumbnail.ToByteArray()) : May<byte[]>.NoValue));
             }
 
             return new TextSecureDataMessage(envelope.getTimestamp(), groupInfo, attachments,

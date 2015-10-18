@@ -44,6 +44,7 @@ namespace libtextsecure
 
         private readonly PushServiceSocket pushServiceSocket;
         private readonly String user;
+        private readonly string userAgent;
 
         /**
          * Construct a TextSecureAccountManager.
@@ -54,10 +55,11 @@ namespace libtextsecure
          * @param password A TextSecure password.
          */
         public TextSecureAccountManager(String url, TrustStore trustStore,
-                                        String user, String password)
+                                        String user, String password, string userAgent)
         {
-            this.pushServiceSocket = new PushServiceSocket(url, trustStore, new StaticCredentialsProvider(user, password, null));
+            this.pushServiceSocket = new PushServiceSocket(url, trustStore, new StaticCredentialsProvider(user, password, null), userAgent);
             this.user = user;
+            this.userAgent = userAgent;
         }
 
         /**
@@ -86,7 +88,7 @@ namespace libtextsecure
          */
         public async void requestSmsVerificationCode()// throws IOException
         {
-           await this.pushServiceSocket.createAccount(false);
+            await this.pushServiceSocket.createAccount(false);
         }
 
         /**
@@ -108,7 +110,6 @@ namespace libtextsecure
          *                         {@link #requestVoiceVerificationCode}).
          * @param signalingKey 52 random bytes.  A 32 byte AES key and a 20 byte Hmac256 key,
          *                     concatenated.
-         * @param supportsSms Indicate whether this client is capable of supporting encrypted SMS.
          * @param axolotlRegistrationId A random 14-bit number that identifies this TextSecure install.
          *                              This value should remain consistent across registrations for the
          *                              same install, but probabilistically differ across registrations
@@ -116,13 +117,49 @@ namespace libtextsecure
          *
          * @throws IOException
          */
-        public async Task<bool> verifyAccount(String verificationCode, String signalingKey,
-                                  bool supportsSms, uint axolotlRegistrationId)
-        //throws IOException
+        public async Task<bool> verifyAccountWithCode(String verificationCode, String signalingKey,
+                                   uint axolotlRegistrationId, bool voice)
         {
-            await this.pushServiceSocket.verifyAccount(verificationCode, signalingKey,
-                                                 supportsSms, axolotlRegistrationId);
+            await this.pushServiceSocket.verifyAccountCode(verificationCode, signalingKey,
+                                                 axolotlRegistrationId, voice);
             return true;
+        }
+
+        /**
+       * Verify a TextSecure account with a signed token from a trusted source.
+       *
+       * @param verificationToken The signed token provided by a trusted server.
+
+       * @param signalingKey 52 random bytes.  A 32 byte AES key and a 20 byte Hmac256 key,
+       *                     concatenated.
+       * @param axolotlRegistrationId A random 14-bit number that identifies this TextSecure install.
+       *                              This value should remain consistent across registrations for the
+       *                              same install, but probabilistically differ across registrations
+       *                              for separate installs.
+       *
+       * @throws IOException
+       */
+
+        public async Task verifyAccountWithToken(String verificationToken, String signalingKey, uint axolotlRegistrationId, bool voice)
+        {
+            await this.pushServiceSocket.verifyAccountToken(verificationToken, signalingKey, axolotlRegistrationId, voice);
+        }
+
+        /**
+         * Refresh account attributes with server.
+         *
+         * @param signalingKey 52 random bytes.  A 32 byte AES key and a 20 byte Hmac256 key, concatenated.
+         * @param axolotlRegistrationId A random 14-bit number that identifies this TextSecure install.
+         *                              This value should remain consistent across registrations for the same
+         *                              install, but probabilistically differ across registrations for
+         *                              separate installs.
+         * @param voice A boolean that indicates whether the client supports secure voice (RedPhone)
+         *
+         * @throws IOException
+         */
+        public async Task setAccountAttributes(String signalingKey, uint axolotlRegistrationId, bool voice)
+        {
+            await this.pushServiceSocket.setAccountAttributes(signalingKey, axolotlRegistrationId, voice, true);
         }
 
         /**
@@ -137,7 +174,7 @@ namespace libtextsecure
          * @throws IOException
          */
         public async Task<bool> setPreKeys(IdentityKey identityKey, PreKeyRecord lastResortKey,
-                               SignedPreKeyRecord signedPreKey, IList<PreKeyRecord> oneTimePreKeys)
+                                   SignedPreKeyRecord signedPreKey, IList<PreKeyRecord> oneTimePreKeys)
         //throws IOException
         {
             await this.pushServiceSocket.registerPreKeys(identityKey, lastResortKey, signedPreKey, oneTimePreKeys);
@@ -213,6 +250,11 @@ namespace libtextsecure
             }
 
             return activeTokens;
+        }
+
+        public async Task<String> getAccoountVerificationToken()
+        {
+            return await this.pushServiceSocket.getAccountVerificationToken();
         }
 
         public async Task<String> getNewDeviceVerificationCode()// throws IOException

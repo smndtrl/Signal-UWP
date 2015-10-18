@@ -43,6 +43,7 @@
             </ResourceDictionary.ThemeDictionaries>
             
             <resource:DateConverter x:Key="DateConverter" />
+            <resource:DeliveryStatusConverter x:Key="DeliveryStatusConverter" />
             <viewmodel:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
         </ResourceDictionary>
     </Application.Resources>

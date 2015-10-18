@@ -59,46 +59,45 @@ namespace TextSecure.database
             }
         }
 
-        private Message Converter(MessageTable m)
+       /* private Message Converter(MessageTable m)
         {
             var recipients = GetRecipientsFor(m.address);
-            return new Message(m._id.Value, m.body, recipients, recipients.getPrimaryRecipient(), (int)m.address_device_id, m.date_sent, m.date_received, m.receipt_count, (int)m.type, (int)m.thread_id, m.status/*,m.mismatches*/); // TODO: ???
-        }
+            return new Message(m._id.Value, m.body, recipients, recipients.getPrimaryRecipient(), (int)m.address_device_id, m.date_sent, m.date_received, m.receipt_count, (int)m.type, (int)m.thread_id, m.status/*,m.mismatches); // TODO: ???
+        }*/
 
         public async Task<List<Message>> getMessages(long threadId, long skip = 0, long take = 10)
         {
-            var query = conn.Table<MessageTable>().Where(v => v.thread_id == threadId);
+            var query = conn.Table<Message>().Where(v => v.ThreadId == threadId);
 
             List<Message> list = new List<Message>();
 
-            foreach (var thread in query.ToList())
+            /*foreach (var thread in query.ToList())
             {
                 var t = Converter(thread);
 
                 list.Add(t);
-            }
+            }*/
 
-            return list;
+            return query.ToList() ;
         }
 
         public async Task<SmsMessageRecord> getMessageRecord(long messageId)
         {
             try
             {
-                var query = conn.Table<MessageTable>().Where(m => m._id == messageId);
-                var first =  query.Count() != 0 ?  query.First() : null;
+                var first = conn.Get<Message>(messageId);
 
-                if (query != null && first != null)
+                if ( first != null)
                 {
                     //LinkedList<IdentityKeyMismatch> mismatches = getMismatches(first.mismatches);
-                    Recipients recipients = GetRecipientsFor(first.address);
-                    DisplayRecord.Body body = getBody(first.body, first.type);
+                    Recipients recipients = GetRecipientsFor(first.Address);
+                    DisplayRecord.Body body = getBody(first.Body, first.Type);
 
-                    return new SmsMessageRecord(first._id.Value, body, recipients,
+                    return new SmsMessageRecord(first.MessageId, body, recipients,
                                         recipients.getPrimaryRecipient(),
-                                        (int)first.address_device_id,
-                                        first.date_sent, first.date_received, (int)first.receipt_count, first.type,
-                                        first.thread_id, (int)first.status, null); // TODO
+                                        (int)first.AddressDeviceId,
+                                        first.DateSent, first.DateReceived, (int)first.ReceiptCount, first.Type,
+                                        first.ThreadId, (int)0, null); // TODO
                 }
                 else
                     return null;
@@ -129,11 +128,21 @@ namespace TextSecure.database
             DisplayRecord.Body body = getBody(cursor);*/
         }
 
-        public async Task<MessageDatabase.MessageTable> getMessage(long messageId)
+        public Message Get(long messageId)
+        {
+            return conn.Get<Message>(messageId);
+        }
+
+        public async Task<Message> GetAsync(long messageId)
+        {
+            return conn.Get<Message>(messageId);
+        }
+
+        public async Task<Message> getMessage(long messageId)
         {
             try
             {
-                var query = conn.Table<MessageTable>().Where(m => m._id == messageId);
+                var query = conn.Table<Message>().Where(m => m.MessageId == messageId);
                 var first =  query.Count() != 0 ?  query.First() : null;
 
                 if (query != null && first != null)

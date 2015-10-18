@@ -58,7 +58,7 @@ namespace TextSecure.database
         private readonly ConcurrentDictionary<String, long> addressCache = new ConcurrentDictionary<String, long>();
         private readonly ConcurrentDictionary<long, String> idCache = new ConcurrentDictionary<long, String>();
 
-        public static CanonicalAddressDatabase getInstance()
+        /*public static CanonicalAddressDatabase getInstance()
         {
             lock (locko)
             {
@@ -67,13 +67,11 @@ namespace TextSecure.database
 
                 return instance;
             }
-        }
+        }*/
 
-        private CanonicalAddressDatabase()
+        public CanonicalAddressDatabase(SQLiteConnection conn)
         {
-            string path = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "test.db");
-            //conn = new SQLiteConnection(path);
-            conn = new SQLiteConnection(path);
+            this.conn = conn;
 
             conn.CreateTable<CanonicalAddress>();
 

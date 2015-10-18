@@ -18,101 +18,119 @@
 using libaxolotl.state;
 using SQLite;
 using SQLite.Net;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TextSecure.database.mappings;
 
 namespace TextSecure.crypto.storage
 {
+    [Table("PreKeys")]
+    public class PreKeyRecordI
+    {
+        [PrimaryKey, AutoIncrement]
+        public uint PreKeyId { get; set; }
+        public byte[] Record { get; set; }
+        public bool Next { get; set; } = false;
+    }
+
+    [Table("PreKeyIndex")]
+    public class PreKeyIndex
+    {
+        [PrimaryKey]
+        public uint Zero { get; set; } = 0;
+        public uint PreyKeyIndex { get; set; }
+        public uint Next { get; set; }
+    }
+
+    [Table("SignedPreKeys")]
+    public class SignedPreKeyRecordI
+    {
+        [PrimaryKey, AutoIncrement]
+        public uint SignedPreyKeyId { get; set; }
+        public byte[] Record { get; set; }
+        public bool Next { get; set; } = false;
+    }
+
+    [Table("SingedPreKeyIndex")]
+    public class SignedPreKeyIndex
+    {
+        [PrimaryKey]
+        public uint Zero { get; set; } = 0;
+        public uint SignedPreyKeyIndex { get; set; }
+        public uint Next { get; set; }
+    }
+
     public class TextSecurePreKeyStore : PreKeyStore, SignedPreKeyStore
     {
-
-        public static readonly String PREKEY_DIRECTORY = "prekeys.db";
-        private static readonly String PREKEY_PATH = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, PREKEY_DIRECTORY);
-        //public static readonly String SIGNED_PREKEY_DIRECTORY = "signed_prekeys";
 
 
         private static readonly uint CURRENT_VERSION_MARKER = 1;
 
         SQLiteConnection conn;
         
-        public TextSecurePreKeyStore()
+        public TextSecurePreKeyStore(SQLiteConnection conn)
         {
-            
-            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), PREKEY_PATH);
-
-            init();
-
+            this.conn = conn;
+            conn.CreateTable<PreKeyRecordI>();
+            conn.CreateTable<PreKeyIndex>();
+            conn.CreateTable<SignedPreKeyRecordI>();
+            conn.CreateTable<SignedPreKeyIndex>();
         }
 
-        private void init()
+        public bool ContainsPreKey(uint preKeyId)
         {
-            conn.CreateTable<PreKeyRecordMapping>();
-            conn.CreateTable<PreKeyRecordIndexMapping>();
-            conn.CreateTable<SignedPreKeyRecordMapping>();
-            conn.CreateTable<SignedPreKeyRecordIndexMapping>();
-
-        }
-
-        public bool containsPreKey(uint preKeyId)
-        {
-            var query = conn.Table<PreKeyRecordMapping>().Where(v => v.id.Equals(preKeyId));
+            var query = conn.Table<PreKeyRecordI>().Where(p => p.PreKeyId.Equals(preKeyId));
             return query.Count() == 1;
         }
 
-        public bool containsSignedPreKey(uint signedPreKeyId)
+        public bool ContainsSignedPreKey(uint signedPreKeyId)
         {
-            var query = conn.Table<SignedPreKeyRecordMapping>().Where(v => v.id.Equals(signedPreKeyId));
+            var query = conn.Table<SignedPreKeyRecordI>().Where(s => s.SignedPreyKeyId.Equals(signedPreKeyId));
             return query.Count() == 1;
         }
 
-        public PreKeyRecord loadPreKey(uint preKeyId)
+        public PreKeyRecord LoadPreKey(uint preKeyId)
         {
-            var query = conn.Table<PreKeyRecordMapping>().Where(v => v.id.Equals(preKeyId));
+            var query = conn.Table<PreKeyRecordI>().Where(p => p.PreKeyId.Equals(preKeyId));
             var preKey = query.First();
-            return new PreKeyRecord(preKey.record);
+            return new PreKeyRecord(preKey.Record);
         }
 
-        public SignedPreKeyRecord loadSignedPreKey(uint signedPreKeyId)
+        public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
-            var query = conn.Table<SignedPreKeyRecordMapping>().Where(v => v.id.Equals(signedPreKeyId));
+            var query = conn.Table<SignedPreKeyRecordI>().Where(s => s.SignedPreyKeyId.Equals(signedPreKeyId));
             var signedPreKey = query.First();
-            return new SignedPreKeyRecord(signedPreKey.record);
+            return new SignedPreKeyRecord(signedPreKey.Record);
         }
 
-        public List<SignedPreKeyRecord> loadSignedPreKeys()
+        public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
-            var query = conn.Table<SignedPreKeyRecordMapping>().Where(v => true);
-            var signedPreKey = query.ToList().Select(x => new SignedPreKeyRecord(x.record));
-            return signedPreKey.ToList();
+            var query = conn.Table<SignedPreKeyRecord>().Where(v => true);
+            return query.ToList();
         }
 
-        public void removePreKey(uint preKeyId)
+        public void RemovePreKey(uint preKeyId)
         {
-            var query = conn.Delete(preKeyId);//.Table<SignedPreKeyRecordMapping>().Where(v => v.id.Equals(signedPreKeyId));
-            return;//  query == preKeyId;
+            var query = conn.Delete(preKeyId);
         }
 
-        public void removeSignedPreKey(uint signedPreKeyId)
+        public void RemoveSignedPreKey(uint signedPreKeyId)
         {
             var query = conn.Delete(signedPreKeyId);
-            return;// query.Count() == 1;
         }
 
-        public void storePreKey(uint preKeyId, PreKeyRecord record)
+        public void StorePreKey(uint preKeyId, PreKeyRecord record)
         {
-            conn.Insert(new PreKeyRecordMapping() { id = preKeyId, record = record.serialize() });
-            return;
+            conn.Insert(new PreKeyRecordI() { PreKeyId = preKeyId, Record = record.serialize() });
         }
 
-        public void storeSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
+        public void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
         {
-            conn.Insert(new SignedPreKeyRecordMapping() { id = signedPreKeyId, record = record.serialize() });
-            return;
+            conn.Insert(new SignedPreKeyRecordI() { SignedPreyKeyId = signedPreKeyId, Record = record.serialize() });
         }
     }
 }

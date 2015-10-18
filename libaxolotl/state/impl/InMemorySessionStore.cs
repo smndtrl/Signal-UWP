@@ -36,11 +36,11 @@ namespace libaxolotl.state.impl
         public InMemorySessionStore() { }
 
         //[MethodImpl(MethodImplOptions.Synchronized)]
-        public SessionRecord loadSession(AxolotlAddress remoteAddress)
+        public SessionRecord LoadSession(AxolotlAddress remoteAddress)
         {
             try
             {
-                if (containsSession(remoteAddress))
+                if (ContainsSession(remoteAddress))
                 {
                     byte[] session;
                     sessions.TryGetValue(remoteAddress, out session); // get()
@@ -59,7 +59,7 @@ namespace libaxolotl.state.impl
         }
 
 
-        public List<uint> getSubDeviceSessions(String name)
+        public List<uint> GetSubDeviceSessions(String name)
         {
             List<uint> deviceIds = new List<uint>();
 
@@ -76,7 +76,7 @@ namespace libaxolotl.state.impl
         }
 
 
-        public void storeSession(AxolotlAddress address, SessionRecord record)
+        public void StoreSession(AxolotlAddress address, SessionRecord record)
         {
             if (sessions.ContainsKey(address)) //mimic HashMap update behaviour
             {
@@ -86,19 +86,19 @@ namespace libaxolotl.state.impl
         }
 
 
-        public bool containsSession(AxolotlAddress address)
+        public bool ContainsSession(AxolotlAddress address)
         {
             return sessions.ContainsKey(address);
         }
 
 
-        public void deleteSession(AxolotlAddress address)
+        public void DeleteSession(AxolotlAddress address)
         {
             sessions.Remove(address);
         }
 
 
-        public void deleteAllSessions(String name)
+        public void DeleteAllSessions(String name)
         {
             foreach (AxolotlAddress key in sessions.Keys) // keySet()
             {

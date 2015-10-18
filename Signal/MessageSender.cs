@@ -21,6 +21,7 @@ using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal;
+using Signal.Model;
 using Signal.Tasks;
 using Strilanc.Value;
 using System;
@@ -30,9 +31,12 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.messages;
-using TextSecure.push;
+using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
+using Signal.Util;
+using GalaSoft.MvvmLight.Messaging;
+using Signal.ViewModel.Messages;
 
 namespace TextSecure
 {
@@ -53,14 +57,18 @@ namespace TextSecure
 
             if (threadId == -1)
             {
-                allocatedThreadId = await DatabaseFactory.getThreadDatabase().GetThreadIdFor(recipients);
+                allocatedThreadId =  DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
             }
             else
             {
                 allocatedThreadId = threadId;
             }
 
-            long messageId = await database.insertMessageOutbox(allocatedThreadId, message, type, DateTime.Now);
+            long messageId = await database.insertMessageOutbox(allocatedThreadId, message, type, TimeUtil.GetDateTimeMillis());
+
+            // notify user interface
+            Messenger.Default.Send(new AddMessageMessage() { ThreadId = allocatedThreadId, MessageId = messageId });
+
 
             await sendTextMessage(recipients, keyExchange, messageId);
 
@@ -237,7 +245,7 @@ namespace TextSecure
                 }
 
                 Recipient recipient = recipients.getPrimaryRecipient();
-                String destination = Util.canonicalizeNumber(recipient.getNumber());
+                String destination = Utils.canonicalizeNumber(recipient.getNumber());
 
                 return await isPushDestination(destination);
             }
@@ -298,7 +306,7 @@ namespace TextSecure
                     return false;
                 }*/
 
-                String e164number = Util.canonicalizeNumber(recipients.getPrimaryRecipient().getNumber());
+                String e164number = Utils.canonicalizeNumber(recipients.getPrimaryRecipient().getNumber());
                 return TextSecurePreferences.getLocalNumber().Equals(e164number);
             }
             catch (InvalidNumberException e)
@@ -310,7 +318,7 @@ namespace TextSecure
 
         private async static Task<bool> isPushDestination(String destination)
         {
-            TextSecureDirectory directory = TextSecureDirectory.getInstance();
+            TextSecureDirectory directory = DatabaseFactory.getDirectoryDatabase();
 
             try
             {

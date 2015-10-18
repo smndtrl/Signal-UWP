@@ -529,7 +529,7 @@ namespace libaxolotl.state
                                                          .Build();
         }
 
-        public uint getLocalRegistrationId()
+        public uint GetLocalRegistrationId()
         {
             return this.sessionStructure.LocalRegistrationId;
         }

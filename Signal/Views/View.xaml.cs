@@ -1,20 +1,22 @@
-﻿/** 
- * Copyright (C) 2015 smndtrl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+﻿
 
+using Signal.ViewModel;
+/** 
+* Copyright (C) 2015 smndtrl
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -37,15 +39,8 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace TextSecure.Views
+namespace Signal.Views
 {
-    public class TestContact
-    {
-        public int id { get; set; }
-        public string number { get; set; }
-        public string name { get; set; }
-    }
-
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -53,6 +48,13 @@ namespace TextSecure.Views
     public sealed partial class View : Page
     {
 
+        public MainViewModel ViewModel
+        {
+            get
+            {
+                return (MainViewModel)DataContext;
+            }
+        }
 
         public View()
         {
@@ -94,11 +96,12 @@ namespace TextSecure.Views
         {
             var isNarrow = newState == NarrowState;
 
-            /*if (isNarrow && oldState == DefaultState && _lastSelectedItem != null)
+            if (isNarrow && oldState == DefaultState /*&& _lastSelectedItem != null*/)
             {
+                ViewModel.NarrowStateCommand.Execute(null);
                 // Resize down to the detail item. Don't play a transition.
-                Frame.Navigate(typeof(ConversationView), _lastSelectedItem.number, new SuppressNavigationTransitionInfo());
-            }*/
+                //Frame.Navigate(typeof(ConversationView), _lastSelectedItem.number, new SuppressNavigationTransitionInfo());
+            }
 
             
             EntranceNavigationTransitionInfo.SetIsTargetElement(masterFrame, isNarrow);
@@ -185,4 +188,6 @@ namespace TextSecure.Views
         }*/
 
     }
+
+
 }

@@ -47,6 +47,8 @@ namespace libaxolotl.state
             this.structure = PreKeyRecordStructure.ParseFrom(serialized);
         }
 
+
+
         public uint getId()
         {
             return this.structure.Id;

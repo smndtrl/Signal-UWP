@@ -30,7 +30,7 @@ namespace Signal.Tasks.Library
 
         public TaskStorage()
         {
-            conn = new SQLiteConnection(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "task.db"));
+            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), "task.db");
         }
 
         public void store(TaskActivity task)

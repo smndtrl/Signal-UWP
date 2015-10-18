@@ -23,7 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
-namespace TextSecure.push
+namespace Signal.Push
 {
     public class TextSecurePushTrustStore : TrustStore
     {

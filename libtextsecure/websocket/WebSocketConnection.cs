@@ -1,20 +1,22 @@
-﻿/** 
- * Copyright (C) 2015 smndtrl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+﻿
 
+using Google.ProtocolBuffers;
+/** 
+* Copyright (C) 2015 smndtrl
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 using libaxolotl.util;
 using libtextsecure.push;
 using libtextsecure.util;
@@ -24,7 +26,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
+using Windows.Web;
 using static libtextsecure.websocket.WebSocketProtos;
 
 namespace libtextsecure.websocket
@@ -40,39 +47,83 @@ namespace libtextsecure.websocket
         private readonly String wsUri;
         private readonly TrustStore trustStore;
         private readonly CredentialsProvider credentialsProvider;
+        private readonly string userAgent;
 
-        //private OkHttpClientWrapper client;
-        private WebSocketClient client;
-        //private KeepAliveSender keepAliveSender;
 
-        public WebSocketConnection(String httpUri, TrustStore trustStore, CredentialsProvider credentialsProvider)
+        private Timer keepAliveTimer;
+
+        MessageWebSocket socket;
+        DataWriter messageWriter;
+
+        public event EventHandler Connected;
+        public event EventHandler Closed;
+        public event TypedEventHandler<WebSocketConnection, WebSocketRequestMessage> MessageReceived;
+
+        public WebSocketConnection(String httpUri, TrustStore trustStore, CredentialsProvider credentialsProvider, string userAgent)
         {
             this.trustStore = trustStore;
              this.credentialsProvider = credentialsProvider;
             this.wsUri = httpUri.Replace("https://", "wss://")
-                                              .Replace("http://", "ws://") + "/v1/websocket/?login=%s&password=%s";
+                                              .Replace("http://", "ws://") + $"/v1/websocket/?login={credentialsProvider.GetUser()}&password={credentialsProvider.GetPassword()}";
+            this.userAgent = userAgent;
         }
 
 
-        public /*synchronized*/ void connect()
+        public async void connect()
         {
             Debug.WriteLine("WSC connect()...");
 
-            if (client == null)
+            if (socket == null)
             {
-                client = new WebSocketClient(wsUri/*, trustStore, credentialsProvider*/, this);
-                client.connect(/*KEEPALIVE_TIMEOUT_SECONDS + 10, TimeUnit.SECONDS*/);
+                socket = new MessageWebSocket();
+                if (userAgent != null) socket.SetRequestHeader("X-Signal-Agent", userAgent);
+                socket.MessageReceived += OnMessageReceived;
+                socket.Closed += OnClosed;
+
+                try
+                {
+                    Uri server = new Uri(wsUri);
+                    await socket.ConnectAsync(server);
+                    //Connected(this, EventArgs.Empty);
+                    keepAliveTimer = new Timer(sendKeepAlive, null, TimeSpan.FromSeconds(KEEPALIVE_TIMEOUT_SECONDS), TimeSpan.FromSeconds(KEEPALIVE_TIMEOUT_SECONDS));
+
+                    
+                    messageWriter = new DataWriter(socket.OutputStream);
+                }
+                catch (Exception e)
+                {
+                    /*WebErrorStatus status = WebSocketError.GetStatus(e.GetBaseException().HResult);
+
+                    switch (status)
+                    {
+                        case WebErrorStatus.CannotConnect:
+                        case WebErrorStatus.NotFound:
+                        case WebErrorStatus.RequestTimeout:
+                            Debug.WriteLine("Cannot connect to the server. Please make sure " +
+                                "to run the server setup script before running the sample.");
+                            break;
+
+                        case WebErrorStatus.Unknown:
+                            throw;
+
+                        default:
+                            Debug.WriteLine("Error: " + status);
+                            break;
+                    }*/
+                }
+                Debug.WriteLine("WSC connected...");
             }
         }
 
-        public /*synchronized*/ void disconnect()
+        public void disconnect()
         {
             Debug.WriteLine("WSC disconnect()...");
 
-            if (client != null)
+            if (socket != null)
             {
-                client.disconnect();
-                client = null;
+                socket.Close(1000, "None");
+                
+                socket = null;
             }
 
             /*if (keepAliveSender != null)
@@ -82,7 +133,7 @@ namespace libtextsecure.websocket
             }*/
         }
 
-        public /*synchronized*/ WebSocketRequestMessage readRequest(ulong timeoutMillis)
+        /*public  WebSocketRequestMessage readRequest(ulong timeoutMillis)
         {
             if (client == null)
             {
@@ -104,11 +155,22 @@ namespace libtextsecure.websocket
                 incomingRequests.RemoveFirst();
                 return message;
             }
+        }*/
+
+        public async void sendMessage(WebSocketMessage message)
+        {
+            if (socket == null)
+            {
+                throw new Exception("Connection closed!");
+            }
+
+            messageWriter.WriteBytes(message.ToByteArray());
+            await messageWriter.StoreAsync();
         }
 
-        public /*synchronized*/ void sendResponse(WebSocketResponseMessage response)
+        public async void sendResponse(WebSocketResponseMessage response)
         {
-            if (client == null)
+            if (socket == null)
             {
                 throw new Exception("Connection closed!");
             }
@@ -118,108 +180,74 @@ namespace libtextsecure.websocket
                                                .SetResponse(response)
                                                .Build();
 
-            client.sendMessage(message.ToByteArray());
+            messageWriter.WriteBytes(message.ToByteArray());
+            await messageWriter.StoreAsync();
         }
 
-        /*private synchronized void sendKeepAlive()
+        private void sendKeepAlive(object state)
         {
-            if (keepAliveSender != null)
-            {
-                client.sendMessage(WebSocketMessage.CreateBuilder()
+            Debug.WriteLine("keepAlive");
+                sendMessage(WebSocketMessage.CreateBuilder()
                                                    .SetType(WebSocketMessage.Types.Type.REQUEST)
                                                    .SetRequest(WebSocketRequestMessage.CreateBuilder()
                                                                                       .SetId(KeyHelper.getTime())
                                                                                       .SetPath("/v1/keepalive")
                                                                                       .SetVerb("GET")
-                                                                                      .Build()).Build()
-                                                   .ToByteArray());
-            }
-        }*/
-
-        public /*synchronized*/ void onMessage(byte[] payload)
-        {
-            Debug.WriteLine("WSC onMessage()");
-            try
-            {
-                WebSocketMessage message = WebSocketMessage.ParseFrom(payload);
-
-                Debug.WriteLine("Message Type: " + message.Type);
-
-                if (message.Type == WebSocketMessage.Types.Type.REQUEST)
-                {
-                    incomingRequests.AddLast(message.Request);
-                }
-
-                //notifyAll();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
-
-        public /*synchronized*/ void onClose()
-        {
-            Debug.WriteLine("onClose()...");
-
-            if (client != null)
-            {
-                client.disconnect();
-                client = null;
-                connect();
-            }
-
-            /* (keepAliveSender != null)
-            {
-                keepAliveSender.shutdown();
-                keepAliveSender = null;
-            }
-
-            notifyAll();*/
-        }
-
-        public /*synchronized*/ void onConnected()
-        {
-            if (client != null /*&& keepAliveSender == null*/)
-            {
-                Debug.WriteLine("onConnected()");
-                /*keepAliveSender = new KeepAliveSender();
-                keepAliveSender.start();*/
-            }
+                                                                                      .Build()).Build());
+ 
         }
 
         private ulong elapsedTime(ulong startTime)
         {
             return KeyHelper.getTime() - startTime;
-        }
-        /*
-        private class KeepAliveSender extends Thread
-        {
-
-            private AtomicBoolean stop = new AtomicBoolean(false);
-
-            public void run()
-        {
-            while (!stop.get())
-            {
-                try
-                {
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(KEEPALIVE_TIMEOUT_SECONDS));
-
-                    Log.w(TAG, "Sending keep alive...");
-                    sendKeepAlive();
-                }
-                catch (Throwable e)
-                {
-                    Log.w(TAG, e);
-                }
-            }
-        }*/
+        } 
 
         /*public void shutdown()
         {
             stop.set(true);
         }
     }*/
+
+        private void OnClosed(IWebSocket sender, WebSocketClosedEventArgs args)
+        {
+            Debug.WriteLine("WSC disconnected...");
+        }
+
+        private void OnMessageReceived(MessageWebSocket sender, MessageWebSocketMessageReceivedEventArgs args)
+        {
+            try
+            {
+                using (DataReader reader = args.GetDataReader())
+                {
+                    reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+
+                    byte[] read = new byte[reader.UnconsumedBufferLength];
+                    reader.ReadBytes(read);
+                    try
+                    {
+                        WebSocketMessage message = WebSocketMessage.ParseFrom(read);
+
+                        Debug.WriteLine("Message Type: " + message.Type);
+
+                        if (message.Type == WebSocketMessage.Types.Type.REQUEST)
+                        {
+                            incomingRequests.AddFirst(message.Request);
+                            MessageReceived(this, message.Request);
+                        }
+
+                        
+                    }
+                    catch (InvalidProtocolBufferException e)
+                    {
+                        Debug.WriteLine(e.Message);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

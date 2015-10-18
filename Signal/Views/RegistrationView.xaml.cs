@@ -31,7 +31,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.crypto;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
 using TextSecure.Views;

@@ -39,7 +39,7 @@ namespace Signal.Tasks
             throw new NotImplementedException("RefreshPreKeysTask Execute");
         }
 
-        protected override async Task<string> Execute()
+        protected override async Task<string> ExecuteAsync()
         {
             //if (!TextSecurePreferences.isPushRegistered()) return;
 
@@ -53,7 +53,7 @@ namespace Signal.Tasks
 
             List<PreKeyRecord> preKeyRecords = await PreKeyUtil.generatePreKeys(/*context, masterSecret*/);
             PreKeyRecord lastResortKeyRecord = await PreKeyUtil.generateLastResortKey(/*context, masterSecret*/);
-            IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(/*context, masterSecret*/);
+            IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair(/*context, masterSecret*/);
             SignedPreKeyRecord signedPreKeyRecord = await PreKeyUtil.generateSignedPreKey(/*context, masterSecret, */identityKey);
 
             Debug.WriteLine("Registering new prekeys...");

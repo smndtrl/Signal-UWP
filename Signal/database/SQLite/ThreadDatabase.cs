@@ -18,8 +18,9 @@
 using libaxolotl.util;
 using Signal.Database.interfaces;
 using Signal.Model;
+using Signal.Util;
 using SQLite.Net;
-using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,37 +31,8 @@ using TextSecure.recipient;
 
 namespace TextSecure.database
 {
-    public class ThreadDatabase : ThreadDatabaseHelper, IThreadDatabase
+    public class ThreadDatabase : ThreadDatabaseHelper
     {
-
-        const String TABLE_NAME = "thread";
-        public static readonly String ID = "_id";
-        public static readonly String DATE = "date";
-        public static readonly String MESSAGE_COUNT = "message_count";
-        public static readonly String RECIPIENT_IDS = "recipient_ids";
-        public static readonly String SNIPPET = "snippet";
-        private static readonly String SNIPPET_CHARSET = "snippet_cs";
-        public static readonly String READ = "read";
-        private static readonly String TYPE = "type";
-        private static readonly String ERROR = "error";
-        private static readonly String HAS_ATTACHMENT = "has_attachment";
-        public static readonly String SNIPPET_TYPE = "snippet_type";
-
-        [Table(TABLE_NAME)]
-        public class ThreadTable
-        {
-            [PrimaryKey, AutoIncrement]
-            public long? _id { get; set; } = null;
-            public DateTime date { get; set; } = DateTime.MinValue;
-            public long message_count { get; set; } = 0;
-            public string recipient_ids { get; set; }
-            public string snippet { get; set; }
-            public long snippet_cs { get; set; } = 0;
-            public long read { get; set; } = 1;
-            public long type { get; set; } = 1;
-            public long error { get; set; } = 1;
-            public long snippet_type { get; set; } = 1;
-        }
 
         /*public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY, "                             +
     DATE + " INTEGER DEFAULT 0, " + MESSAGE_COUNT + " INTEGER DEFAULT 0, "                         +
@@ -74,177 +46,159 @@ namespace TextSecure.database
         SQLiteConnection conn;
 
 
-        public ThreadDatabase(SQLiteConnection connection)
+        public ThreadDatabase(SQLiteConnection conn)
         {
-            conn = connection;
-            
-
-            conn.CreateTable<ThreadTable>();
-/*
-#if DEBUG
-            if (conn.Table<Thread>().Count() == 0) // populate demo set
-            {
-                var thread1 = new Thread() { recipient_ids = "Tester", snippet = "Hallo wierdo!", read = 0, message_count = 2 };
-                var thread2 = new Thread() { recipient_ids = "Klaus", snippet = "Wohooo!", read = 1, message_count = 0 };
-                conn.Insert(thread1);
-                conn.Insert(thread2);
-            }
-#endif*/
+            this.conn = conn;
+            conn.CreateTable<Thread>();
         }
 
         public async Task<int> Count()
         {
-            return conn.Table<ThreadTable>().Count();
+            return conn.Table<Thread>().Count();
         }
 
-        
+        /*
+         * CREATE
+         */
 
-        private async Task<long> createThreadForRecipients(String recipients, int recipientCount, int distributionType) /* done */
+        private long CreateForRecipients(String recipients, int recipientCount, int distributionType)
         {
-            var thread = new ThreadTable()
-            {
-                date = DateTime.Now,
-                recipient_ids = recipients,
-                message_count = 0
-            };
+            var reci = RecipientFactory.getRecipientsForIds(recipients, false);
 
             if (recipientCount > 1)
             {
-                thread.type = distributionType;
+                return CreateForRecipients(reci, distributionType);
             }
 
-            return conn.Insert(thread);
+            return CreateForRecipients(reci, DistributionTypes.DEFAULT); // TODO: lala
         }
 
-        private async Task UpdateThread(long threadId, long count, string body, long date, long type) /* done */
+        private long CreateForRecipients(Recipients recipients, int distributionType)
         {
-            var thread = new ThreadTable()
+            var thread = new Thread()
             {
-                _id = threadId,
-                date = DateTime.Now, // - (uint)date % 1000, // TODO: change
-                message_count = count,
-                snippet = body,
-                snippet_type = type
+                Date = TimeUtil.GetDateTimeMillis(),
+                Count = 0,
+                Recipients = recipients,
+                Type = distributionType
             };
 
-             conn.Update(thread);
+            var rows = conn.Insert(thread);
 
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.update(TABLE_NAME, contentValues, ID + " = ?", new String[] { threadId + "" });
-            notifyConversationListListeners();*/
+            return thread.ThreadId;
         }
 
-        public async Task UpdateSnippet(long threadId, String snippet, long date, long type) /* done */
+        /*
+         * GET
+         */
+
+        public Thread Get(long threadId)
         {
-            var thread = new ThreadTable()
+            return conn.Get<Thread>(threadId);
+        }
+
+        public async Task<List<Thread>> GetAllAsync()
+        {
+            var query = conn.Table<Thread>().Where(v => true);
+            return query.ToList();
+        }
+
+        public long GetThreadIdForRecipients(Recipients recipients)
+        {
+            return GetThreadIdForRecipients(recipients, DistributionTypes.DEFAULT);
+        }
+
+        public long GetThreadIdForRecipients(Recipients recipients, int distributionType)
+        {
+            long[] recipientIds = getRecipientIds(recipients);
+            String recipientsList = getRecipientsAsString(recipientIds);
+
+            try
             {
-                _id = threadId,
-                date = DateTime.Now, //(uint)date - (uint)date % 1000,
-                snippet = snippet,
-                snippet_type = type
-            };
+                var query = conn.Table<Thread>().Where(t => t.RecipientIds == recipientsList); // use internal property
+                var first = query.Count() == 0 ? null : query.First();
+
+                if (query != null && first != null)
+                    return (long)first.ThreadId;
+                else
+                    return CreateForRecipients(recipientsList, recipientIds.Length, distributionType);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /*
+         * UPDATE
+         */
+
+        public void Update(Thread thread)
+        {
+            throw new NotImplementedException("Thread.Update");
+        }
+
+        /*
+         * DELETE
+         */
+
+        public long Delete(long threadId)
+        {
+            return conn.Delete<Thread>(threadId);
+        }
+
+        public long DeleteConversation(long threadId)
+        {
+            DatabaseFactory.getMessageDatabase().DeleteThread(threadId);
+            return Delete(threadId);
+        }
+
+
+
+
+
+
+        /*
+        private async Task UpdateThread(long threadId, long count, string body, long date, long type)
+        {
+            var thread = conn.Get<Thread>(threadId);
+
+            thread.Date = DateTime.Now; // - (uint)date % 1000, // TODO: change
+            thread.Count = count;
+            thread.Snippet = body;
+            thread.SnippetType = type;
 
             conn.Update(thread);
 
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.update(TABLE_NAME, contentValues, ID + " = ?", new String[] { threadId + "" });
-            notifyConversationListListeners();*/
-        }
+        }*/
 
-         /* private */ public async Task DeleteThread(long threadId) /* done */
+        /*public async Task UpdateSnippet(long threadId, String snippet, long date, long type)
         {
-            conn.Delete(new ThreadTable() { _id = threadId});
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.delete(TABLE_NAME, ID_WHERE, new String[] { threadId + "" });
-            notifyConversationListListeners();*/
-        }
+            var thread = conn.Get<Thread>(threadId);
 
-        /* private */ public async Task DeleteThreads(ICollection<long> threadIds) /* done */
+            thread.Date = DateTime.Now; //(uint)date - (uint)date % 1000,
+            thread.Snippet = snippet;
+            thread.SnippetType = type;
+
+            conn.Update(thread);
+
+        }*/
+
+
+        /* private */
+        public async Task DeleteAllThreads() /* done */
         {
-            throw new NotImplementedException("ThreadDatabase deleteThreads");
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            String where = "";
-
-            for (long threadId : threadIds)
-            {
-                where += ID + " = '" + threadId + "' OR ";
-            }
-
-            where = where.substring(0, where.length() - 4);
-
-            db.delete(TABLE_NAME, where, null);
-            notifyConversationListListeners();*/
-        }
-
-        /* private */ public async Task DeleteAllThreads() /* done */
-        {
-            conn.Delete(new ThreadTable() { });
-
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.delete(TABLE_NAME, null, null);
-            notifyConversationListListeners();*/
+            throw new NotImplementedException("ThreadDatabase DeleteAllThreads");
         }
 
         public void trimAllThreads(int length/*, ProgressListener listener*/)
         {
             throw new NotImplementedException("ThreadDatabase trimAllThreads");
-            /*Cursor cursor = null;
-            int threadCount = 0;
-            int complete = 0;
-
-            try
-            {
-                cursor = this.getConversationList();
-
-                if (cursor != null)
-                    threadCount = cursor.getCount();
-
-                while (cursor != null && cursor.moveToNext())
-                {
-                    long threadId = cursor.getLong(cursor.getColumnIndexOrThrow(ID));
-                    trimThread(threadId, length);
-
-                    listener.onProgress(++complete, threadCount);
-                }
-            }
-            finally
-            {
-                if (cursor != null)
-                    cursor.close();
-            }*/
         }
 
         public void trimThread(long threadId, int length)
         {
             throw new NotImplementedException("ThreadDatabase trimThread");
-            /*Log.w("ThreadDatabase", "Trimming thread: " + threadId + " to: " + length);
-            Cursor cursor = null;
-
-            try
-            {
-                cursor = DatabaseFactory.getMmsSmsDatabase(context).getConversation(threadId);
-
-                if (cursor != null && cursor.getCount() > length)
-                {
-                    Log.w("ThreadDatabase", "Cursor count is greater than length!");
-                    cursor.moveToPosition(cursor.getCount() - length);
-
-                    long lastTweetDate = cursor.getLong(cursor.getColumnIndexOrThrow(MmsSmsColumns.NORMALIZED_DATE_RECEIVED));
-
-                    Log.w("ThreadDatabase", "Cut off tweet date: " + lastTweetDate);
-
-                    DatabaseFactory.getSmsDatabase(context).deleteMessagesInThreadBeforeDate(threadId, lastTweetDate);
-                    DatabaseFactory.getMmsDatabase(context).deleteMessagesInThreadBeforeDate(threadId, lastTweetDate);
-
-                    update(threadId);
-                    notifyConversationListeners(threadId);
-                }
-            }
-            finally
-            {
-                if (cursor != null)
-                    cursor.close();
-            }*/
         }
 
         public async Task SetAllThreadsRead()
@@ -254,7 +208,7 @@ namespace TextSecure.database
             ContentValues contentValues = new ContentValues(1);
             contentValues.put(READ, 1);*/
 
-            var thread = new ThreadTable() { read = 1 }; // TODO: don't know how to update on all values-> create own sql
+            var thread = new Thread() { Read = true }; // TODO: don't know how to update on all values-> create own sql
 
             //db.update(TABLE_NAME, contentValues, null, null);
 
@@ -265,42 +219,20 @@ namespace TextSecure.database
 
         public async Task SetRead(long threadId)
         {
-            /*ContentValues contentValues = new ContentValues(1);
-            contentValues.put(READ, 1);
+            var thread = conn.Get<Thread>(threadId);
 
-            SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.update(TABLE_NAME, contentValues, ID_WHERE, new String[] { threadId + "" });
-
-            DatabaseFactory.getSmsDatabase(context).setMessagesRead(threadId);
-            DatabaseFactory.getMmsDatabase(context).setMessagesRead(threadId);
-            notifyConversationListListeners();*/
-
-            var query = conn.Table<ThreadTable>().Where(t => t._id == threadId);
-            var thread = query.First();
-
-            thread.read = 1;
+            thread.Read = true;
 
             conn.Update(thread);
-
-            /*DatabaseFactory.getSmsDatabase().setMessagesRead(threadId); TODO: enable again
-            DatabaseFactory.getMmsDatabase().setMessagesRead(threadId);*/
         }
 
         public async Task SetUnread(long threadId)
         {
-            /*ContentValues contentValues = new ContentValues(1);
-            contentValues.put(READ, 0);*/
+            var thread = conn.Get<Thread>(threadId);
 
-            var query = conn.Table<ThreadTable>().Where(t => t._id == threadId);
-            var thread = query.First();
-
-            thread.read = 0;
+            thread.Read = false;
 
             conn.Update(thread);
-
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.update(TABLE_NAME, contentValues, ID_WHERE, new String[] { threadId + "" });*/
-            //notifyConversationListListeners();
         }
         /*
         public void setDistributionType(long threadId, int distributionType)
@@ -359,7 +291,7 @@ namespace TextSecure.database
 
         /*public async Task<List<Thread>> getThreads()
         {
-            var query = conn.Table<ThreadTable>().Where(v => true);
+            var query = conn.Table<Thread>().Where(v => true);
 
             List < Thread > list = new List<Thread>();
 
@@ -382,38 +314,11 @@ namespace TextSecure.database
             return list;
         }*/
 
-        public async Task<List<ThreadTable>> getConversationList()
-        {
-            var query = conn.Table<ThreadTable>().Where(v => true);
-
-            return query.ToList();
-            throw new NotImplementedException("ThreadDatabase getConversationList");
-            /*SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, DATE + " DESC");
-            setNotifyConverationListListeners(cursor);*/
-        }
 
 
-        public async void deleteConversation(long threadId)
-        {
-            /*DatabaseFactory.getSmsDatabase(context).deleteThread(threadId);
-            DatabaseFactory.getMmsDatabase(context).deleteThread(threadId);
-            DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);*/
-            await DeleteThread(threadId);
-            /*notifyConversationListeners(threadId);
-            notifyConversationListListeners();*/
-        }
 
 
-        public void deleteConversations(IList<long> selectedConversations)
-        {
-            /*DatabaseFactory.getSmsDatabase(context).deleteThreads(selectedConversations);
-            DatabaseFactory.getMmsDatabase(context).deleteThreads(selectedConversations);
-            DatabaseFactory.getDraftDatabase(context).clearDrafts(selectedConversations);*/
-            DeleteThreads(selectedConversations);
-            /*notifyConversationListeners(selectedConversations);
-            notifyConversationListListeners();*/
-        }
+
 
         public async void deleteAllConversations()
         {
@@ -430,47 +335,14 @@ namespace TextSecure.database
 
             try
             {
-                var query = conn.Table<ThreadTable>().Where(t => t.recipient_ids == recipientsList);
+                var query = conn.Table<Thread>().Where(t => t.Recipients == recipients);
                 var first = query.First();
                 //cursor = db.query(TABLE_NAME, new String[] { ID }, where, recipientsArg, null, null, null);
 
                 if (query != null && first != null)
-                    return (long)first._id;
+                    return (long)first.ThreadId;
                 else
                     return -1L;
-            }
-            catch(Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-            finally
-            {
-               // if (cursor != null)
-                //    cursor.close();
-            }
-        }
-
-        public async Task<long> GetThreadIdFor(Recipients recipients)
-        {
-            return await GetThreadIdFor(recipients, DistributionTypes.DEFAULT);
-        }
-
-        public async Task<long> GetThreadIdFor(Recipients recipients, int distributionType)
-        {
-            long[] recipientIds = getRecipientIds(recipients);
-            String recipientsList = getRecipientsAsString(recipientIds);
-
-
-            try
-            {
-                //cursor = db.query(TABLE_NAME, new String[] { ID }, where, recipientsArg, null, null, null);
-                var query = conn.Table<ThreadTable>().Where(t => t.recipient_ids == recipientsList);
-                var first = query.Count() == 0 ? null : query.First();
-
-                if (query != null && first != null)
-                    return (long)first._id;
-                else
-                    return await createThreadForRecipients(recipientsList, recipientIds.Length, distributionType);
             }
             catch (Exception e)
             {
@@ -478,9 +350,14 @@ namespace TextSecure.database
             }
             finally
             {
- 
+                // if (cursor != null)
+                //    cursor.close();
             }
         }
+
+
+
+
 
         public async Task<Recipients> getRecipientsForThreadId(long threadId)
         {
@@ -488,31 +365,19 @@ namespace TextSecure.database
 
             try
             {
-                var query = conn.Table<ThreadTable>().Where(t => t._id == threadId);
-                var first = query.First();
-                var recipientIds = first.recipient_ids;
+                var thread = conn.GetWithChildren<Thread>(threadId);
 
-
-                if (query != null && first != null)
-                {
-                    
-                    return RecipientFactory.getRecipientsForIds(recipientIds, false);
-                }
+                return thread.Recipients;
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            finally
-            {
-                //if (cursor != null)
-                 //   cursor.close();
-            }
 
             return null;
         }
 
-        public async Task<bool> update(long threadId)
+        /*public async Task<bool> update(long threadId)
         {
 
             //throw new NotImplementedException("update");
@@ -526,7 +391,7 @@ namespace TextSecure.database
                 return true;
             }
 
-            return true;
+            return true;*/
             // TODO: update thread
             /*try
             {
@@ -558,7 +423,7 @@ namespace TextSecure.database
                 if (reader != null)
                     reader.close();
             }*/
-        }
+        //}
 
 
         /*public static interface ProgressListener

@@ -136,14 +136,14 @@ namespace Signal.Tasks.Library
             return string.Empty;
         }
 
-        protected abstract Task<string> Execute();
+        protected abstract Task<string> ExecuteAsync();
 
         public override async Task<string> RunAsync(TaskContext context, string input)
         {
            
             try
             {
-                /*result =*/ await Execute();
+                /*result =*/ await ExecuteAsync();
             }
             catch (Exception e)
             {
@@ -164,7 +164,7 @@ namespace Signal.Tasks.Library
         public UntypedTaskActivity() {
         }
 
-        protected abstract string ExecuteAsync();
+        protected abstract string Execute();
 
         protected override Task<string> ExecuteAsync()
         {

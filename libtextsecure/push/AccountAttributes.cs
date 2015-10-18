@@ -27,37 +27,37 @@ namespace libtextsecure.push
     [JsonObject(MemberSerialization.OptIn)]
     class AccountAttributes
     {
-        [JsonProperty]
-        private String signalingKey;
+        [JsonProperty("signalingKey", Required = Required.Always)]
+        private String SignalingKey { get; set; }
 
-        [JsonProperty]
-        private bool supportsSms;
+        [JsonProperty("fetchesMessages", Required = Required.AllowNull)]
+        private bool? FetchesMessages { get; set; } = null;
 
-        [JsonProperty]
-        private uint registrationId;
+        [JsonProperty("registrationId", Required = Required.Always)]
+        private uint RegistrationId { get; set; }
 
-        public AccountAttributes(String signalingKey, bool supportsSms, uint registrationId)
-        {
-            this.signalingKey = signalingKey;
-            this.supportsSms = supportsSms;
-            this.registrationId = registrationId;
-        }
+        [JsonProperty("name", Required = Required.AllowNull)]
+        private string Name { get; set; }
+
+        [JsonProperty("voice", Required = Required.AllowNull)]
+        private bool? Voice { get; set; }
 
         public AccountAttributes() { }
 
-        public String getSignalingKey()
-        {
-            return signalingKey;
+        public AccountAttributes(string signalingKey, uint registrationId, bool? voice) {
+            SignalingKey = signalingKey;
+            RegistrationId = registrationId;
+            Voice = voice;          
         }
 
-        public bool isSupportsSms()
+        public AccountAttributes(string signalingKey, uint registrationId, bool? voice, string name, bool? fetchesMessages)
         {
-            return supportsSms;
+            SignalingKey = signalingKey;
+            RegistrationId = registrationId;
+            Voice = voice;
+            Name = name;
+            FetchesMessages = fetchesMessages;
         }
 
-        public uint getRegistrationId()
-        {
-            return registrationId;
-        }
     }
 }

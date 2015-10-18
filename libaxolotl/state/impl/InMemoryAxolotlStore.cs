@@ -38,118 +38,118 @@ namespace libaxolotl.state.impl
         }
 
 
-        public IdentityKeyPair getIdentityKeyPair()
+        public IdentityKeyPair GetIdentityKeyPair()
         {
-            return identityKeyStore.getIdentityKeyPair();
+            return identityKeyStore.GetIdentityKeyPair();
         }
 
 
-        public uint getLocalRegistrationId()
+        public uint GetLocalRegistrationId()
         {
-            return identityKeyStore.getLocalRegistrationId();
+            return identityKeyStore.GetLocalRegistrationId();
         }
 
 
-        public bool saveIdentity(String name, IdentityKey identityKey)
+        public bool SaveIdentity(String name, IdentityKey identityKey)
         {
-            identityKeyStore.saveIdentity(name, identityKey);
+            identityKeyStore.SaveIdentity(name, identityKey);
             return true;
         }
 
 
-        public bool isTrustedIdentity(String name, IdentityKey identityKey)
+        public bool IsTrustedIdentity(String name, IdentityKey identityKey)
         {
-            return identityKeyStore.isTrustedIdentity(name, identityKey);
+            return identityKeyStore.IsTrustedIdentity(name, identityKey);
         }
 
 
-        public PreKeyRecord loadPreKey(uint preKeyId)
+        public PreKeyRecord LoadPreKey(uint preKeyId)
         {
-            return preKeyStore.loadPreKey(preKeyId);
+            return preKeyStore.LoadPreKey(preKeyId);
         }
 
 
-        public void storePreKey(uint preKeyId, PreKeyRecord record)
+        public void StorePreKey(uint preKeyId, PreKeyRecord record)
         {
-            preKeyStore.storePreKey(preKeyId, record);
+            preKeyStore.StorePreKey(preKeyId, record);
         }
 
 
-        public bool containsPreKey(uint preKeyId)
+        public bool ContainsPreKey(uint preKeyId)
         {
-            return preKeyStore.containsPreKey(preKeyId);
+            return preKeyStore.ContainsPreKey(preKeyId);
         }
 
 
-        public void removePreKey(uint preKeyId)
+        public void RemovePreKey(uint preKeyId)
         {
-            preKeyStore.removePreKey(preKeyId);
+            preKeyStore.RemovePreKey(preKeyId);
         }
 
 
-        public SessionRecord loadSession(AxolotlAddress address)
+        public SessionRecord LoadSession(AxolotlAddress address)
         {
-            return sessionStore.loadSession(address);
+            return sessionStore.LoadSession(address);
         }
 
 
-        public List<uint> getSubDeviceSessions(String name)
+        public List<uint> GetSubDeviceSessions(String name)
         {
-            return sessionStore.getSubDeviceSessions(name);
+            return sessionStore.GetSubDeviceSessions(name);
         }
 
 
-        public void storeSession(AxolotlAddress address, SessionRecord record)
+        public void StoreSession(AxolotlAddress address, SessionRecord record)
         {
-            sessionStore.storeSession(address, record);
+            sessionStore.StoreSession(address, record);
         }
 
 
-        public bool containsSession(AxolotlAddress address)
+        public bool ContainsSession(AxolotlAddress address)
         {
-            return sessionStore.containsSession(address);
+            return sessionStore.ContainsSession(address);
         }
 
 
-        public void deleteSession(AxolotlAddress address)
+        public void DeleteSession(AxolotlAddress address)
         {
-            sessionStore.deleteSession(address);
+            sessionStore.DeleteSession(address);
         }
 
 
-        public void deleteAllSessions(String name)
+        public void DeleteAllSessions(String name)
         {
-            sessionStore.deleteAllSessions(name);
+            sessionStore.DeleteAllSessions(name);
         }
 
 
-        public SignedPreKeyRecord loadSignedPreKey(uint signedPreKeyId)
+        public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
-            return signedPreKeyStore.loadSignedPreKey(signedPreKeyId);
+            return signedPreKeyStore.LoadSignedPreKey(signedPreKeyId);
         }
 
 
-        public List<SignedPreKeyRecord> loadSignedPreKeys()
+        public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
-            return signedPreKeyStore.loadSignedPreKeys();
+            return signedPreKeyStore.LoadSignedPreKeys();
         }
 
 
-        public void storeSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
+        public void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
         {
-            signedPreKeyStore.storeSignedPreKey(signedPreKeyId, record);
+            signedPreKeyStore.StoreSignedPreKey(signedPreKeyId, record);
         }
 
 
-        public bool containsSignedPreKey(uint signedPreKeyId)
+        public bool ContainsSignedPreKey(uint signedPreKeyId)
         {
-            return signedPreKeyStore.containsSignedPreKey(signedPreKeyId);
+            return signedPreKeyStore.ContainsSignedPreKey(signedPreKeyId);
         }
 
 
-        public void removeSignedPreKey(uint signedPreKeyId)
+        public void RemoveSignedPreKey(uint signedPreKeyId)
         {
-            signedPreKeyStore.removeSignedPreKey(signedPreKeyId);
+            signedPreKeyStore.RemoveSignedPreKey(signedPreKeyId);
         }
     }
 }

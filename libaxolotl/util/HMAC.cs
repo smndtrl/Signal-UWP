@@ -47,6 +47,41 @@ namespace libaxolotl.util
         }
     }
 
+    public class Sha256
+    {
+        public static byte[] Sign(byte[] key, byte[] message)
+        {
+            MacAlgorithmProvider provider = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256);
+
+            IBuffer buffKey = CryptographicBuffer.CreateFromByteArray(key);
+            CryptographicKey hmacKey = provider.CreateKey(buffKey);
+
+            IBuffer buffMessage = CryptographicBuffer.CreateFromByteArray(message);
+
+            IBuffer buffHMAC = CryptographicEngine.Sign(hmacKey, buffMessage);
+
+            byte[] hmac;
+
+            CryptographicBuffer.CopyToByteArray(buffHMAC, out hmac);
+
+            return hmac;
+        }
+
+        public static bool Verify(byte[] key, byte[] message, byte[] signature)
+        {
+            MacAlgorithmProvider provider = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256);
+
+            IBuffer buffKey = CryptographicBuffer.CreateFromByteArray(key);
+            CryptographicKey hmacKey = provider.CreateKey(buffKey);
+
+            IBuffer buffMessage = CryptographicBuffer.CreateFromByteArray(message);
+
+            IBuffer buffSignature = CryptographicBuffer.CreateFromByteArray(signature);
+
+            return CryptographicEngine.VerifySignature(hmacKey, buffMessage, buffSignature);
+        }
+    }
+
     public class Encrypt
     {
         public static byte[] aesCbcPkcs5(byte[] message, byte[] key, byte[] iv)
@@ -94,6 +129,8 @@ namespace libaxolotl.util
             SymmetricKeyAlgorithmProvider objAlg = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             IBuffer buffKey = CryptographicBuffer.CreateFromByteArray(key);
             CryptographicKey ckey = objAlg.CreateSymmetricKey(buffKey);
+
+            if (message.Length % objAlg.BlockLength != 0) throw new Exception("Invalid ciphertext length");
 
 
             IBuffer buffPlaintext = CryptographicBuffer.CreateFromByteArray(message);

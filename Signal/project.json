@@ -10,6 +10,7 @@
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MvvmLight": "5.1.1",
     "SQLite.Net-PCL": "3.0.5",
+    "SQLiteNetExtensions": "1.3.0",
     "Strilanc.Value.May": "1.0.2"
   },
   "frameworks": {

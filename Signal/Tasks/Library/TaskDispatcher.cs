@@ -40,7 +40,10 @@ namespace Signal.Tasks.Library
                     
                     task = queue.Take(); // TODO: InvalidOp
 
-                } catch (InvalidOperationException) { }
+                } catch (InvalidOperationException e) {
+                    Debug.WriteLine(e.Message);
+
+                }
                 
 
                 if (task != null)
@@ -57,7 +60,7 @@ namespace Signal.Tasks.Library
             TaskActivity task = (TaskActivity)item;
             try
             {
-                string output = await task.Run(null, null);
+                string output = await task.RunAsync(null, null);
                 //eventToRespond = new TaskCompletedEvent(-1, scheduledEvent.EventId, output);
             }
             /*catch (TaskFailureException e)
@@ -68,6 +71,7 @@ namespace Signal.Tasks.Library
             }*/
             catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
                 /*TraceHelper.TraceExceptionInstance(TraceEventType.Error, taskMessage.OrchestrationInstance, e);
                 string details = IncludeDetails
                     ? string.Format("Unhandled exception while executing task: {0}\n\t{1}", e, e.StackTrace)

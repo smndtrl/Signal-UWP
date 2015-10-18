@@ -214,9 +214,9 @@ namespace TextSecure.util
             }
         }*/
 
-        public static int getLocalRegistrationId()
+        public static int GetLocalRegistrationId()
         {
-            return GetValueOrDefault<int>(LOCAL_REGISTRATION_ID_PREF, 0);
+            return GetValueOrDefault<int>(LOCAL_REGISTRATION_ID_PREF, -1);
         }
 
         public static void setLocalRegistrationId(int registrationId)

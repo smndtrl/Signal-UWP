@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TextSecure.util
+namespace Signal.Util
 {
     public class Base64
     {

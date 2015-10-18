@@ -77,22 +77,22 @@ namespace libtextsecure.push {
             "UG9pbnRlcho1CgZHcm91cHMSKwoEYmxvYhgBIAEoCzIdLnRleHRzZWN1cmUu", 
             "QXR0YWNobWVudFBvaW50ZXIabAoHUmVxdWVzdBIyCgR0eXBlGAEgASgOMiQu", 
             "dGV4dHNlY3VyZS5TeW5jTWVzc2FnZS5SZXF1ZXN0LlR5cGUiLQoEVHlwZRIL", 
-            "CgdVTktOT1dOEAASDAoIQ09OVEFDVFMQARIKCgZHUk9VUFMQAiJBChFBdHRh", 
+            "CgdVTktOT1dOEAASDAoIQ09OVEFDVFMQARIKCgZHUk9VUFMQAiJiChFBdHRh", 
             "Y2htZW50UG9pbnRlchIKCgJpZBgBIAEoBhITCgtjb250ZW50VHlwZRgCIAEo", 
-            "CRILCgNrZXkYAyABKAwizQEKDEdyb3VwQ29udGV4dBIKCgJpZBgBIAEoDBIr", 
-            "CgR0eXBlGAIgASgOMh0udGV4dHNlY3VyZS5Hcm91cENvbnRleHQuVHlwZRIM", 
-            "CgRuYW1lGAMgASgJEg8KB21lbWJlcnMYBCADKAkSLQoGYXZhdGFyGAUgASgL", 
-            "Mh0udGV4dHNlY3VyZS5BdHRhY2htZW50UG9pbnRlciI2CgRUeXBlEgsKB1VO", 
-            "S05PV04QABIKCgZVUERBVEUQARILCgdERUxJVkVSEAISCAoEUVVJVBADIpAB", 
-            "Cg5Db250YWN0RGV0YWlscxIOCgZudW1iZXIYASABKAkSDAoEbmFtZRgCIAEo", 
-            "CRIxCgZhdmF0YXIYAyABKAsyIS50ZXh0c2VjdXJlLkNvbnRhY3REZXRhaWxz", 
-            "LkF2YXRhchotCgZBdmF0YXISEwoLY29udGVudFR5cGUYASABKAkSDgoGbGVu", 
-            "Z3RoGAIgASgNIpkBCgxHcm91cERldGFpbHMSCgoCaWQYASABKAwSDAoEbmFt", 
-            "ZRgCIAEoCRIPCgdtZW1iZXJzGAMgAygJEi8KBmF2YXRhchgEIAEoCzIfLnRl", 
-            "eHRzZWN1cmUuR3JvdXBEZXRhaWxzLkF2YXRhchotCgZBdmF0YXISEwoLY29u", 
-            "dGVudFR5cGUYASABKAkSDgoGbGVuZ3RoGAIgASgNQj8KK29yZy53aGlzcGVy", 
-            "c3lzdGVtcy50ZXh0c2VjdXJlLmludGVybmFsLnB1c2hCEFRleHRTZWN1cmVQ", 
-          "cm90b3M="));
+            "CRILCgNrZXkYAyABKAwSDAoEc2l6ZRgEIAEoDRIRCgl0aHVtYm5haWwYBSAB", 
+            "KAwizQEKDEdyb3VwQ29udGV4dBIKCgJpZBgBIAEoDBIrCgR0eXBlGAIgASgO", 
+            "Mh0udGV4dHNlY3VyZS5Hcm91cENvbnRleHQuVHlwZRIMCgRuYW1lGAMgASgJ", 
+            "Eg8KB21lbWJlcnMYBCADKAkSLQoGYXZhdGFyGAUgASgLMh0udGV4dHNlY3Vy", 
+            "ZS5BdHRhY2htZW50UG9pbnRlciI2CgRUeXBlEgsKB1VOS05PV04QABIKCgZV", 
+            "UERBVEUQARILCgdERUxJVkVSEAISCAoEUVVJVBADIpABCg5Db250YWN0RGV0", 
+            "YWlscxIOCgZudW1iZXIYASABKAkSDAoEbmFtZRgCIAEoCRIxCgZhdmF0YXIY", 
+            "AyABKAsyIS50ZXh0c2VjdXJlLkNvbnRhY3REZXRhaWxzLkF2YXRhchotCgZB", 
+            "dmF0YXISEwoLY29udGVudFR5cGUYASABKAkSDgoGbGVuZ3RoGAIgASgNIpkB", 
+            "CgxHcm91cERldGFpbHMSCgoCaWQYASABKAwSDAoEbmFtZRgCIAEoCRIPCgdt", 
+            "ZW1iZXJzGAMgAygJEi8KBmF2YXRhchgEIAEoCzIfLnRleHRzZWN1cmUuR3Jv", 
+            "dXBEZXRhaWxzLkF2YXRhchotCgZBdmF0YXISEwoLY29udGVudFR5cGUYASAB", 
+            "KAkSDgoGbGVuZ3RoGAIgASgNQj8KK29yZy53aGlzcGVyc3lzdGVtcy50ZXh0", 
+          "c2VjdXJlLmludGVybmFsLnB1c2hCEFRleHRTZWN1cmVQcm90b3M="));
       pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
         descriptor = root;
         internal__static_textsecure_Envelope__Descriptor = Descriptor.MessageTypes[0];
@@ -130,7 +130,7 @@ namespace libtextsecure.push {
         internal__static_textsecure_AttachmentPointer__Descriptor = Descriptor.MessageTypes[4];
         internal__static_textsecure_AttachmentPointer__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::libtextsecure.push.TextSecureProtos.AttachmentPointer, global::libtextsecure.push.TextSecureProtos.AttachmentPointer.Builder>(internal__static_textsecure_AttachmentPointer__Descriptor,
-                new string[] { "Id", "ContentType", "Key", });
+                new string[] { "Id", "ContentType", "Key", "Size", "Thumbnail", });
         internal__static_textsecure_GroupContext__Descriptor = Descriptor.MessageTypes[5];
         internal__static_textsecure_GroupContext__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::libtextsecure.push.TextSecureProtos.GroupContext, global::libtextsecure.push.TextSecureProtos.GroupContext.Builder>(internal__static_textsecure_GroupContext__Descriptor,
@@ -3362,8 +3362,8 @@ namespace libtextsecure.push {
     public sealed partial class AttachmentPointer : pb::GeneratedMessage<AttachmentPointer, AttachmentPointer.Builder> {
       private AttachmentPointer() { }
       private static readonly AttachmentPointer defaultInstance = new AttachmentPointer().MakeReadOnly();
-      private static readonly string[] _attachmentPointerFieldNames = new string[] { "contentType", "id", "key" };
-      private static readonly uint[] _attachmentPointerFieldTags = new uint[] { 18, 9, 26 };
+      private static readonly string[] _attachmentPointerFieldNames = new string[] { "contentType", "id", "key", "size", "thumbnail" };
+      private static readonly uint[] _attachmentPointerFieldTags = new uint[] { 18, 9, 26, 32, 42 };
       public static AttachmentPointer DefaultInstance {
         get { return defaultInstance; }
       }
@@ -3415,6 +3415,27 @@ namespace libtextsecure.push {
         get { return key_; }
       }
       
+      public const int SizeFieldNumber = 4;
+      private bool hasSize;
+      private uint size_;
+      public bool HasSize {
+        get { return hasSize; }
+      }
+      [global::System.CLSCompliant(false)]
+      public uint Size {
+        get { return size_; }
+      }
+      
+      public const int ThumbnailFieldNumber = 5;
+      private bool hasThumbnail;
+      private pb::ByteString thumbnail_ = pb::ByteString.Empty;
+      public bool HasThumbnail {
+        get { return hasThumbnail; }
+      }
+      public pb::ByteString Thumbnail {
+        get { return thumbnail_; }
+      }
+      
       public override bool IsInitialized {
         get {
           return true;
@@ -3432,6 +3453,12 @@ namespace libtextsecure.push {
         }
         if (hasKey) {
           output.WriteBytes(3, field_names[2], Key);
+        }
+        if (hasSize) {
+          output.WriteUInt32(4, field_names[3], Size);
+        }
+        if (hasThumbnail) {
+          output.WriteBytes(5, field_names[4], Thumbnail);
         }
         UnknownFields.WriteTo(output);
       }
@@ -3458,6 +3485,12 @@ namespace libtextsecure.push {
         }
         if (hasKey) {
           size += pb::CodedOutputStream.ComputeBytesSize(3, Key);
+        }
+        if (hasSize) {
+          size += pb::CodedOutputStream.ComputeUInt32Size(4, Size);
+        }
+        if (hasThumbnail) {
+          size += pb::CodedOutputStream.ComputeBytesSize(5, Thumbnail);
         }
         size += UnknownFields.SerializedSize;
         memoizedSerializedSize = size;
@@ -3590,6 +3623,12 @@ namespace libtextsecure.push {
           if (other.HasKey) {
             Key = other.Key;
           }
+          if (other.HasSize) {
+            Size = other.Size;
+          }
+          if (other.HasThumbnail) {
+            Thumbnail = other.Thumbnail;
+          }
           this.MergeUnknownFields(other.UnknownFields);
           return this;
         }
@@ -3643,6 +3682,14 @@ namespace libtextsecure.push {
               }
               case 26: {
                 result.hasKey = input.ReadBytes(ref result.key_);
+                break;
+              }
+              case 32: {
+                result.hasSize = input.ReadUInt32(ref result.size_);
+                break;
+              }
+              case 42: {
+                result.hasThumbnail = input.ReadBytes(ref result.thumbnail_);
                 break;
               }
             }
@@ -3716,6 +3763,49 @@ namespace libtextsecure.push {
           PrepareBuilder();
           result.hasKey = false;
           result.key_ = pb::ByteString.Empty;
+          return this;
+        }
+        
+        public bool HasSize {
+          get { return result.hasSize; }
+        }
+        [global::System.CLSCompliant(false)]
+        public uint Size {
+          get { return result.Size; }
+          set { SetSize(value); }
+        }
+        [global::System.CLSCompliant(false)]
+        public Builder SetSize(uint value) {
+          PrepareBuilder();
+          result.hasSize = true;
+          result.size_ = value;
+          return this;
+        }
+        public Builder ClearSize() {
+          PrepareBuilder();
+          result.hasSize = false;
+          result.size_ = 0;
+          return this;
+        }
+        
+        public bool HasThumbnail {
+          get { return result.hasThumbnail; }
+        }
+        public pb::ByteString Thumbnail {
+          get { return result.Thumbnail; }
+          set { SetThumbnail(value); }
+        }
+        public Builder SetThumbnail(pb::ByteString value) {
+          pb::ThrowHelper.ThrowIfNull(value, "value");
+          PrepareBuilder();
+          result.hasThumbnail = true;
+          result.thumbnail_ = value;
+          return this;
+        }
+        public Builder ClearThumbnail() {
+          PrepareBuilder();
+          result.hasThumbnail = false;
+          result.thumbnail_ = pb::ByteString.Empty;
           return this;
         }
       }

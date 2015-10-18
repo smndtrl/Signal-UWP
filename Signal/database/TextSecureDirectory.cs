@@ -57,9 +57,9 @@ namespace TextSecure.database
 
         private static readonly Object instanceLock = new Object();
         private static volatile TextSecureDirectory instance;
-        private static SQLiteConnection conn;
+        private SQLiteConnection conn;
 
-        public static TextSecureDirectory getInstance()
+        /*public static TextSecureDirectory getInstance()
         {
             if (instance == null)
             {
@@ -73,16 +73,17 @@ namespace TextSecure.database
             }
 
             return instance;
-        }
+        }*/
 
-        private TextSecureDirectory()
+        public TextSecureDirectory(SQLiteConnection conn)
         {
-            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), DIRECTORY_PATH);
+            this.conn = conn;
+            //conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), DIRECTORY_PATH);
 
             conn.CreateTable<Directory>();
         }
 
-        public Task<List<Directory>> getDirectories()
+        public async Task<List<Directory>> getDirectories()
         {
             /*SQLiteDatabase database = databaseHelper.getReadableDatabase();
             Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
@@ -151,7 +152,7 @@ namespace TextSecure.database
                 number = token.getNumber(),
                 relay = token.getRelay(),
                 registered = active ? (uint)1 : 0,
-                supports_sms = token.isSupportsSms() ? (uint)1 : 0,
+                //supports_sms = token.isSupportsSms() ? (uint)1 : 0,
                 timestamp = (uint)Helper.getTime()
             };
 
@@ -172,7 +173,7 @@ namespace TextSecure.database
                         number = token.getNumber(),
                         relay = token.getRelay(),
                         registered = 1,
-                        supports_sms = token.isSupportsSms() ? (uint)1 : 0,
+                        //supports_sms = token.isSupportsSms() ? (uint)1 : 0,
                         timestamp = (uint)Helper.getTime()
                     };
 

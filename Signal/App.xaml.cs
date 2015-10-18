@@ -1,5 +1,7 @@
-﻿using libtextsecure;
+﻿using Bezysoftware.Navigation.BackButton;
+using libtextsecure;
 using Signal.Database;
+using Signal.Push;
 using Signal.Tasks;
 using Signal.Tasks.Library;
 using System;
@@ -8,8 +10,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using TextSecure;
-using TextSecure.push;
+using Signal.Push;
 using TextSecure.util;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -24,6 +27,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using libtextsecure.messages;
+using Strilanc.Value;
+using System.Reflection;
+using Signal.Views;
 
 namespace Signal
 {
@@ -39,6 +46,11 @@ namespace Signal
             get { return Application.Current as App; }
         }
 
+        public static string CurrentVersion
+        {
+            get { return $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}"; }
+        }
+
         public TaskWorker Worker { get; private set;  }
 
         /// <summary>
@@ -50,6 +62,7 @@ namespace Signal
 
         private PushNotificationChannel channel;
         public TextSecureAccountManager accountManager;
+        private TextSecureMessageReceiver messageReceiver;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -62,12 +75,12 @@ namespace Signal
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            using (var db = new SignalContext())
+           /* using (var db = new SignalContext())
             {
                 Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
                 //db.Database.ApplyMigrations();
                 db.Database.EnsureCreated();
-            }
+            }*/
 
             //var culture = new CultureInfo("en-US");
             /* Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
@@ -194,32 +207,76 @@ namespace Signal
             }
 #endif
 
-            accountManager = TextSecureCommunicationFactory.createManager();
-
-            TaskHelper.getInstance().RegisterPushReceiver();
-
-            // re request a channel
-            if (TextSecurePreferences.isPushRegistered() == true)
+            if (TextSecurePreferences.GetLocalRegistrationId() == -1)
             {
-                if (channel == null)
-                {
-                    //Debug.WriteLine("requesting new channel");
-                    var response = await PushHelper.getInstance().OpenChannelAndUpload();
-
-                    channel = response.Channel;
-                   // Debug.WriteLine($"Save Channel URI: {channel.Uri}");
-                    //channel.PushNotificationReceived += OnPushNotificationReceived;
-                }
+                Debug.WriteLine("Launching first launch experience");
+                OnFirstLaunched(e);
+                return;
             }
 
+            Debug.WriteLine("Launching...");
+
+            if (TextSecurePreferences.isPushRegistered() == true)
+            {
+                TaskHelper.getInstance().RegisterPushReceiver();
+
+                if (channel == null)
+                {
+                    var response = await PushHelper.getInstance().OpenChannelAndUpload();
+                    channel = response.Channel;
+                }
+
+            }
+
+            accountManager = TextSecureCommunicationFactory.createManager();
+
+
             Worker = new TaskWorker();
-            //Worker.Start();
+            Worker.Start();
 
-           // var task = new EchoActivity("ASDFFDSA");
+            await DirectoryHelper.refreshDirectory();
 
-            //manager.AddTaskActivities(task);
+            // var task = new EchoActivity("ASDFFDSA");
+             var websocketTask = new WebsocketTask();
+             Task.Factory.StartNew(() =>
+             {
+                 try
+                 {
+                     var messageReceiver = TextSecureCommunicationFactory.createReceiver();
+                     var pipe = messageReceiver.createMessagePipe();
+                     pipe.MessageReceived += OnMessageRecevied;
+                 }
+                 catch (Exception ex) { Debug.WriteLine( "Failed asd:"+ex.Message); }
+
+             });
+            //Worker.AddTaskActivities(websocketTask);
 
 
+
+
+            /*if (rootFrame.Content == null)
+            {
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+            }*/
+            // Ensure the current window is active
+
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+            }
+
+            rootFrame.Navigate(typeof(View), e.Arguments);
+            Window.Current.Content = rootFrame;
+            Window.Current.Activate();
+        }
+
+        private void OnFirstLaunched(LaunchActivatedEventArgs e)
+        {
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -248,17 +305,18 @@ namespace Signal
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+
             }
 
-            /*if (rootFrame.Content == null)
-            {
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
-            }*/
-            // Ensure the current window is active
             Window.Current.Activate();
+
+        }
+
+        private void OnMessageRecevied(TextSecureMessagePipe sender, TextSecureEnvelope envelope)
+        {
+            var task = new PushContentReceiveTask();
+            task.handle(envelope, false);
+            //throw new NotImplementedException("OnMessageReceived");
         }
 
         /// <summary>

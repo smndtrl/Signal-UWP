@@ -20,9 +20,11 @@ using libtextsecure.util;
 using libtextsecure.websocket;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using static libtextsecure.websocket.WebSocketProtos;
 
 namespace libtextsecure
@@ -38,73 +40,38 @@ namespace libtextsecure
         private readonly WebSocketConnection websocket;
         private readonly CredentialsProvider credentialsProvider;
 
+        public event TypedEventHandler<TextSecureMessagePipe, TextSecureEnvelope> MessageReceived;
+
         public TextSecureMessagePipe(WebSocketConnection websocket, CredentialsProvider credentialsProvider)
         {
             this.websocket = websocket;
+
+            this.websocket.MessageReceived += OnMessageReceived;
             this.credentialsProvider = credentialsProvider;
 
             this.websocket.connect();
         }
 
-        /**
-         * A blocking call that reads a message off the pipe.  When this
-         * call returns, the message has been acknowledged and will not
-         * be retransmitted.
-         *
-         * @param timeout The timeout to wait for.
-         * @param unit The timeout time unit.
-         * @return A new message.
-         *
-         * @throws InvalidVersionException
-         * @throws IOException
-         * @throws TimeoutException
-         */
-        public TextSecureEnvelope read(ulong timeout/*, TimeUnit unit*/)
-        //throws InvalidVersionException, IOException, TimeoutException
+        private void OnMessageReceived(WebSocketConnection sender, WebSocketRequestMessage request)
         {
-            return read(timeout/*, unit*/, new NullMessagePipeCallback());
-        }
+            WebSocketResponseMessage response = createWebSocketResponse(request);
 
-        /**
-         * A blocking call that reads a message off the pipe (see {@link #read(long, java.util.concurrent.TimeUnit)}
-         *
-         * Unlike {@link #read(long, java.util.concurrent.TimeUnit)}, this method allows you
-         * to specify a callback that will be called before the received message is acknowledged.
-         * This allows you to write the received message to durable storage before acknowledging
-         * receipt of it to the server.
-         *
-         * @param timeout The timeout to wait for.
-         * @param unit The timeout time unit.
-         * @param callback A callback that will be called before the message receipt is
-         *                 acknowledged to the server.
-         * @return The message read (same as the message sent through the callback).
-         * @throws TimeoutException
-         * @throws IOException
-         * @throws InvalidVersionException
-         */
-        public TextSecureEnvelope read(ulong timeout/*, TimeUnit unit*/, MessagePipeCallback callback)
-        //throws TimeoutException, IOException, InvalidVersionException
-        {
-            while (true)
+            Debug.WriteLine($"Verb: {request.Verb}, Path {request.Path}, Body({request.Body.Length}): {request.Body}, Id: {request.Id}");
+
+            try
             {
-                WebSocketRequestMessage request = websocket.readRequest(/*unit.toMillis(timeout)*/100000);
-                WebSocketResponseMessage response = createWebSocketResponse(request);
-
-                try
+                if (isTextSecureEnvelope(request))
                 {
-                    if (isTextSecureEnvelope(request))
-                    {
-                        TextSecureEnvelope envelope = new TextSecureEnvelope(request.Body.ToByteArray(),
-                                                                             credentialsProvider.GetSignalingKey());
+                    TextSecureEnvelope envelope = new TextSecureEnvelope(request.Body.ToByteArray(),
+                                                                         credentialsProvider.GetSignalingKey());
 
-                        callback.onMessage(envelope);
-                        return envelope;
-                    }
+                    MessageReceived(this, envelope);
                 }
-                finally
-                {
-                    websocket.sendResponse(response);
-                }
+            }
+            //catch (Exception e) { } // ignore for now
+            finally
+            {
+                websocket.sendResponse(response);
             }
         }
 
@@ -145,7 +112,7 @@ namespace libtextsecure
          * For receiving a callback when a new message has been
          * received.
          */
-        public interface MessagePipeCallback
+        /*public interface MessagePipeCallback
         {
             void onMessage(TextSecureEnvelope envelope);
         }
@@ -154,7 +121,7 @@ namespace libtextsecure
         {
 
             public void onMessage(TextSecureEnvelope envelope) { }
-        }
+        }*/
 
     }
 }

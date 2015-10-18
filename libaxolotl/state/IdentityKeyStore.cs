@@ -36,7 +36,7 @@ namespace libaxolotl.state
          *
          * @return The local client's persistent identity key pair.
          */
-        IdentityKeyPair getIdentityKeyPair();
+        IdentityKeyPair GetIdentityKeyPair();
 
         /**
          * Return the local client's registration ID.
@@ -46,7 +46,7 @@ namespace libaxolotl.state
          *
          * @return the local client's registration ID.
          */
-        uint getLocalRegistrationId();
+        uint GetLocalRegistrationId();
 
         /**
          * Save a remote client's identity key
@@ -56,7 +56,7 @@ namespace libaxolotl.state
          * @param name        The name of the remote client.
          * @param identityKey The remote client's identity key.
          */
-        bool saveIdentity(String name, IdentityKey identityKey);
+        bool SaveIdentity(String name, IdentityKey identityKey);
 
 
         /**
@@ -73,7 +73,7 @@ namespace libaxolotl.state
          * @param identityKey The identity key to verify.
          * @return true if trusted, false if untrusted.
          */
-        bool isTrustedIdentity(String name, IdentityKey identityKey);
+        bool IsTrustedIdentity(String name, IdentityKey identityKey);
 
     }
 }

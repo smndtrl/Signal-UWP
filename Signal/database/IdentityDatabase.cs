@@ -16,6 +16,7 @@
  */
 
 using libaxolotl;
+using Signal.Util;
 using SQLite;
 using SQLite.Net;
 using SQLite.Net.Attributes;
@@ -31,69 +32,58 @@ namespace TextSecure.database
 {
     public class IdentityDatabase
     {
-        private const String TABLE_NAME = "identities";
+        private const String TABLE_NAME = "Identities";
         private static readonly String ID = "_id";
         public static readonly String RECIPIENT = "recipient";
         public static readonly String IDENTITY_KEY = "key";
         public static readonly String MAC = "mac";
 
-        private static readonly String DIRECTORY_PATH = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "identity.db");
-
         [Table(TABLE_NAME)]
         public class Identity
         {
             [PrimaryKey, AutoIncrement]
-            public long? _id { get; set; } = null;
+            public long IdentityId { get; set; }
             [Unique]
-            public long recipient { get; set; }
-            public string key { get; set; }
-            public string mac { get; set; }
+            public long RecipientId { get; set; } // TODO: FK
+            public string Key { get; set; }
+            public string Mac { get; set; }
         }
 
+        public class IdentityKeyRecord
+        {
+            [PrimaryKey]
+            public string name { get; set; }
+            public byte[] publicKey { get; set; }
+        }
 
         SQLiteConnection conn;
 
-        public IdentityDatabase()
+        public IdentityDatabase(SQLiteConnection conn)
         {
-            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), DIRECTORY_PATH) { };
-
-
+            this.conn = conn;
             conn.CreateTable<Identity>();
         }
 
-        public IList<Identity> getIdentities()
+        public IList<Identity> GetIdentities()
         {
-            /*SQLiteDatabase database = databaseHelper.getReadableDatabase();
-            Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
-
-            if (cursor != null)
-                cursor.setNotificationUri(context.getContentResolver(), CHANGE_URI);*/
             var query = conn.Table<Identity>().Where(v => true);
 
             return query.ToList();
         }
 
-        public bool isValidIdentity(long recipientId,
+        public bool IsValidIdentity(long recipientId,
                                IdentityKey theirIdentity)
         {
             try
             {
-                /*cursor = database.query(TABLE_NAME, null, RECIPIENT + " = ?",
-                                        new String[] { recipientId + "" }, null, null, null);*/
+                var query = conn.Table<Identity>().Where(v => v.RecipientId.Equals(recipientId));
 
-                var query = conn.Table<Identity>().Where(v => v.recipient.Equals(recipientId));
-
-                if (query != null &&  query.Count() > 0)
+                if (query.Count() > 0)
                 {
-                    var key = query.First();
-                    String serializedIdentity = key.key;
-                    String mac = key.mac;
+                    var identity = query.First();
+                    String serializedIdentity = identity.Key;
+                    String mac = identity.Mac;
 
-                   /* if (!masterCipher.verifyMacFor(recipientId + serializedIdentity, Base64.decode(mac))) TODO: verify mac
-                    {
-                        //Log.w("IdentityDatabase", "MAC failed");
-                        return false;
-                    }*/
 
                     IdentityKey ourIdentity = new IdentityKey(Base64.decode(serializedIdentity), 0);
 
@@ -104,53 +94,29 @@ namespace TextSecure.database
                     return true;
                 }
             }
-            catch (IOException e)
-            {
-                //Log.w("IdentityDatabase", e);
-                return false;
-            }
-            catch (InvalidKeyException e)
-            {
-                //Log.w("IdentityDatabase", e);
-                return false;
-            }
-            finally
-            {
-                /*if (cursor != null)
-                {
-                    cursor.close();
-                }*/
-            }
+            catch (IOException e) { return false; }
+            catch (InvalidKeyException e) { return false; }
+            catch (Exception e) { return false; }
+            
+        }
+        
+        private bool HasIdentity(long recipientId)
+        {
+            var query = conn.Table<Identity>().Where(i => i.RecipientId == recipientId);
+            return query.Count() == 1;
         }
 
-        public long saveIdentity(long recipientId, IdentityKey identityKey)
+        public long SaveIdentity(long recipientId, IdentityKey identityKey)
         {
-            String identityKeyString = Base64.encodeBytes(identityKey.serialize());
-            /*String macString = Base64.encodeBytes(masterCipher.getMacFor(recipientId +
-                                                                                      identityKeyString));*/ // TODO: enable mac gen
-
-            /*ContentValues contentValues = new ContentValues();
-            contentValues.put(RECIPIENT, recipientId);
-            contentValues.put(IDENTITY_KEY, identityKeyString);
-            contentValues.put(MAC, macString);*/
-
-            var identity = new Identity() { recipient = recipientId, key = identityKeyString, mac = Base64.encode(identityKeyString) };
+            String identityKeyString = Base64.encodeBytes(identityKey.serialize()); // TODO: real mac
+            var identity = new Identity() { RecipientId = recipientId, Key = identityKeyString, Mac = Base64.encode(identityKeyString) };
 
             return conn.InsertOrReplace(identity);
-
-            /*database.replace(TABLE_NAME, null, contentValues);
-
-            context.getContentResolver().notifyChange(CHANGE_URI, null);*/
         }
 
-        public long deleteIdentity(long id)
+        public long DeleteIdentity(long id)
         {
-            return conn.Table<Identity>().Delete(t => t.recipient == id);
-            //return await conn.Delete(new Identity() { recipient = id });
-            /*SQLiteDatabase database = databaseHelper.getWritableDatabase();
-            database.delete(TABLE_NAME, ID_WHERE, new String[] { id + "" });
-
-            context.getContentResolver().notifyChange(CHANGE_URI, null);*/
+            return conn.Table<Identity>().Delete(i => i.RecipientId == id);
         }
     }
 }

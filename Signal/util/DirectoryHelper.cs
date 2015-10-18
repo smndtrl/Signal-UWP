@@ -25,7 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
 
 namespace TextSecure.util
 {
@@ -44,7 +44,7 @@ namespace TextSecure.util
 
         public static async Task<bool> refreshDirectory(TextSecureAccountManager accountManager, String localNumber)
         {
-            TextSecureDirectory directory = TextSecureDirectory.getInstance();
+            TextSecureDirectory directory = DatabaseFactory.getDirectoryDatabase();
             List<String> eligibleContactNumbers = await directory.getPushEligibleContactNumbers(localNumber);
             List<ContactTokenDetails> activeTokens = await accountManager.getContacts(eligibleContactNumbers);
 
@@ -96,7 +96,7 @@ namespace TextSecure.util
 
                 String e164number = Util.canonicalizeNumber(context, number);
 
-                return TextSecureDirectory.getInstance().isActiveNumber(e164number);
+                return DatabaseFactory.getDirectoryDatabase().isActiveNumber(e164number);
             }
             catch (InvalidNumberException e)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Signal.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace Signal.Database.interfaces
 
     public abstract class ThreadDatabaseHelper {
 
-        protected long[] getRecipientIds(Recipients recipients)
+        public static long[] getRecipientIds(Recipients recipients)
         {
             HashSet<long> recipientSet = new HashSet<long>();
             List<Recipient> recipientList = recipients.getRecipientsList();
@@ -49,7 +50,7 @@ namespace Signal.Database.interfaces
             return recipientArray;
         }
 
-        protected String getRecipientsAsString(long[] recipientIds)
+        public static String getRecipientsAsString(long[] recipientIds)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < recipientIds.Length; i++)

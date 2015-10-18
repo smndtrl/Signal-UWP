@@ -146,6 +146,7 @@
     <Compile Include="messages\TextSecureGroup.cs" />
     <Compile Include="messages\TextSecureSyncContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="push\AuthorizationToken.cs" />
     <Compile Include="push\AccountAttributes.cs" />
     <Compile Include="push\ContactTokenDetails.cs" />
     <Compile Include="push\ContactTokenDetailsList.cs" />
@@ -199,10 +200,8 @@
     <Compile Include="util\PhoneNumberFormatter.cs" />
     <Compile Include="util\StaticCredentialsProvider.cs" />
     <Compile Include="util\Util.cs" />
-    <Compile Include="websocket\WebSocketClient.cs" />
     <Compile Include="websocket\WebSocketConnection.cs" />
     <Compile Include="websocket\WebSocketProtos.cs" />
-    <Compile Include="websocket\WebSocketStreamClient.cs" />
     <Content Include="Properties\libtextsecure.rd.xml" />
   </ItemGroup>
   <ItemGroup>

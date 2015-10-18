@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure;
 using TextSecure.database;
-using TextSecure.push;
+using Signal.Push;
 using TextSecure.util;
 
 namespace Signal.Tasks
@@ -32,7 +32,7 @@ namespace Signal.Tasks
         {
             if (!isActiveNumber(envelope.getSource()))
             {
-                TextSecureDirectory directory = TextSecureDirectory.getInstance();
+                TextSecureDirectory directory = DatabaseFactory.getDirectoryDatabase();
                 ContactTokenDetails contactTokenDetails = new ContactTokenDetails();
                 contactTokenDetails.setNumber(envelope.getSource());
 
@@ -45,27 +45,23 @@ namespace Signal.Tasks
 
         private void handleMessage(TextSecureEnvelope envelope, bool sendExplicitReceipt)
         {
-            throw new NotImplementedException("ReceiveTask handleMessage");
-            /* TODO: TASKS enable
             var worker = App.Current.Worker;
-
-            //JobManager jobManager = ApplicationContext.getInstance(context).getJobManager();
-            long messageId = DatabaseFactory.getPushDatabase().insert(envelope);
+            long messageId = DatabaseFactory.getPushDatabase().Insert(envelope);
 
             if (sendExplicitReceipt)
             {
-                worker.AddTaskActivities(new DeliveryReceiptTask(envelope.getSource(),
+             /*   worker.AddTaskActivities(new DeliveryReceiptTask(envelope.getSource(),
                                                       envelope.getTimestamp(),
-                                                      envelope.getRelay()));
+                                                      envelope.getRelay()));*/
             }
 
             worker.AddTaskActivities(new PushDecryptTask(messageId, envelope.getSource()));
-            */
+            
         }
 
         private void handleReceipt(TextSecureEnvelope envelope)
         {
-            Debug.WriteLine(String.Format("Received receipt: (XXXXX, %d)", envelope.getTimestamp()));
+            Debug.WriteLine($"Received receipt: (XXXXX, {envelope.getTimestamp()})");
             DatabaseFactory.getMessageDatabase().incrementDeliveryReceiptCount(envelope.getSource(),
                                                                                      (long)envelope.getTimestamp());
         }
@@ -76,7 +72,7 @@ namespace Signal.Tasks
 
             try
             {
-                isActiveNumber = TextSecureDirectory.getInstance().isActiveNumber(e164number);
+                isActiveNumber = DatabaseFactory.getDirectoryDatabase().isActiveNumber(e164number);
             }
             catch (/*NotInDirectory*/Exception e)
             {

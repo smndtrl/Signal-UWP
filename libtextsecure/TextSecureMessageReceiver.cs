@@ -40,6 +40,7 @@ namespace libtextsecure
         private readonly TrustStore trustStore;
         private readonly String url;
         private readonly CredentialsProvider credentialsProvider;
+        private readonly string userAgent;
 
         /**
          * Construct a TextSecureMessageReceiver.
@@ -52,8 +53,8 @@ namespace libtextsecure
          * @param signalingKey The 52 byte signaling key assigned to this user at registration.
          */
         public TextSecureMessageReceiver(String url, TrustStore trustStore,
-                                         String user, String password, String signalingKey)
-            : this(url, trustStore, new StaticCredentialsProvider(user, password, signalingKey))
+                                         String user, String password, String signalingKey, string userAgent)
+            : this(url, trustStore, new StaticCredentialsProvider(user, password, signalingKey), userAgent)
         {
 
         }
@@ -66,12 +67,13 @@ namespace libtextsecure
          *                   the server's TLS signing certificate.
          * @param credentials The TextSecure user's credentials.
          */
-        public TextSecureMessageReceiver(String url, TrustStore trustStore, CredentialsProvider credentials)
+        public TextSecureMessageReceiver(String url, TrustStore trustStore, CredentialsProvider credentials, string userAgent)
         {
             this.url = url;
             this.trustStore = trustStore;
             this.credentialsProvider = credentials;
-            this.socket = new PushServiceSocket(url, trustStore, credentials);
+            this.socket = new PushServiceSocket(url, trustStore, credentials, userAgent);
+            this.userAgent = userAgent;
         }
 
         /**
@@ -100,7 +102,7 @@ namespace libtextsecure
          */
         public TextSecureMessagePipe createMessagePipe()
         {
-            WebSocketConnection webSocket = new WebSocketConnection(url, trustStore, credentialsProvider);
+            WebSocketConnection webSocket = new WebSocketConnection(url, trustStore, credentialsProvider, userAgent);
             return new TextSecureMessagePipe(webSocket, credentialsProvider);
         }
 

@@ -3,7 +3,9 @@ using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal.database.models;
+using Signal.Model;
 using Signal.Tasks.Library;
+using Signal.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,6 +32,8 @@ namespace Signal.Tasks
             database.markAsSending(messageId);
             database.markAsPush(messageId);
 
+            Debug.WriteLine("Pushsendtask onadded");
+
             //throw new NotImplementedException();
         }
 
@@ -40,8 +44,10 @@ namespace Signal.Tasks
 
         protected override async Task<string> ExecuteAsync()
         {
+            Debug.WriteLine("executeasync");
             TextMessageDatabase database = DatabaseFactory.getTextMessageDatabase();
             var message = await database.getMessageRecord(messageId);
+            //var message = await database.Get(messageId);
 
             try
             {
@@ -50,7 +56,9 @@ namespace Signal.Tasks
                 database.markAsSecure(messageId);
                 database.markAsSent(messageId);
 
-            } catch(Exception e) { }
+            } catch(Exception e) {
+                Debug.WriteLine($"{GetType()} failure {e.Message}");
+            }
 
 
             return "";
@@ -63,7 +71,7 @@ namespace Signal.Tasks
             {
                 TextSecureAddress address = getPushAddress(message.getIndividualRecipient().getNumber());
                 TextSecureDataMessage textSecureMessage = TextSecureDataMessage.newBuilder()
-                                                                                 .withTimestamp((ulong)Util.GetUnixTimestamp(message.getDateSent()))
+                                                                                 .withTimestamp((ulong)TimeUtil.GetUnixTimestampMillis(message.getDateSent()))
                                                                                  .withBody(message.getBody().getBody())
                                                                                  .asEndSessionMessage(message.isEndSession())
                                                                                  .build();

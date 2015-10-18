@@ -15,21 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using SQLite;
-using SQLite.Net.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TextSecure.database.mappings
+namespace libtextsecure.push
 {
-    public class SessionStoreMapping
+    [JsonObject(MemberSerialization.OptIn)]
+    public class AuthorizationToken
     {
-            [PrimaryKey]
-            public string name { get; set; }
-            public uint deviceId { get; set; }
-            public byte[] record { get; set; }
+        [JsonProperty("token", Required = Required.Always)]
+        public string Token { get; set; }
     }
 }

@@ -31,63 +31,62 @@ namespace TextSecure.crypto.storage
 {
     public class TextSecureSessionStore : SessionStore
     {
-        [Table("sessions")]
+        [Table("Sessions")]
         private class Session
         {
             [AutoIncrement, PrimaryKey]
-            private long _id { get; set; }
-            public string name { get; set; }
-            public long deviceId { get; set; }
-            public byte[] record { get; set; }
+            private long SessionId { get; set; }
+            public string Name { get; set; } // TODO:: K AxolotlAddress
+            public long DeviceId { get; set; } // TODO:: K AxolotlAddress
+            public byte[] Record { get; set; }
         }
 
         SQLiteConnection conn;
 
-        public TextSecureSessionStore()
+        public TextSecureSessionStore(SQLiteConnection conn)
         {
-            string path = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "session.db");
-            conn = new SQLiteConnection(new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), path) {  };
-
+            this.conn = conn;
             conn.CreateTable<Session>();
         }
 
-        public bool containsSession(AxolotlAddress address)
+        public bool ContainsSession(AxolotlAddress address)
         {
             var name = address.getName();
             var deviceId = address.getDeviceId();
-            var query = conn.Table<Session>().Where(v => v.name == name && v.deviceId == deviceId);
+            var query = conn.Table<Session>().Where(v => v.Name == name && v.DeviceId == deviceId);
+
             return query.Count() != 0;
         }
 
-        public void deleteAllSessions(string name)
+        public void DeleteAllSessions(string name)
         {
-            var query = conn.Table<Session>().Delete(t => t.name == name);
+            var query = conn.Table<Session>().Delete(t => t.Name == name);
         }
 
-        public void deleteSession(AxolotlAddress address)
+        public void DeleteSession(AxolotlAddress address)
         {
             var name = address.getName();
             var deviceId = address.getDeviceId();
-            var query = conn.Table<Session>().Delete(t => t.name == name && t.deviceId == deviceId);
+            var query = conn.Table<Session>().Delete(t => t.Name == name && t.DeviceId == deviceId);
         }
 
-        public List<uint> getSubDeviceSessions(string name)
+        public List<uint> GetSubDeviceSessions(string name)
         {
-            var query = conn.Table<Session>().Where(t => t.name == name);
+            var query = conn.Table<Session>().Where(t => t.Name == name);
             var list = query.ToList();
-            var output = list.Select(t => (uint)t.deviceId).ToList();
+            var output = list.Select(t => (uint)t.DeviceId).ToList();
             return output;
         }
 
-        public SessionRecord loadSession(AxolotlAddress address)
+        public SessionRecord LoadSession(AxolotlAddress address)
         {
             var name = address.getName();
             var deviceId = address.getDeviceId();
-            var query = conn.Table<Session>().Where(t => t.name == name && t.deviceId == deviceId);
+            var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId == deviceId);
 
             if (query != null && query.Count() > 0)
             {
-                return new SessionRecord(query.First().record);
+                return new SessionRecord(query.First().Record);
             }
             else
             {
@@ -96,11 +95,11 @@ namespace TextSecure.crypto.storage
             
         }
 
-        public void storeSession(AxolotlAddress address, SessionRecord record)
+        public void StoreSession(AxolotlAddress address, SessionRecord record)
         {
-            deleteSession(address); // TODO: sqlite-net combined private keys for insertOrReplace
+            DeleteSession(address); // TODO: sqlite-net combined private keys for insertOrReplace
 
-            var session = new Session() { deviceId = address.getDeviceId(), name = address.getName(), record = record.serialize() };
+            var session = new Session() { DeviceId = address.getDeviceId(), Name = address.getName(), Record = record.serialize() };
             conn.InsertOrReplace(session);
             return;
         }

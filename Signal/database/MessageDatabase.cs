@@ -17,6 +17,7 @@
 
 using libaxolotl.util;
 using Signal.Model;
+using Signal.Util;
 using SQLite;
 using SQLite.Net;
 using SQLite.Net.Attributes;
@@ -35,58 +36,34 @@ namespace TextSecure.database
 {
     public class MessageDatabase : MessageTypes
     {
-        public const string TABLE_NAME = "messages";
-        public const string ID = "_id";
-        public const string NORMALIZED_DATE_SENT = "date_sent";
-        public const string NORMALIZED_DATE_RECEIVED = "date_received";
-        public const string THREAD_ID = "thread_id";
-        public const string READ = "read";
-        public const string BODY = "body";
-        public const string STATUS = "status";
-        public const string ADDRESS = "address";
-        public const string ADDRESS_DEVICE_ID = "address_device_id";
-        public const string RECEIPT_COUNT = "delivery_receipt_count";
-        public const string MISMATCHED_IDENTITIES = "mismatched_identities";
-        public const String TYPE = "type";
 
-        [Table(TABLE_NAME)]
-        public class MessageTable
-        {
-            [PrimaryKey, AutoIncrement]
-            public long? _id { get; set; } = null;
-            public long thread_id { get; set; }
-            public string address { get; set; }
-            public long address_device_id { get; set; }
-
-            public DateTime date_received { get; set; }
-            public DateTime date_sent { get; set; }
-            public long read { get; set; } = 0;
-            public long status { get; set; } = -1;
-            public long type { get; set; }
-            public long receipt_count { get; set; } = 0;
-            public string body { get; set; }
-            public string mismatches { get; set; }
-
-
-
-        }
 
         protected SQLiteConnection conn;
 
         public MessageDatabase(SQLiteConnection conn)
         {
             this.conn = conn;
-            conn.CreateTable<MessageTable>();
+            conn.CreateTable<Message>();
+        }
+
+
+        /*
+         * Thread related
+         */
+
+        public void DeleteThread(long threadId)
+        {
+            conn.Table<Message>().Delete(message => message.ThreadId == threadId);
         }
 
         public async Task<int> Count()
         {
-            return conn.Table<MessageTable>().Count();
+            return conn.Table<Message>().Count();
         }
 
-        public async Task<List<MessageTable>> getMessageList(long thread_id)
+        public async Task<List<Message>> getMessageList(long thread_id)
         {
-            var query = conn.Table<MessageTable>().Where(v => true);
+            var query = conn.Table<Message>().Where(v => true);
 
             return query.ToList();
             throw new NotImplementedException("MessageDatabase getMessageList");
@@ -95,57 +72,53 @@ namespace TextSecure.database
             setNotifyConverationListListeners(cursor);*/
         }
 
-        protected String getTableName()
+        private async Task updateTypeBitmask(long messageId, long maskOff, long maskOn)
         {
-            return TABLE_NAME;
+            Debug.WriteLine($"MessageDatabase: Updating ID: {messageId} to base type: {maskOn}");
+
+            var message = conn.Get<Message>(messageId);
+            message.PropertyChanged += (s, e) => { Debug.WriteLine("property changed"); };
+
+            message.Type = (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
+            Debug.WriteLine("before save");
+            conn.Update(message);
+            Debug.WriteLine("after save");
+
+            // TODO: await DatabaseFactory.getThreadDatabase().update(message.ThreadId);
         }
 
-        private async Task<long> updateTypeBitmask(long id, long maskOff, long maskOn)
+        public async Task Test(long messageId)
         {
-            Debug.WriteLine($"MessageDatabase: Updating ID: {id} to base type: {maskOn}");
+            Debug.WriteLine($"MessageDatabase: Testing message: {messageId}");
 
-            var update = new MessageTable { _id = id, status = (MessageTypes.TOTAL_MASK - maskOff) | maskOn };
-            return conn.Update(update);
+            var message1 = conn.Get<Message>(messageId);
+            message1.Type += 1;
+            conn.Update(message1);
+            message1.PropertyChanged += (s, e) => { Debug.WriteLine("message 1 property changed"); };
 
-            /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.execSQL("UPDATE " + TABLE_NAME +
-                       " SET " + TYPE + " = (" + TYPE + " & " + (MessageTypes.TOTAL_MASK - maskOff) + " | " + maskOn + " )" +
-                       " WHERE " + ID + " = ?", new String[] { id + "" });
 
-            long threadId = getThreadIdForMessage(id);
+            var message2 = conn.Get<Message>(messageId);
+            message2.Type -= 1;
+            conn.Update(message2);
+            message1.PropertyChanged += (s, e) => { Debug.WriteLine("message 2 property changed"); };
 
-            DatabaseFactory.getThreadDatabase(context).update(threadId);
-            notifyConversationListeners(threadId);
-            notifyConversationListListeners();*/
-            //throw new NotImplementedException();
+            /*Debug.WriteLine("before save");
+            conn.Update(message);
+            Debug.WriteLine("after save");*/
+
+            // TODO: await DatabaseFactory.getThreadDatabase().update(message.ThreadId);
         }
 
-        public async Task<long> getThreadIdForMessage(long id)
+        public async Task<long> getThreadIdForMessage(long messageId)
         {
-            //String sql = "SELECT " + THREAD_ID + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
-            //String[] sqlArgs = new String[] { id + "" };
-            //SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
-            //Cursor cursor = null;
+            var message = conn.Get<Message>(messageId);
 
-            try
-            {
-                var query = conn.Table<MessageTable>().Where(t => t._id == id);
+            if (message != null)
+                return message.ThreadId;
+            else
+                return -1;
 
-                if (query != null && query.First() != null)
-                    return (query.First()).thread_id;
-                else
-                    return -1;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-            finally
-            {
-                //if (cursor != null)
-                //cursor.close();
-            }
         }
 
         public async Task<int> getMessageCount()
@@ -153,7 +126,7 @@ namespace TextSecure.database
 
             try
             {
-                var query = conn.Table<MessageTable>().Where(t => true);
+                var query = conn.Table<Message>().Where(t => true);
 
                 if (query != null) return query.Count();
                 else return 0;
@@ -173,7 +146,7 @@ namespace TextSecure.database
 
             try
             {
-                var query = conn.Table<MessageTable>().Where(t => t.thread_id == threadId);
+                var query = conn.Table<Message>().Where(t => t.ThreadId == threadId);
 
                 if (query != null) return query.Count();
             }
@@ -269,18 +242,15 @@ namespace TextSecure.database
             updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENT_TYPE);
         }
 
-        public async void markStatus(long id, int status)
+        /*public async void markStatus(long messageId, int status)
         {
-            Debug.WriteLine($"MessageDatabase Updating ID: {id} to status: {status}");
-            //ContentValues contentValues = new ContentValues();
-            //contentValues.put(STATUS, status);
+            Debug.WriteLine($"MessageDatabase Updating ID: {messageId} to status: {status}");
+            var message = conn.Get<Message>(messageId);
 
-            var update = new MessageTable { _id = id, status = status };
-            conn.Update(update);
-            //            SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            //db.update(TABLE_NAME, contentValues, ID_WHERE, new String[] { id + "" });
-            //notifyConversationListeners(getThreadIdForMessage(id));
-        }
+            message.DeliveryStatus = status;
+
+            conn.Update(message);
+        }*/
 
         public void markAsSentFailed(long id)
         {
@@ -289,64 +259,37 @@ namespace TextSecure.database
 
         public void incrementDeliveryReceiptCount(String address, long timestamp)
         {
-            /*SQLiteDatabase database = databaseHelper.getWritableDatabase();
-            Cursor cursor = null;
+            var date = TimeUtil.GetDateTime(timestamp);
+            var query = conn.Table<Message>().Where(m => 
+                m.DateSent == date
+            );
 
-            try
+            if (query.Count() > 0)
             {
-                cursor = database.query(TABLE_NAME, new String[] { ID, THREAD_ID, ADDRESS, TYPE },
-                                        DATE_SENT + " = ?", new String[] { String.valueOf(timestamp) },
-                                        null, null, null, null);
+                var message = query.First();
 
-                while (cursor.moveToNext())
+                if (MessageTypes.isOutgoingMessageType(message.Type))
                 {
-                    if (MessageTypes.isOutgoingMessageType(cursor.getLong(cursor.getColumnIndexOrThrow(TYPE))))
+                    String theirAddress = Utils.canonicalizeNumber(address);
+                    String ourAddress = Utils.canonicalizeNumber(message.Address);
+
+                    if (ourAddress.Equals(theirAddress))
                     {
-                        try
-                        {
-                            String theirAddress = canonicalizeNumber(context, address);
-                            String ourAddress = canonicalizeNumber(context, cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                        message.ReceiptCount += 1;
 
-                            if (ourAddress.equals(theirAddress))
-                            {
-                                database.execSQL("UPDATE " + TABLE_NAME +
-                                                 " SET " + RECEIPT_COUNT + " = " + RECEIPT_COUNT + " + 1 WHERE " +
-                                                 ID + " = ?",
-                                                 new String[] { String.valueOf(cursor.getLong(cursor.getColumnIndexOrThrow(ID))) });
-
-                                notifyConversationListeners(cursor.getLong(cursor.getColumnIndexOrThrow(THREAD_ID)));
-                            }
-                        }
-                        catch (InvalidNumberException e)
-                        {
-                            Log.w("SmsDatabase", e);
-                        }
+                        conn.Update(message);
                     }
                 }
             }
-            finally
-            {
-                if (cursor != null)
-                    cursor.close();
-            }*/
-            throw new NotImplementedException("messageDatabase incrementDeliveryReceiptCount");
         }
 
         public async void setMessagesRead(long threadId)
         {
-            /*SQLiteDatabase database = databaseHelper.getWritableDatabase();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(READ, 1);
+            var message = conn.Get<Message>(threadId);
 
-            database.update(TABLE_NAME, contentValues,
-                            THREAD_ID + " = ? AND " + READ + " = 0",
-                            new String[] { threadId + "" });*/
+            message.Read = true;
 
-            var query = conn.Table<MessageTable>().Where(t => t.thread_id == threadId);
-            var entry = query.First();
-            entry.read = 1;
-
-           conn.Update(entry);
+            conn.Update(message);
         }
 
         public void setAllMessagesRead()
@@ -456,8 +399,8 @@ namespace TextSecure.database
 
             long threadId;
 
-            if (groupRecipients == null) threadId = DatabaseFactory.getThreadDatabase().GetThreadIdFor(recipients).Result; // TODO CHECK
-            else threadId = DatabaseFactory.getThreadDatabase().GetThreadIdFor(groupRecipients).Result;
+            if (groupRecipients == null) threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients); // TODO CHECK
+            else threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(groupRecipients);
 
             /*ContentValues values = new ContentValues(6);
             values.put(ADDRESS, message.getSender());
@@ -476,26 +419,28 @@ namespace TextSecure.database
             values.put(TYPE, type);
             values.put(THREAD_ID, threadId);*/
 
-            var insert = new MessageTable()
+            var insert = new Message()
             {
-                address = message.getSender(),
-                address_device_id = message.getSenderDeviceId(),
-                date_received = DateTime.Now,
-                date_sent = Util.GetDateTimeMili(message.getSentTimestampMillis()),
-                read = unread ? 0 : 1,
-                body = message.getMessageBody(),
-                type = type,
-                thread_id = threadId
+                Address = message.getSender(),
+                AddressDeviceId = message.getSenderDeviceId(),
+                DateReceived = TimeUtil.GetDateTimeMillis(), // force precision to millis not to ticks
+                DateSent = TimeUtil.GetDateTime(message.getSentTimestampMillis()),
+                Read = !unread,
+                Body = message.getMessageBody(),
+                Type = type,
+                ThreadId = threadId
             };
 
-            long messageId = conn.Insert(insert);
+            long rows = conn.Insert(insert);
+
+            long messageId = insert.MessageId;
 
             if (unread)
             {
                 DatabaseFactory.getThreadDatabase().SetUnread(threadId);
             }
 
-            var id = DatabaseFactory.getThreadDatabase().update(threadId).Result;
+            // TODO: var id = DatabaseFactory.getThreadDatabase().update(threadId).Result;
             //notifyConversationListeners(threadId);
             //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
 
@@ -586,7 +531,9 @@ namespace TextSecure.database
         /*package */
         async void deleteThread(long threadId)
         {
-            conn.Delete(new MessageTable() { thread_id = threadId });
+            throw new NotImplementedException("MessageDatabase deleteThread");
+
+            //conn.Delete(new Message() { thread_id = threadId });
         }
 
         /*package*/
@@ -609,10 +556,12 @@ namespace TextSecure.database
         /*package*/
         void deleteThreads(IList<long> threadIds)
         {
-            foreach (var threadId in threadIds)
+            throw new NotImplementedException("MessageDatabase deleteThreads");
+
+            /*foreach (var threadId in threadIds)
             {
-                conn.Delete(new MessageTable() { thread_id = threadId });
-            }
+                conn.Delete(new Message() { thread_id = threadId });
+            }*/
 
             /*SQLiteDatabase db = databaseHelper.getWritableDatabase();
             String where = "";
@@ -630,7 +579,7 @@ namespace TextSecure.database
         /*package */
         async void deleteAllThreads()
         {
-            conn.Delete(new MessageTable());
+            throw new NotImplementedException("MessageDatabase deleteAllThreads");
         }
 
         /*
@@ -653,26 +602,26 @@ namespace TextSecure.database
             contentValues.put(READ, 1);
             contentValues.put(TYPE, type);*/
 
-            var insert = new MessageTable()
+            var insert = new Message()
             {
                 //address = PhoneNumberUtils.formatNumber(message.getRecipients().getPrimaryRecipient().getNumber()),
-                address = message.getRecipients().getPrimaryRecipient().getNumber(),
-                thread_id = threadId,
-                body = message.getMessageBody(),
-                date_received = date,
-                date_sent = date,
-                read = 1,
-                type = type
+                Address = message.getRecipients().getPrimaryRecipient().getNumber(),
+                ThreadId = threadId,
+                Body = message.getMessageBody(),
+                DateReceived = date,
+                DateSent = date,
+                Read = false,
+                Type = type
             };
 
             //SQLiteDatabase db = databaseHelper.getWritableDatabase();
             //long messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);
             long messageId = conn.Insert(insert);
-            await DatabaseFactory.getThreadDatabase().update(threadId);
+            // TODO: await DatabaseFactory.getThreadDatabase().update(threadId);
             //notifyConversationListeners(threadId);
             //jobManager.add(new TrimThreadJob(context, threadId));
 
-            return messageId;
+            return insert.MessageId;
         }
 
 
@@ -682,7 +631,7 @@ namespace TextSecure.database
         {
             /*int count = DatabaseFactory.getTextMessagingDatabase().getMessageCountForThread(threadId);
             count += DatabaseFactory.getMediaMessagingDatabase().getMessageCountForThread(threadId);*/
-            
+
 
             return await getMessageCountForThread(threadId);
         }

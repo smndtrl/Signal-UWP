@@ -17,6 +17,7 @@
 
 using libaxolotl;
 using libaxolotl.ecc;
+using Signal.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace TextSecure.crypto
             }
         }
 
-        public static IdentityKeyPair getIdentityKeyPair()
+        public static IdentityKeyPair GetIdentityKeyPair()
         {
             if (!hasIdentityKey())
                 return null;

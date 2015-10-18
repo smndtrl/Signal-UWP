@@ -1,4 +1,5 @@
-﻿using Signal.Database;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Signal.Database;
 using Signal.Database.interfaces;
 using Signal.Model;
 using System;
@@ -32,18 +33,33 @@ namespace Signal.database
             Contacts = new List<Contact>();
             Threads = new List<Thread>();
             Messages = new List<Message>();
+
+
             for (var i = 0; i <= 100; i++)
             {
                 if (i < 7) Contacts.Add(new Contact() { name = "Simon" + i, number = "+491122330" + i, label = "mobile" });
-                if (i < 2) Threads.Add(new Thread() { Body = "Last message", Read = (i % 2) == 1, Count = i, Date = DateTime.Now.AddSeconds(-60 * i), Recipients = new List<Recipient>() { new Recipient("Recip " + i, "+49001122" + i, i) }, ThreadId = i % 2 });
+                if (i < 2) Threads.Add(new Thread() { Body = "Last message", Read = (i % 2) == 1, Count = i, Date = DateTime.Now.AddSeconds(-60 * i), Recipients = new Recipients(new List<Recipient>() { new Recipient("Recip " + i, "+49001122" + i, i) }, null), ThreadId = i % 2 });
                 //                     var msg = new Message() { MessageId = i, ThreadId = i % 2, Body = "Message " + i, IsFailed = i % 5 == 0, IsOutgoing = i % 3 == 0, Date = DateTime.Now.AddSeconds(-15 * i) ;
 
                 if (i < 50)
                 {
-                    var msg = new Message(i, "Message " + i, null, new Recipient("Name" + i, "+49112233" + i, i), 1, DateTime.Now.AddMinutes(-60 * i), DateTime.Now.AddSeconds(-15 * i), i % 2, 1, 1, 1);
+                    var msg = new Message()
+                    {
+                        MessageId = i,
+                        Body = "Message " + i,
+                        Address = "+49112233" + i,
+                        AddressDeviceId = 1,
+                        DateSent = DateTime.Now.AddMinutes(-60 * i),
+                        DateReceived = DateTime.Now.AddSeconds(-15 * i),
+                        Read = i % 2 == 1 ? true : false,
+                        ReceiptCount = 1,
+                        Type = 1
+                    };
+
                     Messages.Add(msg);
                 }
             }
+
         }
 
         public Task<IEnumerable<Contact>> getContacts()
@@ -72,27 +88,27 @@ namespace Signal.database
         }
     }
 
-    public class Real : IDataService
+    public class Sqlite : IDataService
     {
-        private SignalContext context;
+       // private SignalContext context;
 
-        private Database.EF.ThreadDatabase Threads;
+        //private Database.EF.ThreadDatabase Threads;
 
-        public Real()
+        public Sqlite()
         {
 
-            context = new SignalContext();
-            Threads = new Database.EF.ThreadDatabase(context);
+            //context = new SignalContext();
+            //Threads = new Database.EF.ThreadDatabase(context);
         }
 
         public async Task<IEnumerable<Contact>> getContacts()
         {
-            return await new ContactsDatabase().getContacts();
+            return await DatabaseFactory.getContactsDatabase().getContacts();
         }
 
-        public Task<IEnumerable<Contact>> getDictionary()
+        public async Task<IEnumerable<Contact>> getDictionary()
         {
-            throw new NotImplementedException();
+            return await DatabaseFactory.getContactsDatabase().getContacts();
         }
 
         public async Task<IEnumerable<Message>> getMessages(long threadId)
@@ -102,8 +118,8 @@ namespace Signal.database
 
         public async Task<IEnumerable<Thread>> getThreads()
         {
-            return context.Threads.Where(t => true).ToList();
-            //return await DatabaseFactory.getThreadDatabase().getThreads();
+            //return context.Threads.Where(t => true).ToList();
+            return await DatabaseFactory.getThreadDatabase().GetAllAsync();
         }
 
         public void CreateThread(Thread thread)

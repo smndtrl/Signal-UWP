@@ -37,14 +37,23 @@ namespace libtextsecure.messages
         private readonly ulong id;
         private readonly byte[] key;
         private readonly May<String> relay;
+        private readonly May<uint> size;
+        private readonly May<byte[]> preview;
 
-        public TextSecureAttachmentPointer(ulong id, String contentType, byte[] key, String relay)
+        public TextSecureAttachmentPointer(ulong id, String contentType, byte[] key, String relay, May<uint> size, May<byte[]> preview)
             : base(contentType)
         {
             this.id = id;
             this.key = key;
             this.relay = new May<String>(relay);
+            this.size = size;
+            this.preview = preview;
         }
+
+        public TextSecureAttachmentPointer(ulong id, String contentType, byte[] key, String relay)
+        : this(id, contentType, key, relay, May<uint>.NoValue, May<byte[]>.NoValue)
+        { }
+
 
         public ulong getId()
         {

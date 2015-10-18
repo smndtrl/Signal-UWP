@@ -43,8 +43,8 @@ namespace libaxolotl_test
             AxolotlStore aliceStore = new TestInMemoryAxolotlStore();
             AxolotlStore bobStore = new TestInMemoryAxolotlStore();
 
-            aliceStore.storeSession(new AxolotlAddress("+14159999999", 1), aliceSessionRecord);
-            bobStore.storeSession(new AxolotlAddress("+14158888888", 1), bobSessionRecord);
+            aliceStore.StoreSession(new AxolotlAddress("+14159999999", 1), aliceSessionRecord);
+            bobStore.StoreSession(new AxolotlAddress("+14158888888", 1), bobSessionRecord);
 
             SessionCipher aliceCipher = new SessionCipher(aliceStore, new AxolotlAddress("+14159999999", 1));
             SessionCipher bobCipher = new SessionCipher(bobStore, new AxolotlAddress("+14158888888", 1));
