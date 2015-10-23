@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Signal.Model
+namespace Signal.Models
 {
     /*
         public const String TABLE_NAME = "contacts";
@@ -40,5 +40,6 @@ namespace Signal.Model
         [Indexed(Name = "number", Unique = true)]
         public string number { get; set;  }
         public string label { get; set; }
+        public string SystemId { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using Signal.Database;
 using Signal.Database.interfaces;
-using Signal.Model;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +15,10 @@ namespace Signal.database
 {
     public interface IDataService
     {
-        Task<IEnumerable<Contact>> getContacts();
+        //Task<IEnumerable<Contact>> getContacts();
         Task<IEnumerable<Thread>> getThreads();
         void CreateThread(Thread thread);
-        Task<IEnumerable<Contact>> getDictionary();
+        Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary();
         Task<IEnumerable<Message>> getMessages(long threadId);
     }
 
@@ -27,18 +27,20 @@ namespace Signal.database
         IList<Contact> Contacts;
         IList<Thread> Threads;
         IList<Message> Messages;
+        IList<TextSecureDirectory.Directory> Directory;
 
         public Design()
         {
             Contacts = new List<Contact>();
             Threads = new List<Thread>();
             Messages = new List<Message>();
+            Directory = new List<TextSecureDirectory.Directory>();
 
 
             for (var i = 0; i <= 100; i++)
             {
                 if (i < 7) Contacts.Add(new Contact() { name = "Simon" + i, number = "+491122330" + i, label = "mobile" });
-                if (i < 2) Threads.Add(new Thread() { Body = "Last message", Read = (i % 2) == 1, Count = i, Date = DateTime.Now.AddSeconds(-60 * i), Recipients = new Recipients(new List<Recipient>() { new Recipient("Recip " + i, "+49001122" + i, i) }, null), ThreadId = i % 2 });
+                if (i < 5) Threads.Add(new Thread() { Body = "Last message", Read = (i % 2) == 1, Count = i, Date = DateTime.Now.AddSeconds(-60 * i), Recipients = new Recipients(new List<Recipient>() { new Recipient("Recip " + i, "+49001122" + i, i, null) }, null), ThreadId = i % 2 });
                 //                     var msg = new Message() { MessageId = i, ThreadId = i % 2, Body = "Message " + i, IsFailed = i % 5 == 0, IsOutgoing = i % 3 == 0, Date = DateTime.Now.AddSeconds(-15 * i) ;
 
                 if (i < 50)
@@ -77,9 +79,9 @@ namespace Signal.database
             return Task.FromResult<IEnumerable<Message>>(Messages.Where(p => p.ThreadId == threadId));
         }
 
-        public Task<IEnumerable<Contact>> getDictionary()
+        public Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary()
         {
-            return Task.FromResult<IEnumerable<Contact>>(Contacts);
+            return Task.FromResult<IEnumerable<TextSecureDirectory.Directory>>(Directory);
         }
 
         public void CreateThread(Thread thread)
@@ -101,14 +103,14 @@ namespace Signal.database
             //Threads = new Database.EF.ThreadDatabase(context);
         }
 
-        public async Task<IEnumerable<Contact>> getContacts()
+        /*public async Task<IEnumerable<Contact>> getContacts()
         {
             return await DatabaseFactory.getContactsDatabase().getContacts();
-        }
+        }*/
 
-        public async Task<IEnumerable<Contact>> getDictionary()
+        public async Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary()
         {
-            return await DatabaseFactory.getContactsDatabase().getContacts();
+            return await DatabaseFactory.getDirectoryDatabase().GetAllAsync();
         }
 
         public async Task<IEnumerable<Message>> getMessages(long threadId)

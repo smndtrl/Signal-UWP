@@ -54,12 +54,29 @@ namespace Signal.Views
         {
             base.OnNavigatedTo(e);
 
+            var navigableViewModel = this.DataContext as INavigableViewModel;
+            if (navigableViewModel != null) navigableViewModel.Activate(e.Parameter);
+
+            /*WwwFormUrlDecoder decoder = new WwwFormUrlDecoder((string)(e.Parameter));
+            var dict = decoder.ToDictionary(x => x.Name, x => x.Value);
+
+            if (dict["thread"] != null)
+            {
+                this.DataContext = ViewModelLocator.GetViewModel<MessageViewModel>(dict["thread"]);
+                Messenger.Default.Send(new RefreshThreadMessage() { ThreadId = threadId });
+
+                //((EventDetailViewModel)this.DataContext).RefreshLayout();
+            }*/
+
             SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
+
+            var navigableViewModel = this.DataContext as INavigableViewModel;
+            if (navigableViewModel != null) navigableViewModel.Deactivate(e.Parameter);
 
             SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
         }
@@ -131,7 +148,7 @@ namespace Signal.Views
             // Page above us will be our master view.
             // Make sure we are using the "drill out" animation in this transition.
 
-            //Frame.GoBack(new DrillInNavigationTransitionInfo());
+            Frame.GoBack(new DrillInNavigationTransitionInfo());
         }
 
         private void DetailPage_BackRequested(object sender, BackRequestedEventArgs e)

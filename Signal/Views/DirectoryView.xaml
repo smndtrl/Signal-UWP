@@ -1,11 +1,16 @@
 ﻿<Page
-    x:Class="Signal.Views.ThreadAddView"
+    x:Class="Signal.Views.DirectoryView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Signal.Views"
-    xmlns:model="using:Signal.Model"
+    xmlns:models="using:Signal.Models"
+    xmlns:database="using:TextSecure.database"
+    xmlns:viewmodels="using:Signal.ViewModels"
+    xmlns:drawables="using:Signal.Drawables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:back="using:Bezysoftware.Navigation.BackButton"
+    back:BackButtonManager.IsBackButtonEnabled="True"
     mc:Ignorable="d">
 
     <Page.DataContext>
@@ -13,22 +18,25 @@
     </Page.DataContext>
 
     <Page.Resources>
-        <CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}"/>
-        <DataTemplate x:Key="DirectoryItemNarrow" x:DataType="model:Contact">
-            <Grid Background="#FFC55151">
+        <CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.GroupedContacts}" IsSourceGrouped="True" />
+
+        <DataTemplate x:Key="DirectoryItemNarrow" x:DataType="database:TextSecureDirectory+Directory">
+            <Grid Padding="4">
                 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="0.5*"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Image Width="32" Height="32"/>
-                
-                <TextBlock Grid.Column="2" Text="{x:Bind number}"/>
+                <drawables:ContactPicture 
+                    Grid.RowSpan="2"  Radius="32" Contact="{Binding Result}" DataContext="{x:Bind ContactId, Converter={StaticResource ContactRetriever}}"/>
+                <TextBlock Grid.Column="2" Text="{x:Bind Name}"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind Number}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -64,7 +72,17 @@
             HorizontalContentAlignment="Stretch"
                   SelectedItem="{Binding SelectedContact, Mode=TwoWay}"
             >
-            
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                        Text="test"
+                        FontSize="40" />
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

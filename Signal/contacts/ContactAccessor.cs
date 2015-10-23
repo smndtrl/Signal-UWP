@@ -91,7 +91,7 @@ namespace TextSecure.contacts
                                                       ContactsContract.Contacts.DISPLAY_NAME + " ASC");
         }
         */
-        public async Task<List<ContactData>> getContactsWithPush()
+        /*public async Task<List<ContactData>> getContactsWithPush()
         {
             //final ContentResolver resolver = context.getContentResolver();
             //final String[] inProjection = new String[] { PhoneLookup._ID, PhoneLookup.DISPLAY_NAME };
@@ -130,7 +130,7 @@ namespace TextSecure.contacts
                 throw new NotImplementedException("ContactAccessor getContactsWithPush");
                 //return lookupData;
             }
-        }
+        }*/
         /*
         public String getNameFromContact(Context context, Uri uri)
         {

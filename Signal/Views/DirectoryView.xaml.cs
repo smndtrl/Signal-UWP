@@ -21,24 +21,20 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ThreadView : Page
+    public sealed partial class DirectoryView : Page
     {
-        public ThreadViewModel ViewModel
+        public DirectoryViewModel ViewModel
         {
             get
             {
-                return (ThreadViewModel)DataContext;
+                return (DirectoryViewModel)DataContext;
             }
         }
 
-        public ThreadView()
+        public DirectoryView()
         {
             this.InitializeComponent();
         }
 
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
     }
 }

@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
-using Signal.Model;
+using Signal.Models;
 using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Signal.ViewModel
             _navigationService = navService;
             Threads = new ThreadCollection(service);
 
-            Messenger.Default.Register<AddThreadMessage>(
+            /*Messenger.Default.Register<AddThreadMessage>(
                 this,
                 message =>
                 {
@@ -39,7 +39,29 @@ namespace Signal.ViewModel
                     Threads.Add(thread);
                     Debug.WriteLine("ThreadViewModel got new Thread");
                 }
-            );
+            );*/
+        }
+
+        public const string SelectedThreadPropertyName = "SelectedThread";
+        private Thread _selectedThread = null;
+        public Thread SelectedThread
+        {
+            get { return _selectedThread; }
+            set
+            {
+                Debug.WriteLine("Setting Thread");
+                if (_selectedThread == value)
+                {
+                    return;
+                }
+
+                var oldValue = _selectedThread;
+                _selectedThread = value;
+                //RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
+
+                //Uri eventDetailPageUri = new Uri(string.Format("{0}?key={1}", "MessagePageKey", _selectedThread.ThreadId), UriKind.Relative);
+                _navigationService.NavigateTo("MessagePageKey", _selectedThread);
+            }
         }
 
         ObservableCollection<Thread> _Threads;

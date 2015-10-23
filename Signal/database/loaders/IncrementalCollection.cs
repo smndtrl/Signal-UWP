@@ -15,6 +15,8 @@ namespace Signal.database.loaders
 {
     public abstract class IncrementalCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading where T : INotifyPropertyChanged
     {
+        protected long Skip { get; set; }
+        protected long Take { get; set; }
 
         public bool HasMoreItems
         {

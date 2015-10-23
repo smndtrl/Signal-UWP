@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
-using Signal.Model;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,23 +26,7 @@ namespace Signal.ViewModel
 
         }
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
-        private Thread _selectedThread = null;
-        public Thread SelectedThread
-        {
-            get { return _selectedThread;  }
-            set {
-                Debug.WriteLine("Setting Thread");
-                if (_selectedThread == value)
-                {
-                    return;
-                }
-
-                var oldValue = _selectedThread;
-                _selectedThread = value;
-                RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
-            }
-        }
+        
 
         private RelayCommand _narrowStateCommand;
         public RelayCommand NarrowStateCommand

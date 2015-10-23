@@ -1,6 +1,6 @@
 ﻿
 
-using Signal.Model;
+using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl
 * 
@@ -80,7 +80,8 @@ namespace TextSecure.recipient
 
             Recipient recipient;
             RecipientDetails details;
-            String number = DatabaseFactory.getCanonicalAddressDatabase().getAddressFromId(recipientId);
+            // String number = DatabaseFactory.getCanonicalAddressDatabase().getAddressFromId(recipientId);
+            String number = DatabaseFactory.getDirectoryDatabase().GetNumberForId(recipientId);
             bool isGroupRecipient = GroupUtil.isEncodedGroup(number);
 
             if (isGroupRecipient) details = getGroupRecipientDetails(number).Result;
@@ -88,7 +89,7 @@ namespace TextSecure.recipient
 
             if (details != null)
             {
-                recipient = new Recipient(details.name, details.number, recipientId);
+                recipient = new Recipient(details.Name, details.Number, recipientId, details.ContactId);
             }
             else
             {
@@ -96,11 +97,16 @@ namespace TextSecure.recipient
                                                      ? ContactPhotoFactory.getDefaultGroupPhoto(context)
                                                      : ContactPhotoFactory.getDefaultContactPhoto(context, null);*/
 
-                recipient = new Recipient(null, number, recipientId/*, null, defaultPhoto*/);
+                recipient = new Recipient(null, number, recipientId, null);
             }
 
             recipientCache.Add(recipientId, recipient);
             return recipient;
+        }
+
+        public long getRecipientIdForNumber(string number)
+        {
+            return DatabaseFactory.getDirectoryDatabase().GetForNumber(number).DirectoryId;
         }
 
         /*private Recipient gethronousRecipient(final Context context, final long recipientId)
@@ -166,7 +172,7 @@ namespace TextSecure.recipient
             {
             }*/
 
-            return new RecipientDetails(null, number);
+            return new RecipientDetails(null, number, null);
         }
 
         private async Task<RecipientDetails> getGroupRecipientDetails(String groupId)
@@ -179,7 +185,7 @@ namespace TextSecure.recipient
                 if (record != null)
                 {
                     //Drawable avatar = ContactPhotoFactory.getGroupContactPhoto(context, record.getAvatar());
-                    return new RecipientDetails(record.getTitle(), groupId/*, null, avatar*/);
+                    return new RecipientDetails(record.getTitle(), groupId, null);
                 }
 
                 return null;
@@ -218,17 +224,17 @@ namespace TextSecure.recipient
     }
     public class RecipientDetails
     {
-        public String name;
-        public String number;
+        public string Name { get; set; }
+        public string Number { get; set; }
+        public string ContactId { get; set; }
         //public static Drawable avatar;
         //public static Uri      contactUri;
 
-        public RecipientDetails(String name, String number/*, Uri contactUri, Drawable avatar*/)
+        public RecipientDetails(string name, string number, string contactId)
         {
-            this.name = name;
-            this.number = number;
-            //this.avatar = avatar;
-            //this.contactUri = contactUri;
+            this.Name = name;
+            this.Number = number;
+            this.ContactId = contactId;
         }
     }
 

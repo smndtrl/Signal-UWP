@@ -77,7 +77,8 @@
         </Grid>-->
         
         <local:ThreadView x:Name="masterFrame"  Grid.Row="2" Margin="0"/>
-        <local:MessageView x:Name="detailFrame" Grid.Column="1" Grid.RowSpan="2" Loaded="detailFrame_Loaded"/>
+        <!--local:MessageView x:Name="detailFrame" Grid.Column="1" Grid.RowSpan="2" Loaded="detailFrame_Loaded"/>-->
+        <ContentPresenter x:Name="detailFrame" Grid.Column="1" Grid.RowSpan="2"/>
     
     
     </Grid>

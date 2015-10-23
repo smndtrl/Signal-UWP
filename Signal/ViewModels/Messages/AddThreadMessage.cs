@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using Signal.Model;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

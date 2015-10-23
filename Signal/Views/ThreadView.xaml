@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Signal.Views"
     xmlns:resources="using:Signal.Resources"
-    xmlns:models="using:Signal.Model"
+    xmlns:models="using:Signal.Models"
+    xmlns:drawables="using:Signal.Drawables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
@@ -20,7 +21,7 @@
             <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
             <Setter Property="TextLineBounds" Value="Full"/>
         </Style>
-        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource SubtitleTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="Black"/>
         </Style>
@@ -35,7 +36,7 @@
         </MenuFlyout>
 
         <DataTemplate x:Key="ThreadTemplate" x:DataType="models:Thread">
-            <Grid Padding="10" FlyoutBase.AttachedFlyout="{StaticResource ThreadMenuFlyout}">
+            <Grid Padding="4" FlyoutBase.AttachedFlyout="{StaticResource ThreadMenuFlyout}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior x:Name="ReadFalseDataTrigger" Binding="{Binding Read}" Value="False">
                         <Core:ChangePropertyAction PropertyName="Style" Value="{StaticResource RecipientNameUnreadTextBlockStyle}" TargetObject="{Binding ElementName=RecipientNameTextBlock}"/>
@@ -53,40 +54,44 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="64" Height="64">
-                    <Image Height="64" Width="64"/>
+                
+                <Border Width="64" Height="64">
+                    <drawables:ContactPicture Radius="32" />
+                    <!--<Image Height="64" Width="64" DataContext="{x:Bind Recipients.PrimaryRecipient.Number, Converter={StaticResource ContactPictureConverter}}" Source="{Binding Result}"/>-->
                 </Border>
+                
                 <Grid Grid.Column="1" Margin="10,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="0.5*"/>
+                        <RowDefinition Height="0.5*"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock x:Name="RecipientNameTextBlock" 
-                                Text="{Binding Recipients.ShortString}"  Style="{StaticResource TitleTextBlockStyle}">
+                                Text="{x:Bind Recipients.ShortString}" 
+                               Style="{StaticResource TitleTextBlockStyle}"
+                               TextWrapping="NoWrap">
                     </TextBlock>
                     <TextBlock x:Name="DateTextBlock" 
                                Grid.Column="2"
-                               Text="{Binding Date, Converter={StaticResource DateConverter}}" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    </TextBlock>
+                               Text="{x:Bind Date, Converter={StaticResource DateConverter}}" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
                     <TextBlock x:Name="LastMessageTextBlock" 
                                Grid.Row="2" Grid.ColumnSpan="2"
-                               Text="{Binding Body}" TextWrapping="NoWrap">
+                               Text="{x:Bind Body}" TextWrapping="NoWrap" VerticalAlignment="Center">
                     </TextBlock>
                 </Grid>
             </Grid>
         </DataTemplate>
-        <CollectionViewSource x:Key="threadCvs" Source="{Binding Thread.Threads}">
+        <CollectionViewSource x:Key="threadCvs" Source="{x:Bind ViewModel.Threads}">
         </CollectionViewSource>
     </Page.Resources>
     
     <Page.DataContext>
-        <Binding Source="{StaticResource Locator}"/>
+        <Binding Source="{Binding Thread, Source={StaticResource Locator}}"/>
     </Page.DataContext>
 
     <Grid x:Name="grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -128,9 +133,9 @@
 			x:Name="listView"
 			Margin="0" d:LayoutOverrides="LeftPosition, RightPosition, TopPosition, BottomPosition"
 			ItemsSource="{Binding Source={StaticResource threadCvs}}"
-			IncrementalLoadingTrigger="Edge" IncrementalLoadingThreshold="0" DataFetchSize="0.5"
+			IncrementalLoadingTrigger="Edge" IncrementalLoadingThreshold="1" DataFetchSize="1"
                   IsItemClickEnabled="True"
-			SelectionMode="Single" SelectedItem="{Binding Main.SelectedThread, Mode=TwoWay}" ItemTemplate="{StaticResource ThreadTemplate}">
+			SelectionMode="Single" SelectedItem="{Binding SelectedThread, Mode=TwoWay}" ItemTemplate="{StaticResource ThreadTemplate}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

@@ -1,22 +1,25 @@
-﻿/** 
- * Copyright (C) 2015 smndtrl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+﻿
 
+using GalaSoft.MvvmLight;
+/** 
+* Copyright (C) 2015 smndtrl
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 using libtextsecure.push;
 using libtextsecure.util;
+using Signal.Util;
 using SQLite;
 using SQLite.Net;
 using SQLite.Net.Attributes;
@@ -35,16 +38,17 @@ namespace TextSecure.database
 
     public class TextSecureDirectory
     {
-        public class Directory
+        public class Directory : ObservableObject
         {
             [PrimaryKey, AutoIncrement]
-            public int? id { get; set; } = null;
+            public int DirectoryId { get; set; }
             [Unique]
-            public string number { get; set; }
-            public uint registered { get; set; }
-            public string relay { get; set; }
-            public uint supports_sms { get; set; }
-            public uint timestamp { get; set; }
+            public string Number { get; set; }
+            public string Name { get; set; }
+            public long Registered { get; set; }
+            public string Relay { get; set; }
+            public DateTime Time { get; set; }
+            public string ContactId { get; set; }
         }
 
 
@@ -83,21 +87,54 @@ namespace TextSecure.database
             conn.CreateTable<Directory>();
         }
 
-        public async Task<List<Directory>> getDirectories()
+        public Directory Get(long directoryId)
         {
-            /*SQLiteDatabase database = databaseHelper.getReadableDatabase();
-            Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
+            return conn.Get<Directory>(directoryId);
+        }
 
-            if (cursor != null)
-                cursor.setNotificationUri(context.getContentResolver(), CHANGE_URI);*/
+        public List<Directory> GetAll()
+        {
             var query = conn.Table<Directory>().Where(v => true);
 
             return query.ToList();
         }
 
-        public bool isSmsFallbackSupported(String e164number)
+        public async Task<List<Directory>> GetAllAsync()
         {
-            var query = conn.Table<Directory>().Where(v => v.number == e164number);
+            var query = conn.Table<Directory>().Where(v => true);
+
+            return query.ToList();
+        }
+
+        public Directory GetForNumber(string number)
+        {
+            var query = conn.Table<Directory>().Where(d => d.Number == number);
+
+            return query.First();
+        }
+
+        public List<string> GetNumbers(string number)
+        {
+            var query = conn.Table<Directory>().Where(d => true);
+
+            return query.Select(d => d.Number).ToList();
+        }
+
+        public async Task<List<string>> GetNumbersAsync(string number)
+        {
+            await ReloadLocalContacts(number);
+            var query = conn.Table<Directory>().Where(d => true);
+
+            return query.Select(d => d.Number).ToList();
+        }
+
+        public string GetNumberForId(long recipientId)
+        {
+            return Get(recipientId).Number;
+        }
+        /*public bool isSmsFallbackSupported(String e164number)
+        {
+            var query = conn.Table<Directory>().Where(v => v.Number == e164number);
 
             if (query != null)
             {
@@ -108,7 +145,7 @@ namespace TextSecure.database
                 return false;
             }
 
-        }
+        }*/
 
         public bool isActiveNumber(String e164number)// throws NotInDirectoryException
         {
@@ -117,11 +154,11 @@ namespace TextSecure.database
                 return false;
             }
 
-            var query = conn.Table<Directory>().Where(v => v.number == e164number);
+            var query = conn.Table<Directory>().Where(v => v.Number == e164number);
 
             if (query != null)
             {
-                return query.First().registered == 1;
+                return query.First().Registered == 1;
             }
             else
             {
@@ -132,11 +169,11 @@ namespace TextSecure.database
 
         public String getRelay(String e164number)
         {
-            var query = conn.Table<Directory>().Where(v => v.number == e164number);
+            var query = conn.Table<Directory>().Where(v => v.Number == e164number);
 
             if (query != null)
             {
-                return query.First().relay;
+                return query.First().Relay;
             }
             else
             {
@@ -149,11 +186,11 @@ namespace TextSecure.database
         {
             Directory dir = new Directory()
             {
-                number = token.getNumber(),
-                relay = token.getRelay(),
-                registered = active ? (uint)1 : 0,
+                Number = token.getNumber(),
+                Relay = token.getRelay(),
+                Registered = active ? (uint)1 : 0,
                 //supports_sms = token.isSupportsSms() ? (uint)1 : 0,
-                timestamp = (uint)Helper.getTime()
+                Time = TimeUtil.GetDateTimeMillis()
             };
 
             conn.InsertOrReplace(dir);
@@ -167,29 +204,26 @@ namespace TextSecure.database
             {
                 foreach (ContactTokenDetails token in activeTokens)
                 {
-                    Debug.WriteLine("Directory: Adding active token: " + token.getNumber() + ", " + token.getToken());
-                    Directory dir = new Directory()
-                    {
-                        number = token.getNumber(),
-                        relay = token.getRelay(),
-                        registered = 1,
-                        //supports_sms = token.isSupportsSms() ? (uint)1 : 0,
-                        timestamp = (uint)Helper.getTime()
-                    };
 
-                    conn.InsertOrReplace(dir);
+                    var directory = GetForNumber(token.getNumber());
+
+                    directory.Relay = token.getRelay();
+                    directory.Registered = 1;
+                    directory.Time = TimeUtil.GetDateTimeMillis();
+
+                    conn.Update(directory);
+
                 }
 
                 foreach (String token in inactiveTokens)
                 {
-                    Directory dir = new Directory()
-                    {
-                        number = token,
-                        registered = 0,
-                        timestamp = (uint)Helper.getTime()
-                    };
+                    var directory = GetForNumber(token);
 
-                    conn.InsertOrReplace(dir);
+                    directory.Relay = null;
+                    directory.Registered = 0;
+                    directory.Time = TimeUtil.GetDateTimeMillis();
+
+                    conn.Update(directory);
 
                 }
 
@@ -199,12 +233,68 @@ namespace TextSecure.database
             }
         }
 
-        public async Task<List<String>> getPushEligibleContactNumbers(String localNumber)
+        private async Task ReloadLocalContacts(string localNumber)
         {
-            /**final Uri         uri = Phone.CONTENT_URI;
-            final Set< String > results = new HashSet<String>();
-            Cursor cursor = null;*/
-            
+            try
+            {
+                var contactStore = await ContactManager.RequestStoreAsync();
+                var contacts = await contactStore.FindContactsAsync();
+
+                foreach (var contact in contacts)
+                {
+                    //Debug.WriteLine($"Name: {contact.DisplayName}");
+                    foreach (var number in contact.Phones)
+                    {
+                        //Debug.WriteLine($"Number: {number.Number}");
+                        try
+                        {
+                            string e164number = PhoneNumberFormatter.formatNumber(number.Number, localNumber);
+
+                            var directory = GetForNumber(e164number);
+
+                            if (directory != null)
+                            {
+                                directory.Name = contact.DisplayName;
+                                directory.Time = TimeUtil.GetDateTimeMillis();
+                                directory.ContactId = contact.Id;
+
+                                conn.Update(directory);
+                            } else
+                            {
+                                var newdir = new Directory()
+                                {
+                                    Name = contact.DisplayName,
+                                    Number = e164number,
+                                    Relay = null,
+                                    Registered = 0,
+                                    Time = TimeUtil.GetDateTimeMillis(),
+                                    ContactId = contact.Id
+                                };
+                                conn.Insert(newdir);
+                            }
+
+                           
+
+                        }
+                        catch (InvalidNumberException e)
+                        {
+                            Debug.WriteLine($"Directory: Invalid number: {number}");
+                        }
+                        catch (SQLiteException e)
+                        {
+                            if (e.Message.Equals("Constraint")) continue;
+                        }
+
+                    }
+                }
+
+
+            }
+            catch (Exception e) { }
+       }
+
+        /*public async Task<List<Tuple<string, Contact>>> getPushEligibleContactNumbers(String localNumber)
+        {
 
 
 
@@ -213,7 +303,7 @@ namespace TextSecure.database
                 var contactStore = await ContactManager.RequestStoreAsync();
                 var contacts = await contactStore.FindContactsAsync();
 
-                IList<string> results = new List<string>();
+                IList<Tuple<string, Contact>> results = new List<Tuple<string, Contact>>();
 
                 foreach (var contact in contacts)
                 {
@@ -222,7 +312,7 @@ namespace TextSecure.database
                         try
                         {
                             string e164number = PhoneNumberFormatter.formatNumber(number.Number, localNumber);
-                            results.Add(number.Number); //apply formatting
+                            results.Add(Tuple.Create(number.Number, contact)); //apply formatting
                         }
                         catch (InvalidNumberException e)
                         {
@@ -235,7 +325,7 @@ namespace TextSecure.database
                 var query = conn.Table<Directory>().Where(t => true);
                 foreach (var contact in query)
                 {
-                    results.Add(PhoneNumberFormatter.formatNumber(contact.number, localNumber)); //apply formatting
+                    //results.Add(Tuple.Create(PhoneNumberFormatter.formatNumber(contact.Number, localNumber), contact.)); //apply formatting
                 }
 
                 return results.Distinct().ToList();
@@ -246,10 +336,8 @@ namespace TextSecure.database
             }
             finally
             {
-                /* if (cursor != null)
-                     cursor.close();*/
             }
-        }
+        }*/
 
         public async Task<List<Directory>> getActiveDirectoryList()
         {
@@ -257,7 +345,7 @@ namespace TextSecure.database
             Cursor cursor = null;*/
             try
             {
-                var query = conn.Table<Directory>().Where(t => t.registered == 1);
+                var query = conn.Table<Directory>().Where(t => t.Registered == 1);
                 /*cursor = databaseHelper.getReadableDatabase().query(TABLE_NAME, new String[] { NUMBER },
                     REGISTERED + " = 1", null, null, null, null);
 
@@ -280,8 +368,8 @@ namespace TextSecure.database
             Cursor cursor = null;*/
             try
             {
-                var query = conn.Table<Directory>().Where(t => t.registered == 1);
-                var list =  query.ToList();
+                var query = conn.Table<Directory>().Where(t => t.Registered == 1);
+                var list = query.ToList();
                 /*cursor = databaseHelper.getReadableDatabase().query(TABLE_NAME, new String[] { NUMBER },
                     REGISTERED + " = 1", null, null, null, null);
 
@@ -289,7 +377,7 @@ namespace TextSecure.database
                 {
                     results.add(cursor.getString(0));
                 }*/
-                return list.Select(t => t.number).ToList();
+                return list.Select(t => t.Number).ToList();
             }
             finally
             {

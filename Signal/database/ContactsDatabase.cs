@@ -1,6 +1,6 @@
 ﻿
 
-using Signal.Model;
+using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl
 * 
@@ -58,7 +58,7 @@ namespace TextSecure.database
                                                                     TYPE_COLUMN
     };*/
 
-        public const uint NORMAL_TYPE = 0;
+        /*public const uint NORMAL_TYPE = 0;
         public const uint PUSH_TYPE = 1;
         public const uint GROUP_TYPE = 2;
 
@@ -87,7 +87,7 @@ namespace TextSecure.database
 
             var list = conn.Table<Contact>().Where(t => true).ToList();
             return list;
-        }
+        }*/
 
         /*public Cursor query(String filter, boolean pushOnly)
         {
@@ -229,7 +229,7 @@ namespace TextSecure.database
             onCreate(db);
         }
         */
-        private async void loadPushUsers()// throws IOException
+        /*private async void loadPushUsers()// throws IOException
         {
             Debug.WriteLine("populating push users into virtual db.");
             List<ContactAccessor.ContactData> pushUsers = await ContactAccessor.getInstance().getContactsWithPush();
@@ -244,13 +244,14 @@ namespace TextSecure.database
                     label = "",
                     type = PUSH_TYPE,
 
-                };*/
+                };*
 
                 var contact = new Contact()
                 {
                     label = "label",
                     number = user.numbers[0],
-                    name = user.name
+                    name = user.name,
+                    SystemId = user.id
                 };
 
                 Debug.WriteLine($"Found push {contact.name} with {contact.number}");
@@ -269,10 +270,10 @@ namespace TextSecure.database
                 values.put(LABEL_COLUMN, (String)null);
                 values.put(NUMBER_COLUMN, user.numbers.get(0).number);
                 values.put(TYPE_COLUMN, PUSH_TYPE);
-                mDatabase.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);*/
+                mDatabase.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);*
             }
             Debug.WriteLine("finished populating push users.");
-        }
+        }*/
     }/*
 
     private static class TypedCursorWrapper extends CursorWrapper

@@ -7,7 +7,7 @@ using libaxolotl.util;
 using libtextsecure.push.exceptions;
 using libtextsecure.util;
 using Signal.database;
-using Signal.Model;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -43,8 +43,9 @@ namespace TextSecure.database
         private TextMessageDatabase textMessageDatabase;
         private PushDatabase pushDatabase;
 
-        private ContactsDatabase contactDatabase;
-        private CanonicalAddressDatabase addressDatabase;
+        private RecipientDatabase recipientDatabase;
+        //private ContactsDatabase contactDatabase;
+        //private CanonicalAddressDatabase addressDatabase;
         private TextSecureDirectory directoryDatabase;
 
         private SQLiteConnection connection;
@@ -86,15 +87,15 @@ namespace TextSecure.database
             return getInstance().textMessageDatabase;
         }
 
-        public static ContactsDatabase getContactsDatabase()
+        /*public static ContactsDatabase getContactsDatabase()
         {
             return getInstance().contactDatabase;
-        }
+        }*/
 
-        public static CanonicalAddressDatabase getCanonicalAddressDatabase()
+       /* public static CanonicalAddressDatabase getCanonicalAddressDatabase()
         {
             return getInstance().addressDatabase;
-        }
+        }*/
 
         public static TextSecureDirectory getDirectoryDatabase()
         {
@@ -104,6 +105,11 @@ namespace TextSecure.database
         public static PushDatabase getPushDatabase()
         {
             return getInstance().pushDatabase;
+        }
+
+        public static RecipientDatabase getRecipientDatabase()
+        {
+            return getInstance().recipientDatabase;
         }
 
         private DatabaseFactory()
@@ -121,10 +127,11 @@ namespace TextSecure.database
             messageDatabase = new MessageDatabase(connection);
             textMessageDatabase = new TextMessageDatabase(connection);
 
-            contactDatabase = new ContactsDatabase(connection);
-            addressDatabase = new CanonicalAddressDatabase(connection);
+            //contactDatabase = new ContactsDatabase(connection);
+            //addressDatabase = new CanonicalAddressDatabase(connection);
             directoryDatabase = new TextSecureDirectory(connection);
             pushDatabase = new PushDatabase(connection);
+            recipientDatabase = new RecipientDatabase(connection);
         }
     }
 

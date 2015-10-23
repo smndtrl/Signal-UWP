@@ -34,7 +34,6 @@ using TextSecure.database;
 using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
-using TextSecure.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

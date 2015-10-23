@@ -1,7 +1,6 @@
 ﻿
 
-using Signal.database.models;
-using Signal.Model;
+
 /** 
 * Copyright (C) 2015 smndtrl
 * 
@@ -26,6 +25,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.recipient;
+using Signal.database.models;
+using Signal.Models;
 
 namespace TextSecure.database
 {

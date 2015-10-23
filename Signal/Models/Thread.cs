@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.recipient;
 
-namespace Signal.Model
+namespace Signal.Models
 {
     /*
     const String TABLE_NAME = "thread";

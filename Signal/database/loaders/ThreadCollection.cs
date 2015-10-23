@@ -1,4 +1,6 @@
-﻿using Signal.Model;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Signal.Models;
+using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TextSecure.database;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
 namespace Signal.database.loaders
@@ -32,6 +35,20 @@ namespace Signal.database.loaders
                 Debug.WriteLine($"Adding thread for {con.Recipients.ShortString}");
                 Add(con);
             }*/
+
+            Messenger.Default.Register<RefreshThreadMessage>(
+                this,
+                async message =>
+                {
+                    // Refresh Collection loader
+                    Debug.WriteLine("Refreshing Thread Collection");
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Clear();
+                    });
+                   
+                }
+            );
         }
 
         protected override bool HasMoreItemsInternal()

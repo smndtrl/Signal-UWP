@@ -1,6 +1,6 @@
 ﻿
 
-using Signal.Model;
+using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl
 * 

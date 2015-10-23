@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.recipient;
 
-namespace Signal.Model
+namespace Signal.Models
 {
 
     /*

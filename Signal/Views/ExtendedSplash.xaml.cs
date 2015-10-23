@@ -31,7 +31,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Core;
-using TextSecure.Views;
 using TextSecure.util;
 using System.Threading;
 using Windows.UI.ViewManagement;

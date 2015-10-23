@@ -1,4 +1,4 @@
-﻿using Signal.Model;
+﻿using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,14 +14,14 @@ using Windows.UI.Xaml.Data;
 
 namespace Signal.database.loaders
 {
-    public class ContactCollection : IncrementalCollection<Contact>
+    public class GroupedDirectoryCollection : ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>>
     {
         IDataService service;
         IEnumerable<Contact> _storage;
 
         int max = 10;
 
-        public ContactCollection(IDataService service)
+        public GroupedDirectoryCollection(IDataService service)
         {
             this.service = service;
             /*var list = (await service.getContacts()).ToList();
@@ -32,19 +32,14 @@ namespace Signal.database.loaders
                 Debug.WriteLine($"Adding {con.name}");
                 Add(con);
             }*/
+
+            var contacts = (service.getDictionary().Result).ToList();
+            var grouped = from contact in contacts group contact by contact.Registered;
+            foreach (var group in grouped)
+            {
+                if (group.Key == 1) Add(group); // TODO: only add registered for now
+                Debug.WriteLine($"We have {grouped.Count()} groups, {group.Key} with {group.Count()} members.");
+            }
         }
-
-        protected override bool HasMoreItemsInternal()
-        {
-            return Count < max;
-        }
-
-        protected override async Task<IEnumerable<Contact>> LoadMoreItemsInternal(CancellationToken c, uint count)
-        {
-            Debug.WriteLine($"Loading {count} more");
-            return (await service.getContacts()).ToList().Skip(Count).Take((int)count);
-        }
-
-
     }
 }

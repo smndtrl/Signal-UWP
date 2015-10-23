@@ -25,7 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.util;
 
-namespace Signal.Model
+namespace Signal.Models
 {
     public class Recipient
     {
@@ -34,9 +34,10 @@ namespace Signal.Model
         [PrimaryKey, AutoIncrement]
         public long RecipientId { get; private set; }
 
-        public string Number { get; private set; }
+        public string Number { get; set; }
         public string Name { get; private set; }
 
+        public string ContactId { get; private set; }
         //private Drawable contactPhoto;
         private Uri contactUri;
 
@@ -78,7 +79,21 @@ namespace Signal.Model
     });
   }*/
 
-        public Recipient(String name, String number, long recipientId/*, Uri contactUri, Drawable contactPhoto*/)
+            public Recipient()
+        {
+
+        }
+
+        public Recipient(String name, String number, long recipientId, string contactId)
+        {
+            Number = number;
+            RecipientId = recipientId;
+            //this.contactUri = contactUri;
+            Name = name;
+            ContactId = contactId;
+        }
+
+        /*public Recipient(String name, String number, long recipientId/*, Uri contactUri, Drawable contactPhoto)
         {
             Number = number;
             RecipientId = recipientId;
@@ -138,8 +153,7 @@ namespace Signal.Model
 
         public static Recipient getUnknownRecipient()
         {
-            return new Recipient("Unknown", "Unknown", -1/*, null,
-                                 ContactPhotoFactory.getDefaultContactPhoto(context, null)*/);
+            return new Recipient("Unknown", "Unknown", -1, "");
         }
 
         public override bool Equals(Object o)

@@ -6,6 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.MessageView"
+    xmlns:model="using:Signal.Models"
+    xmlns:resources="using:Signal.Resources"
+    xmlns:back="using:Bezysoftware.Navigation.BackButton"
+    back:BackButtonManager.IsBackButtonEnabled="True"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -39,6 +43,47 @@
                     </Setter.Value>
                 </Setter>-->
             </Style>
+
+        <MenuFlyout x:Name="flyout1" x:Key="MessageMenuFlyout">
+            <MenuFlyoutItem x:Name="DeleteMessageFlyout" 
+                        Text="Delete TODO" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{Binding}"/>
+            <MenuFlyoutItem x:Name="UpdateMessageFlyout" 
+                        Text="Update TODO" Command="{x:Bind ViewModel.UpdateCommand}" CommandParameter="{Binding}"/>
+        </MenuFlyout>
+        
+        <DataTemplate x:Key="DeliveryStatus" x:DataType="model:Message">
+            <Grid Width="20" Height="20">
+
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior x:Name="IsFailedTrigger" Binding="{Binding Converter={StaticResource DeliveryStatusConverter}}" Value="0">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=delivered}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=sent}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=pending}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior x:Name="IsPendingTrigger" Binding="{Binding Converter={StaticResource DeliveryStatusConverter}}" Value="1">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=delivered}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=sent}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=pending}" Value="Visible"/>
+                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=pending}" Value="True"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior x:Name="IsDeliveredTrigger" Binding="{Binding Converter={StaticResource DeliveryStatusConverter}}" Value="2">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=delivered}" Value="Visible"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=sent}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=pending}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior x:Name="IsSentTrigger" Binding="{Binding Converter={StaticResource DeliveryStatusConverter}}" Value="3">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=delivered}" Value="Collapsed"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=sent}" Value="Visible"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=pending}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <Image x:Name="delivered" Width="16" Height="16" Source="ms-appx:///Assets/ic_done_all_white_18dp.png"/>
+                <Image x:Name="sent" Width="16" Height="16" Source="ms-appx:///Assets/ic_done_white_18dp.png"/>
+                <ProgressRing x:Name="pending" Width="12" Height="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+        
         <DataTemplate x:Key="MessageBubbleLeft">
             <Grid>
                 <Grid.RowDefinitions>
@@ -69,7 +114,12 @@
 
                 <StackPanel Grid.Column="1" Margin="10,0,0,0" Padding="10" Background="{ThemeResource MessageBubbleBackgroundThemeBrush}">
                     <TextBlock Text="{Binding Body}" />
-                    <TextBlock Text="{Binding DateSent, Converter={StaticResource DateConverter}}" TextWrapping="NoWrap"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding DateSent, Converter={StaticResource DateConverter}}" TextWrapping="NoWrap"/>
+                        <ContentPresenter x:Name="deliveryStatusPresenter" ContentTemplate="{StaticResource DeliveryStatus}"/>
+                    </StackPanel>
+                    
+
                 </StackPanel>
 
                 <Path Data="m 16,0 l 16,8 l 0,-8 l -16,0"
@@ -79,15 +129,18 @@
         			Grid.Row="2" Grid.Column="2"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="MessageTemplate">
-            <Grid x:Name="MessageGrid" Padding="10" HorizontalAlignment="Right">
+        
+
+        
+        <DataTemplate x:Key="MessageTemplate" x:DataType="model:Message">
+            <Grid x:Name="MessageGrid" Padding="10" HorizontalAlignment="Right" FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="ImageColumn" Width="Auto"/>
                     <ColumnDefinition x:Name="TextColumn"  Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior x:Name="IsOutgoingTrueDataTrigger" Binding="{Binding IsOutgoing}" Value="True">
+                    <Core:DataTriggerBehavior x:Name="IsOutgoingTrueDataTrigger" Binding="{Binding DateSent, Converter={StaticResource DateConverter}}" Value="True">
                         <Core:ChangePropertyAction PropertyName="ContentTemplate" TargetObject="{Binding ElementName=contentPresenter}" Value="{StaticResource MessageBubbleRight}"/>
                         <Core:ChangePropertyAction PropertyName="HorizontalAlignment" TargetObject="{Binding ElementName=MessageGrid}" Value="Right"/>
                         <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ImageBorder}" Value="Collapsed"/>
@@ -96,11 +149,15 @@
                         <Core:ChangePropertyAction PropertyName="ContentTemplate" TargetObject="{Binding ElementName=contentPresenter}" Value="{StaticResource MessageBubbleLeft}"/>
                         <Core:ChangePropertyAction PropertyName="HorizontalAlignment" TargetObject="{Binding ElementName=MessageGrid}" Value="Left"/>
                     </Core:DataTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="RightTapped">
+                        <resources:OpenMenuFlyoutAction />
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="Holding">
+                        <resources:OpenMenuFlyoutAction />
+                    </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
 
-                <Border x:Name="ImageBorder" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="32" Height="32" VerticalAlignment="Top">
-                    <Image Height="32" Width="32"/>
-                </Border>
+                
                 <!--<StackPanel Grid.Column="1" Margin="10,0,0,0">
                     <TextBlock Text="" Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock Text="{Binding body}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
@@ -112,7 +169,7 @@
 
 
     <Page.DataContext>
-        <Binding Source="{StaticResource Locator}"/>
+        <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>
     </Page.DataContext>
 
 
@@ -124,11 +181,16 @@
 
         <ListView 
 			x:Name="listView"
-            ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{Binding Message.Messages}"
+            ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{Binding Messages}"
 			IncrementalLoadingTrigger="Edge" IncrementalLoadingThreshold="0" DataFetchSize="0.2"
 			HorizontalContentAlignment="Stretch" IsItemClickEnabled="True"
-			SelectionMode="None" local:ItemClickCommand.Command="{Binding Thread.NavigateCommand}"
+			SelectionMode="None"
                   >
+
+            <Interactivity:Interaction.Behaviors>
+                <resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
+            </Interactivity:Interaction.Behaviors>
+            
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -146,13 +208,13 @@
                 x:Name="button" 
                 Content="Button" 
                 VerticalAlignment="Stretch" d:LayoutOverrides="Height"
-                Command="{Binding Message.SendCommand}"/>
+                Command="{x:Bind ViewModel.SendCommand}"/>
 
             <TextBox Grid.Column="2" 
                      x:Uid="MessageTextBox"
                      x:Name="textBox" 
                      TextWrapping="Wrap" 
-                     Text="{Binding Message.MessageText, Mode=TwoWay}" d:LayoutOverrides="Width, Height"
+                     Text="{x:Bind ViewModel.MessageText, Mode=TwoWay}" d:LayoutOverrides="Width, Height"
                      Style="{StaticResource SendMessageTextBox}"/>
         </Grid>
 

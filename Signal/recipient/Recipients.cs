@@ -1,6 +1,6 @@
 ﻿
 
-using Signal.Model;
+using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl
 * 
@@ -299,6 +299,17 @@ namespace TextSecure.recipient
                 }
 
                 return fromString;
+            }
+        }
+
+        public Recipient PrimaryRecipient
+        {
+            get
+            {
+                if (!isEmpty())
+                    return this.recipients[0];
+                else
+                    return null;
             }
         }
 

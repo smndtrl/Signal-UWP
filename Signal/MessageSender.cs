@@ -21,7 +21,7 @@ using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal;
-using Signal.Model;
+using Signal.Models;
 using Signal.Tasks;
 using Strilanc.Value;
 using System;

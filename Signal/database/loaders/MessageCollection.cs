@@ -1,4 +1,6 @@
-﻿using Signal.Model;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Signal.Models;
+using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +22,40 @@ namespace Signal.database.loaders
         //IEnumerable<Contact> _storage;
 
         int max = int.MaxValue;
-        long threadId;
+        long threadId = -1;
+
+        /*public MessageCollection(IDataService service)
+        {
+            this.service = service;
+
+            Messenger.Default.Register<RefreshThreadMessage>(
+    this,
+    async message =>
+    {
+        Debug.WriteLine($"(MessageCollection)Refreshing message Collection for Thread {message.ThreadId}");
+
+                    // Refresh Collection loader
+                    if (threadId != message.ThreadId)
+        {
+            Debug.WriteLine($"Thread #{threadId} got message for {message.ThreadId}, sleeping.");
+            return;
+        }
+
+
+        Debug.WriteLine($"Refreshing message Collection for Trhead {message.ThreadId}");
+        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+        {
+            Clear();
+        });
+
+    }
+);
+        }
+
+        public void Show(long threadId)
+        {
+            this.threadId = threadId;
+        }*/
 
         public MessageCollection(IDataService service, long threadId)
         {
@@ -33,6 +68,29 @@ namespace Signal.database.loaders
             {
                 Add(con);
             }*/
+
+            Messenger.Default.Register<RefreshThreadMessage>(
+                this,
+                async message =>
+                {
+                    Debug.WriteLine($"(MessageCollection)Refreshing message Collection for Thread {message.ThreadId}");
+
+                    // Refresh Collection loader
+                    if (threadId != message.ThreadId)
+                    {
+                        Debug.WriteLine($"Thread #{threadId} got message for {message.ThreadId}, sleeping.");
+                        return;
+                    }
+
+
+                    Debug.WriteLine($"Refreshing message Collection for Trhead {message.ThreadId}");
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Clear();
+                    });
+
+                }
+            );
         }
 
         protected override bool HasMoreItemsInternal()

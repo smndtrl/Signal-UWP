@@ -16,7 +16,7 @@
  */
 
 using libaxolotl.util;
-using Signal.Model;
+using Signal.Models;
 using Signal.Util;
 using SQLite;
 using SQLite.Net;
@@ -66,7 +66,6 @@ namespace TextSecure.database
             var query = conn.Table<Message>().Where(v => true);
 
             return query.ToList();
-            throw new NotImplementedException("MessageDatabase getMessageList");
             /*SQLiteDatabase db = databaseHelper.getReadableDatabase();
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, DATE + " DESC");
             setNotifyConverationListListeners(cursor);*/
@@ -84,10 +83,10 @@ namespace TextSecure.database
             conn.Update(message);
             Debug.WriteLine("after save");
 
-            // TODO: await DatabaseFactory.getThreadDatabase().update(message.ThreadId);
+            DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
         }
 
-        public async Task Test(long messageId)
+        /*public async Task Test(long messageId)
         {
             Debug.WriteLine($"MessageDatabase: Testing message: {messageId}");
 
@@ -102,12 +101,9 @@ namespace TextSecure.database
             conn.Update(message2);
             message1.PropertyChanged += (s, e) => { Debug.WriteLine("message 2 property changed"); };
 
-            /*Debug.WriteLine("before save");
-            conn.Update(message);
-            Debug.WriteLine("after save");*/
 
-            // TODO: await DatabaseFactory.getThreadDatabase().update(message.ThreadId);
-        }
+            DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
+        }*/
 
         public async Task<long> getThreadIdForMessage(long messageId)
         {

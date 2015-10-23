@@ -1,5 +1,5 @@
 ﻿using Microsoft.Data.Entity;
-using Signal.Model;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

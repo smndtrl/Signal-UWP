@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
-using Signal.Model;
+using Signal.Models;
 using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
@@ -29,10 +29,12 @@ namespace Signal.ViewModel
             _dataService = service;
             _navigationService = navService;
 
+            var test = Contacts;
+
         }
 
-        ObservableCollection<Contact> _Contacts;
-        public ObservableCollection<Contact> Contacts
+        ObservableCollection<TextSecureDirectory.Directory> _Contacts;
+        public ObservableCollection<TextSecureDirectory.Directory> Contacts
         {
             get { return _Contacts ?? (Contacts = new DirectoryCollection(_dataService)); }
             set
@@ -42,9 +44,32 @@ namespace Signal.ViewModel
             }
         }
 
+        GroupedDirectoryCollection _GroupedContacts;
+        public GroupedDirectoryCollection GroupedContacts
+        {
+            get { return _GroupedContacts ?? (_GroupedContacts = new GroupedDirectoryCollection(_dataService)); }
+            set
+            {
+                _GroupedContacts = value;
+                RaisePropertyChanged("GroupedContacts");
+            }
+        }
 
-        Contact _selectedContact;
-        public Contact SelectedContact
+        /* public ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>> GroupedContacts
+         {
+             get {
+                 var contacts = _dataService.getDictionary();
+                 var grouped = from contact in contacts group contact by contact.Registered;
+                 foreach (var group in grouped)
+                     Debug.WriteLine($"We have {grouped.Count()} groups, {group.Key} with {group.Count()} members.");
+                 return new ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>>(grouped);
+             }
+
+         }*/
+
+
+        TextSecureDirectory.Directory _selectedContact;
+        public TextSecureDirectory.Directory SelectedContact
         {
             get { return _selectedContact; }
             set
@@ -76,12 +101,12 @@ namespace Signal.ViewModel
         }*/
 
         // commands
-        private RelayCommand<Contact> _addCommand;
-        public RelayCommand<Contact> AddCommand
+        private RelayCommand<TextSecureDirectory.Directory> _addCommand;
+        public RelayCommand<TextSecureDirectory.Directory> AddCommand
         {
             get
             {
-                return _addCommand ?? (_addCommand = new RelayCommand<Contact>( 
+                return _addCommand ?? (_addCommand = new RelayCommand<TextSecureDirectory.Directory>( 
                    p => { addCommandInternal(); },
                    p => SelectedContact != null
                    ));
@@ -91,7 +116,7 @@ namespace Signal.ViewModel
         private async void addCommandInternal()
         {
 
-            Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.number, true);
+            Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.Number, true);
 
             var threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients, 0);
 

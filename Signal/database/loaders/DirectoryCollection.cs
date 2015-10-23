@@ -1,4 +1,4 @@
-﻿using Signal.Model;
+﻿using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Signal.database.loaders
 {
-    public class DirectoryCollection : IncrementalCollection<Contact>
+    public class DirectoryCollection : IncrementalCollection<TextSecureDirectory.Directory>
     {
         IDataService service;
         IEnumerable<Contact> _storage;
@@ -39,7 +39,7 @@ namespace Signal.database.loaders
             return Count < max;
         }
 
-        protected override async Task<IEnumerable<Contact>> LoadMoreItemsInternal(CancellationToken c, uint count)
+        protected override async Task<IEnumerable<TextSecureDirectory.Directory>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
             Debug.WriteLine($"Loading {count} more from directory");
             return (await service.getDictionary()).ToList().Skip(Count).Take((int)count);

@@ -1,7 +1,4 @@
-﻿
-
-using Signal.Model;
-/** 
+﻿/** 
 * Copyright (C) 2015 smndtrl
 * 
 * This program is free software: you can redistribute it and/or modify
@@ -24,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
+using Signal.Models;
 
 namespace TextSecure.recipient
 {
@@ -51,6 +49,8 @@ namespace TextSecure.recipient
             }
 
             return provider.getRecipients(ids, asynchronous);
+
+            //return DatabaseFactory.getRecipientDatabase().GetRecipients(recipients);
         }
 
         public static Recipients getRecipientsFor(Recipient recipient, bool asynchronous)
@@ -59,16 +59,22 @@ namespace TextSecure.recipient
             ids[0] = recipient.getRecipientId();
 
             return provider.getRecipients(ids, asynchronous);
+
+            //return DatabaseFactory.getRecipientDatabase().GetRecipients(new long[] { recipient.RecipientId });
         }
 
         public static Recipient getRecipientForId(long recipientId, bool asynchronous)
         {
             return provider.getRecipient(recipientId, asynchronous);
+
+            //return DatabaseFactory.getRecipientDatabase().Get(recipientId);
         }
 
         public static Recipients getRecipientsForIds(long[] recipientIds, bool asynchronous)
         {
             return provider.getRecipients(recipientIds, asynchronous);
+
+            //return DatabaseFactory.getRecipientDatabase().GetRecipients(recipientIds);
         }
 
         public static Recipients getRecipientsFromString(String rawText, bool asynchronous)
@@ -99,7 +105,7 @@ namespace TextSecure.recipient
                 ids[i++] = Convert.ToUInt32(id);
             }
 
-            return provider.getRecipients( ids, asynchronous);
+            return DatabaseFactory.getRecipientDatabase().GetRecipients(ids);
         }
 
         private static May<long> getRecipientIdFromNumber(String number)
@@ -113,7 +119,9 @@ namespace TextSecure.recipient
                 number = parseBracketedNumber(number);
             }
 
-            return new May<long>(DatabaseFactory.getCanonicalAddressDatabase().getCanonicalAddressId(number));
+            //return new May<long>(DatabaseFactory.getRecipientDatabase().GetRecipientIdForNumber(number));
+            return new May<long>(provider.getRecipientIdForNumber(number));
+
         }
 
         private static bool hasBracketedNumber(String recipient)
