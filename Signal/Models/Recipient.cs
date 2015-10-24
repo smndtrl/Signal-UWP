@@ -32,12 +32,12 @@ namespace Signal.Models
 
         //private final Set<RecipientModifiedListener> listeners = Collections.newSetFromMap(new WeakHashMap<RecipientModifiedListener, Boolean>());
         [PrimaryKey, AutoIncrement]
-        public long RecipientId { get; private set; }
+        public long RecipientId { get; set; }
 
         public string Number { get; set; }
-        public string Name { get; private set; }
+        public string Name { get;  set; }
 
-        public string ContactId { get; private set; }
+        public string ContactId { get;  set; }
         //private Drawable contactPhoto;
         private Uri contactUri;
 
@@ -78,10 +78,14 @@ namespace Signal.Models
         }
     });
   }*/
-
-            public Recipient()
+        public Recipient()
         {
+            
+        }
 
+        public Recipient(long recipientId)
+        {
+            RecipientId = recipientId;
         }
 
         public Recipient(String name, String number, long recipientId, string contactId)

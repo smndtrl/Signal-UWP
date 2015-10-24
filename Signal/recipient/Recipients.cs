@@ -52,52 +52,8 @@ namespace TextSecure.recipient
         {
             this.recipients = recipients;
 
-            /*if (preferences != null)
-            {
-                ringtone = preferences.getRingtone();
-                mutedUntil = preferences.getMuteUntil();
-                vibrate = preferences.getVibrateState();
-                blocked = preferences.isBlocked();
-            }*/
-        }/*
-
-        Recipients(List<Recipient> recipients, ListenableFutureTask<RecipientsPreferences> preferences)
-        {
-            this.recipients = recipients;
-
-            /*preferences.addListener(new FutureTaskListener<RecipientsPreferences>() {
-      @Override
-      public void onSuccess(RecipientsPreferences result)
-        {
-            if (result != null)
-            {
-
-                Set<RecipientsModifiedListener> localListeners;
-
-                synchronized(Recipients.this) {
-                    ringtone = result.getRingtone();
-                    mutedUntil = result.getMuteUntil();
-                    vibrate = result.getVibrateState();
-                    blocked = result.isBlocked();
-
-                    localListeners = new HashSet<>(listeners);
-                }
-
-                for (RecipientsModifiedListener listener : localListeners)
-                {
-                    listener.onModified(Recipients.this);
-                }
-            }
         }
-
-        @Override
-      public void onFailure(Throwable error)
-        {
-            Log.w(TAG, error);
-        }
-    });
-        }
-        
+        /*
         public synchronized @Nullable Uri getRingtone()
         {
             return ringtone;
@@ -204,23 +160,57 @@ namespace TextSecure.recipient
         {
             return isSingleRecipient() && GroupUtil.isEncodedGroup(recipients.get(0).getNumber());
         }*/
-
-        public bool isEmpty()
+        public bool IsGroupRecipient
         {
-            return this.recipients.Count == 0;
+            get
+            {
+                return IsSingleRecipient && false; // TODO: group enable
+            }
         }
 
-        public bool isSingleRecipient()
+
+        /*public bool isEmpty()
+        {
+            return this.recipients.Count == 0;
+        }*/
+        public bool IsEmpty
+        {
+            get
+            {
+                return this.recipients.Count == 0;
+            }
+        }
+
+        /*public bool isSingleRecipient()
         {
             return this.recipients.Count == 1;
+        }*/
+
+        public bool IsSingleRecipient
+        {
+            get
+            {
+                return this.recipients.Count == 1;
+            }
         }
 
         public Recipient getPrimaryRecipient() // TODO: null
         {
-            if (!isEmpty())
+            if (!IsEmpty)
                 return this.recipients[0];
             else
                 return null;
+        }
+
+        public Recipient PrimaryRecipient
+        {
+            get
+            {
+                if (!IsEmpty)
+                    return this.recipients[0];
+                else
+                    return null;
+            }
         }
 
         public List<Recipient> getRecipientsList()
@@ -302,16 +292,7 @@ namespace TextSecure.recipient
             }
         }
 
-        public Recipient PrimaryRecipient
-        {
-            get
-            {
-                if (!isEmpty())
-                    return this.recipients[0];
-                else
-                    return null;
-            }
-        }
+
 
         /*
         @Override

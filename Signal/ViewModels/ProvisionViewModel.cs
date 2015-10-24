@@ -21,182 +21,112 @@ using TextSecure.recipient;
 using Signal.Util;
 using TextSecure.util;
 using System.Windows.Input;
+using Windows.Media.Capture;
+using Windows.ApplicationModel;
+using Windows.Devices.Enumeration;
+using Windows.ApplicationModel;
+using Windows.Devices.Enumeration;
+using Windows.Graphics.Display;
+using Windows.Graphics.Imaging;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Core;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.Devices.Enumeration;
+using Windows.Graphics.Display;
+using Windows.Graphics.Imaging;
+using Windows.Media;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
+using Windows.Storage;
+using Windows.System.Display;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
+using Signal.Views;
 
 namespace Signal.ViewModel
 {
-    public class RegistrationViewModel : ViewModelBase
+    public class ProvisionViewModel : ViewModelBase, INavigableViewModel
     {
         private readonly INavigationService _navigationService;
         private readonly IDataService _dataService;
 
-
-
-        public RegistrationViewModel(IDataService service, INavigationService navService)
+        public ProvisionViewModel(IDataService service, INavigationService navService)
         {
             _dataService = service;
             _navigationService = navService;
 
         }
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
-        private Thread _selectedThread = null;
-        public Thread SelectedThread
+        private async Task<DeviceInformation> GetCamera()
         {
-            get { return _selectedThread; }
-            set
-            {
-                Debug.WriteLine("Setting Thread");
-                if (_selectedThread == value)
-                {
-                    return;
-                }
-
-                var oldValue = _selectedThread;
-                _selectedThread = value;
-                RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
-            }
+            var allCameras = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            return allCameras.FirstOrDefault();
         }
 
-        public const string IsBusyPropertyName = "IsBusy";
-        private bool _isBusy = false;
-        public bool IsBusy
+        public async void Activate(object parameter)
         {
-            get { return _isBusy; }
-            set
-            {
-                if (_isBusy == value)
-                {
-                    return;
-                }
+            var cam = await GetCamera();
 
-                var oldValue = _isBusy;
-                _isBusy = value;
-                RaisePropertyChanged(IsBusyPropertyName, oldValue, _isBusy, true);
-            }
+            if (cam != null) HasCamera = true;
         }
 
-        public string CountryCode = "";
-        public string PhoneNumber = "";
-        private string getNumber()
-        {   try
-            {
-                return PhoneNumberFormatter.formatE164(CountryCode, PhoneNumber);
-            } catch (Exception e)
-            {
-                return "";
-            }
-        }
-        public string VerificationToken = "";
-
-        public enum RegistrationState { None, Registering, Registered, Verifying, Verified,  Generated, Sat };
-
-        public const string StatePropertyName = "State";
-        private int _state = (int)RegistrationState.None;
-        public int State
+        public void Deactivate(object parameter)
         {
-            get { return _state; }
-            set
-            {
-                if (_state == value)
-                {
-                    return;
-                }
-
-                var oldValue = _state;
-                _state = value;
-                Debug.WriteLine($"State: {_state}");
-                RaisePropertyChanged(StatePropertyName, oldValue, _state, true);
-            }
+            //throw new NotImplementedException();
         }
 
-
-        private RelayCommand _verifyCommand;
-        public RelayCommand VerifyCommand
+        private CaptureElement _captureElement;
+        public CaptureElement CaptureElement
         {
             get
             {
-                return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
-                   () =>
-                {
-                    IsBusy = true;
-
-                    var success = await handleRegistration(VerificationToken);
-
-                    if (!success)
-                    {
-                        State = (int)RegistrationState.Registered;
-                    }
-
-                    State = (int)RegistrationState.Verified;
-
-                    IsBusy = false;
-                },
-                    () => true));
+                return _captureElement ?? new CaptureElement();
             }
-        }
-
-        private RelayCommand _registerCommand;
-        public RelayCommand RegisterCommand
-        {
-            get
+            set
             {
-                return _registerCommand ?? (_registerCommand = new RelayCommand(async
-                   () =>
-                {
-                    
-                    number = $"+{CountryCode}{PhoneNumber}";
-                    Debug.WriteLine($"Register: {number}");
-
-
-
-                    password = Utils.getSecret(18);
-                    signalingKey = Utils.getSecret(52);
-
-                    State = (int)RegistrationState.Registering;
-                    IsBusy = true;
-                    try {
-                        await Task.Delay(2000);
-
-                        App.Current.accountManager = TextSecureCommunicationFactory.createManager(number, password);
-                        App.Current.accountManager.requestSmsVerificationCode();
-                        State = (int)RegistrationState.Registered;
-
-                        _navigationService.NavigateTo("VerificationPageKey");
-
-                    } catch (Exception e)
-                    {
-                        Debug.WriteLine(e.Message);
-                        State = (int)RegistrationState.None;
-                    }
-
-                    IsBusy = false;
-
-                },
-                    () => {
-                        PhoneNumberFormatter.isValidNumber(getNumber());
-                        return true;
-                        }));
+                Set(ref _captureElement, value);
+                RaisePropertyChanged();
             }
         }
-
 
         /*
-         * ReegistrationTypeView
+         * ProvisioningView
          */
 
-        private RelayCommand _navigateRegisterCommand;
-        public RelayCommand NavigateRegisterCommand
+        private RelayCommand _scanCodeCommand;
+        public RelayCommand ScanCodeCommand
         {
             get
             {
-                return _navigateRegisterCommand ?? new RelayCommand(
-                    () => { _navigationService.NavigateTo(ViewModelLocator.REGISTERING_PAGE_KEY); },
-                    () => { return true; }
-                    );
+                return _scanCodeCommand ?? (_scanCodeCommand = new RelayCommand(
+                    async () => {
+                        //await InitializeCameraAsync();
+                    },
+                    () => { return HasCamera; }
+                    ));
             }
         }
 
-        public RelayCommand _navigateProvisionCommand { get; private set; }
+        private bool _hasCamera;
+        public bool HasCamera {
+            get
+            {
+                return _hasCamera;
+            }
+            set
+            {
+                Set(ref _hasCamera, value);
+                ScanCodeCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        /*public RelayCommand _navigateProvisionCommand { get; private set; }
         public RelayCommand NavigateProvisionCommand
         {
             get
@@ -206,14 +136,10 @@ namespace Signal.ViewModel
                     () => { return true; }
                     );
             }
-        }
+        }*/
 
-        /*
-         * ProvisioningView
-         */
 
-        
-        private string password;
+        /*private string password;
         private string signalingKey;
         private string number;
 
@@ -287,6 +213,8 @@ namespace Signal.ViewModel
             TextSecurePreferences.setSignedPreKeyRegistered(true);
             TextSecurePreferences.setPromptedPushRegistration(true);
         }
+
+
 
         /*private string generateRandomSignalingKey()
         {

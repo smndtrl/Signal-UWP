@@ -1,6 +1,4 @@
-﻿using Bezysoftware.Navigation.BackButton;
-using Signal.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,29 +20,11 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ThreadView : Page, IBackAwareObject
+    public sealed partial class ProtocolProvisioningView : Page
     {
-        public ThreadViewModel ViewModel
-        {
-            get
-            {
-                return (ThreadViewModel)DataContext;
-            }
-        }
-
-        public ThreadView()
+        public ProtocolProvisioningView()
         {
             this.InitializeComponent();
-        }
-
-        public bool AllowBackNavigation()
-        {
-            return ThreadViewModel.CanGoBack;
-        }
-
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
         }
     }
 }

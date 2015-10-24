@@ -51,7 +51,7 @@ namespace Signal
             get { return $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}"; }
         }
 
-        public TaskWorker Worker { get; private set;  }
+        public TaskWorker Worker { get; private set; }
 
         /// <summary>
         /// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
@@ -75,12 +75,12 @@ namespace Signal
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-           /* using (var db = new SignalContext())
-            {
-                Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
-                //db.Database.ApplyMigrations();
-                db.Database.EnsureCreated();
-            }*/
+            /* using (var db = new SignalContext())
+             {
+                 Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
+                 //db.Database.ApplyMigrations();
+                 db.Database.EnsureCreated();
+             }*/
 
             //var culture = new CultureInfo("en-US");
             /* Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
@@ -192,6 +192,43 @@ namespace Signal
         }
 
 
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+
+                // TODO: Handle URI activation
+                // The received URI is eventArgs.Uri.AbsoluteUri
+
+                var uri = eventArgs.Uri.Query;
+
+                try
+                {
+                    var test = eventArgs.Uri;
+                    WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(uri);
+                    var param = decoder.ToDictionary(x => x.Name, x => x.Value);
+
+                    var uuid = param["uuid"];
+                    var pubKey = param["pub_key"];
+
+                    Debug.WriteLine($"UUID: {uuid}, PubKey: {pubKey}");
+
+                    if (uuid.Equals(string.Empty) || pubKey.Equals(string.Empty))
+                    {
+
+                    }
+                } catch (Exception e)
+                {
+                    Debug.WriteLine($"Error while parsing protocol uri tsdevice://{uri}");
+                }
+
+
+
+            }
+        }
+
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -237,18 +274,18 @@ namespace Signal
             await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
-             var websocketTask = new WebsocketTask();
-             Task.Factory.StartNew(() =>
-             {
-                 try
-                 {
-                     var messageReceiver = TextSecureCommunicationFactory.createReceiver();
-                     var pipe = messageReceiver.createMessagePipe();
-                     pipe.MessageReceived += OnMessageRecevied;
-                 }
-                 catch (Exception ex) { Debug.WriteLine( "Failed asd:"+ex.Message); }
+            var websocketTask = new WebsocketTask();
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var messageReceiver = TextSecureCommunicationFactory.createReceiver();
+                    var pipe = messageReceiver.createMessagePipe();
+                    pipe.MessageReceived += OnMessageRecevied;
+                }
+                catch (Exception ex) { Debug.WriteLine("Failed asd:" + ex.Message); }
 
-             });
+            });
             //Worker.AddTaskActivities(websocketTask);
 
 

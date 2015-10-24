@@ -48,9 +48,22 @@ namespace TextSecure.recipient
             Recipient cachedRecipient;
             recipientCache.TryGetValue(recipientId, out cachedRecipient);
 
-            if (cachedRecipient != null) return cachedRecipient;
-            //else if (asynchronous) return gethronousRecipient(recipientId);
-            else return getSynchronousRecipient(recipientId);
+            if (cachedRecipient != null && true/*!cachedRecipient.isStale()*/) return cachedRecipient;
+
+            //String number = CanonicalAddressDatabase.getInstance(context).getAddressFromId(recipientId);
+            var directory = DatabaseFactory.getDirectoryDatabase().Get(recipientId);
+
+            if (asynchronous)
+            {
+                cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };/*, getRecipientDetailsAsync(recipientId, number)*/
+            }
+            else
+            {
+                cachedRecipient = new Recipient(recipientId/*, getRecipientDetailsSync(context, recipientId, number)*/) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
+            }
+
+            recipientCache.Add(recipientId, cachedRecipient);
+            return cachedRecipient;
         }
 
         internal Recipients getRecipients(long[] recipientIds, bool asynchronous)
@@ -106,7 +119,8 @@ namespace TextSecure.recipient
 
         public long getRecipientIdForNumber(string number)
         {
-            return DatabaseFactory.getDirectoryDatabase().GetForNumber(number).DirectoryId;
+            var dir = DatabaseFactory.getDirectoryDatabase().GetForNumber(number);
+            return dir.DirectoryId;
         }
 
         /*private Recipient gethronousRecipient(final Context context, final long recipientId)

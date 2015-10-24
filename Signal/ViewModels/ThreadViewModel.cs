@@ -30,16 +30,21 @@ namespace Signal.ViewModel
             _navigationService = navService;
             Threads = new ThreadCollection(service);
 
-            /*Messenger.Default.Register<AddThreadMessage>(
+            Messenger.Default.Register<RefreshThreadMessage>(
                 this,
-                message =>
+                async message =>  
                 {
-                    var thread = DatabaseFactory.getThreadDatabase().Get(message.ThreadId);
-                    //SelectedThread = message.NewValue;
-                    Threads.Add(thread);
-                    Debug.WriteLine("ThreadViewModel got new Thread");
+
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Threads.Refresh();
+                        Debug.WriteLine("Thread Refresh");
+
+                    });
+                    
+                   
                 }
-            );*/
+            );
         }
 
         public const string SelectedThreadPropertyName = "SelectedThread";
@@ -64,8 +69,8 @@ namespace Signal.ViewModel
             }
         }
 
-        ObservableCollection<Thread> _Threads;
-        public ObservableCollection<Thread> Threads
+        ThreadCollection _Threads;
+        public ThreadCollection Threads
         {
             get { return _Threads ?? (Threads = new ThreadCollection(_dataService)); }
             set
@@ -149,5 +154,7 @@ namespace Signal.ViewModel
          } 
 
          public RelayCommand<ThreadDatabase.Thread> NavigateCommand { get; private set; }*/
+
+        public static bool CanGoBack = false;
     }
 }

@@ -36,7 +36,7 @@ namespace Signal.database.loaders
                 Add(con);
             }*/
 
-            Messenger.Default.Register<RefreshThreadMessage>(
+            /*Messenger.Default.Register<RefreshThreadMessage>(
                 this,
                 async message =>
                 {
@@ -48,7 +48,7 @@ namespace Signal.database.loaders
                     });
                    
                 }
-            );
+            );*/
         }
 
         protected override bool HasMoreItemsInternal()

@@ -7,66 +7,72 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.VerificationView"
     mc:Ignorable="d" DataContext="{Binding Source={Binding Registration, Source={StaticResource Locator}}}">
-    
+
     <Interactivity:Interaction.Behaviors>
         <Core:DataTriggerBehavior/>
     </Interactivity:Interaction.Behaviors>
 
     <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.6*"/>
-            <RowDefinition Height="0.1*"/>
-            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" Background="Red" x:Name="verifyGrid">
-            <!-- Number -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="1" x:Name="registration0ProgressText" Text="registrationProgressText" Foreground="White" FontFamily="Segoe UI Light"/>
-
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" >
-                <TextBox x:Name="verificationTextBox" Text="{x:Bind ViewModel.VerificationToken, Mode=TwoWay}" TabIndex="3" Margin="8" BorderThickness="0,0,0,2" InputScope="Number" MaxLength="6"/>
-                <Button x:Name="verifyButton" TabIndex="4" Margin="8" Command="{x:Bind ViewModel.VerifyCommand}" Content="Verify"/>
-            </StackPanel>
-
-        </Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="verificationTextBox" 
+                         Text="{x:Bind ViewModel.VerificationToken, Mode=TwoWay}" 
+                         TabIndex="3" 
+                         Margin="16" 
+                         BorderThickness="0,0,0,2" 
+                         InputScope="Number" 
+                         MaxLength="6"/>
+        </StackPanel>
+        
 
 
 
-
-
-
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ProgressRing x:Name="verificationProgressRing" Width="64" Height="64" Foreground="White" VerticalAlignment="Top" Margin="5">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="True">
-                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=verificationProgressRing}" Value="True"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="False">
-                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=verificationProgressRing}" Value="False"/>
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </ProgressRing>
-
-            <Grid Grid.Row="1" x:Name="progressText">
-                <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText" x:Uid="registrationGeneratingKeys" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
-
-                <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText2" x:Uid="registrationRefreshingDirectory" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
-
-                <TextBlock  Margin="8" Visibility="Collapsed" x:Name="registrationProgressText3" x:Uid="registrationVerifyingAccount" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
-            </Grid>
-            <!--
-            
-            -->
-        </Grid>
+        <Button x:Name="verifyButton"
+                    Grid.Row="1"
+                    TabIndex="4"
+                    Margin="16"
+                    
+                    Command="{x:Bind ViewModel.VerifyCommand}"
+                    Content="Verify" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Center"
+                    d:LayoutOverrides="Width"
+                    />
     </Grid>
+
+
+
+
+
+
+    <!--<Grid Grid.Row="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ProgressRing x:Name="verificationProgressRing" Width="64" Height="64" Foreground="White" VerticalAlignment="Top" Margin="5">
+            <Interactivity:Interaction.Behaviors>
+                <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="True">
+                    <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=verificationProgressRing}" Value="True"/>
+                </Core:DataTriggerBehavior>
+                <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="False">
+                    <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=verificationProgressRing}" Value="False"/>
+                </Core:DataTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+        </ProgressRing>
+
+        <Grid Grid.Row="1" x:Name="progressText">
+            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText" x:Uid="registrationGeneratingKeys" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
+
+            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText2" x:Uid="registrationRefreshingDirectory" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
+
+            <TextBlock  Margin="8" Visibility="Collapsed" x:Name="registrationProgressText3" x:Uid="registrationVerifyingAccount" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center"/>
+        </Grid>
+
+
+    </Grid> -->
 </Page>

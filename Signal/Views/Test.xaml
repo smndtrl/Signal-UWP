@@ -14,4 +14,62 @@
         </Canvas>
         
     </Grid>
+
+    <!--<Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ProgressRing x:Name="registrationProgressRing" Width="64" Height="64" Foreground="White" VerticalAlignment="Top" Margin="5" >
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=registrationProgressRing}" Value="True"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=progressText}" Value="Visible"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=registrationProgressRing}" Value="False"/>
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=progressText}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </ProgressRing>-->
+
+    <!--<Grid Grid.Row="1" x:Name="progressText">
+            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText" x:Uid="registrationGeneratingKeys" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
+            	<Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="1">
+            			<Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText}" Value="Visible"/>
+            		    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registerGrid}" Value="Collapsed"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="1">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText}" Value="Collapsed"/>
+                     </Core:DataTriggerBehavior>
+            	</Interactivity:Interaction.Behaviors>
+            </TextBlock>
+
+            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText2" x:Uid="registrationRefreshingDirectory" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
+            	<Interactivity:Interaction.Behaviors>
+                     <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="2">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText2}" Value="Visible"/>
+                     </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="2">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText2}" Value="Collapsed"/>
+                     </Core:DataTriggerBehavior>
+            	</Interactivity:Interaction.Behaviors>
+            </TextBlock>
+
+            <TextBlock  Margin="8" Visibility="Collapsed" x:Name="registrationProgressText3" x:Uid="registrationVerifyingAccount" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
+            	<Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="0">
+                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText3}" Value="Visible"/>
+            </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="0">
+                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText3}" Value="Collapsed"/>
+                     </Core:DataTriggerBehavior>
+            	</Interactivity:Interaction.Behaviors>
+            </TextBlock>
+            </Grid>-->
+    <!--
+            
+            
+        </Grid>-->
 </Page>

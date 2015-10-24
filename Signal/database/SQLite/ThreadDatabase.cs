@@ -136,9 +136,29 @@ namespace TextSecure.database
          * UPDATE
          */
 
-        public void Update(Thread thread)
+        public void Update(long threadId, long count, string snippet, object attachment, DateTime date, long type)
         {
-            throw new NotImplementedException("Thread.Update");
+            var thread = Get(threadId);
+
+            thread.Count = count;
+            thread.Date = date;
+            thread.Snippet = snippet;
+            thread.SnippetType = type;
+            //thread.SnippetUri
+
+            conn.Update(thread);
+        }
+
+        public void UpdateSnippet(long threadId, string snippet, object attachment, DateTime date, long type)
+        {
+            var thread = Get(threadId);
+
+            thread.Date = date;
+            thread.Snippet = snippet;
+            thread.SnippetType = type;
+            //thread.SnippetUri
+
+            conn.Update(thread);
         }
 
         /*
@@ -162,7 +182,11 @@ namespace TextSecure.database
 
         public void Refresh(long threadId)
         {
+            var lastMessage = DatabaseFactory.getMessageDatabase().GetConversationSnippet(threadId);
+            Update(threadId, 0, lastMessage.Body, null, lastMessage.DateSent, lastMessage.Type);
+
             Messenger.Default.Send(new RefreshThreadMessage() { ThreadId = threadId });
+
         }
 
 

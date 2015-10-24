@@ -46,7 +46,7 @@ namespace TextSecure.database
             {
                 Recipients recipients = RecipientFactory.getRecipientsFromString(address, false);
 
-                if (recipients == null || recipients.isEmpty())
+                if (recipients == null || recipients.IsEmpty)
                 {
                     return RecipientFactory.getRecipientsFor(Recipient.getUnknownRecipient(), false);
                 }

@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package 
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
-  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" 
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
-  xmlns:r="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilites" 
-  IgnorableNamespaces="uap mp r">
-  <Identity Name="39705SimonDieterle.TextSecure" Publisher="CN=D7D38CBF-3113-497A-88DB-52B717888A39" Version="1.1.0.0" />
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:r="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilites" IgnorableNamespaces="uap mp r">
+  <Identity Name="39705SimonDieterle.TextSecure" Publisher="CN=D7D38CBF-3113-497A-88DB-52B717888A39" Version="0.0.11.0" />
   <mp:PhoneIdentity PhoneProductId="e13539c9-2506-4444-bf9d-ddbe92b4a5c8" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>TextSecure</DisplayName>
@@ -29,37 +24,40 @@
         </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.protocol" EntryPoint="Views.ProvisionDeviceView">
-          <uap:Protocol Name="tsdevice">
-            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
-            <uap:DisplayName>TextSecure</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
-          <BackgroundTasks>
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.SmsReceiverTask">
           <BackgroundTasks>
             <Task Type="general" />
           </BackgroundTasks>
         </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.protocol" EntryPoint="Views.ProvisioningProtocolView">
+          <uap:Protocol Name="tsdevice">
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
+            <uap:DisplayName>TextSecure</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
     <uap:Capability Name="contacts" />
-    <r:Capability Name="cellularMessaging" />
+    <!-- essential -->
+    <!-- essential -->
+    <!-- Scan QR Code -->
+    <!-- Not used yet -->
+    <DeviceCapability Name="webcam" />
+    <DeviceCapability Name="microphone" />
   </Capabilities>
-  <Extensions>
-    <!-- Required for curve25519 (for now). Would like NuGet to do this one day automatically. For now, it's manual. -->
-    <Extension Category="windows.activatableClass.inProcessServer">
+  <!-- Required for curve25519 (for now). Would like NuGet to do this one day automatically. For now, it's manual. -->
+  <!--<Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
         <Path>curve25519.dll</Path>
         <ActivatableClass ActivatableClassId="curve25519.Curve25519Native" ThreadingModel="both" />
       </InProcessServer>
-    </Extension>
-  </Extensions>
+    </Extension>-->
 </Package>

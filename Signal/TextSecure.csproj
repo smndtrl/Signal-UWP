@@ -163,6 +163,7 @@
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
     <Compile Include="Tasks\Library\TaskStorage.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="ViewModels\Messages\AddThreadMessage.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\DirectoryViewModel.cs" />
+    <Compile Include="ViewModels\ProvisionViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="ViewModels\RegistrationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -208,6 +210,15 @@
     <Compile Include="Views\ItemClickCommand.cs" />
     <Compile Include="Views\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Registration\ProtocolProvisioningView.xaml.cs">
+      <DependentUpon>ProtocolProvisioningView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Registration\ProvisioningView.xaml.cs">
+      <DependentUpon>ProvisioningView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
+      <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -265,6 +276,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Registration\ProtocolProvisioningView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Registration\ProvisioningView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Registration\RegistrationTypeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

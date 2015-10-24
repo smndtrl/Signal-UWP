@@ -296,15 +296,15 @@ namespace TextSecure
                     return false;
                 }
 
-                if (!recipients.isSingleRecipient())
+                if (!recipients.IsSingleRecipient)
                 {
                     return false;
                 }
 
-                /*if (recipients.isGroupRecipient())
+                if (recipients.IsGroupRecipient)
                 {
                     return false;
-                }*/
+                }
 
                 String e164number = Utils.canonicalizeNumber(recipients.getPrimaryRecipient().getNumber());
                 return TextSecurePreferences.getLocalNumber().Equals(e164number);

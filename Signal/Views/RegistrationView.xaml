@@ -15,12 +15,15 @@
     <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.6*"/>
-            <RowDefinition Height="0.1*"/>
-            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="Lime" x:Name="registerGrid" VerticalAlignment="Bottom">
+        <Grid x:Name="registerGrid" 
+              Grid.Row="0"
+              Margin="16"
+              Background="Lime" 
+              VerticalAlignment="Center">
             <!-- Number -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -32,69 +35,38 @@
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" >
                 <TextBlock Text="+" Margin="8" VerticalAlignment="Center"/>
-                <TextBox x:Name="countryCode" Text="{x:Bind ViewModel.CountryCode, Mode=TwoWay}" TabIndex="0" Margin="8" BorderThickness="0,0,0,2" InputScope="Number" MaxLength="3" Width="29" />
-                <TextBox x:Name="phoneNumber" Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}" TabIndex="1" Margin="8" BorderThickness="0,0,0,2" InputScope="Number" Width="128"/>
-                <Button x:Name="registerButton" TabIndex="2" Margin="8"  Command="{x:Bind ViewModel.RegisterCommand}" Content="Register"/>
+                <TextBox x:Name="countryCode"
+                         Text="{x:Bind ViewModel.CountryCode, Mode=TwoWay}" 
+                         TabIndex="0" 
+                         Margin="8" 
+                         BorderThickness="0,0,0,2" 
+                         InputScope="Number" 
+                         MaxLength="3" 
+                         Width="32" />
+                <TextBox x:Name="phoneNumber" 
+                         Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}" 
+                         TabIndex="1" 
+                         Margin="8" 
+                         BorderThickness="0,0,0,2" 
+                         InputScope="Number" 
+                         Width="160"/>
+                
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ProgressRing x:Name="registrationProgressRing" Width="64" Height="64" Foreground="White" VerticalAlignment="Top" Margin="5" >
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="True">
-                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=registrationProgressRing}" Value="True"/>
-                        <!--<Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=progressText}" Value="Visible"/>-->
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding IsBusy}" Value="False">
-                        <Core:ChangePropertyAction PropertyName="IsActive" TargetObject="{Binding ElementName=registrationProgressRing}" Value="False"/>
-                        <!--<Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=progressText}" Value="Collapsed"/>-->
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </ProgressRing>
-
-            <!--<Grid Grid.Row="1" x:Name="progressText">
-            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText" x:Uid="registrationGeneratingKeys" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
-            	<Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="1">
-            			<Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText}" Value="Visible"/>
-            		    <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registerGrid}" Value="Collapsed"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="1">
-                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText}" Value="Collapsed"/>
-                     </Core:DataTriggerBehavior>
-            	</Interactivity:Interaction.Behaviors>
-            </TextBlock>
-
-            <TextBlock Margin="8" Visibility="Collapsed" x:Name="registrationProgressText2" x:Uid="registrationRefreshingDirectory" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
-            	<Interactivity:Interaction.Behaviors>
-                     <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="2">
-                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText2}" Value="Visible"/>
-                     </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="2">
-                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText2}" Value="Collapsed"/>
-                     </Core:DataTriggerBehavior>
-            	</Interactivity:Interaction.Behaviors>
-            </TextBlock>
-
-            <TextBlock  Margin="8" Visibility="Collapsed" x:Name="registrationProgressText3" x:Uid="registrationVerifyingAccount" Foreground="White" FontFamily="Segoe UI Light" HorizontalAlignment="Center">
-            	<Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="Equal" Value="0">
-                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText3}" Value="Visible"/>
-            </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding State}" ComparisonCondition="NotEqual" Value="0">
-                        <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registrationProgressText3}" Value="Collapsed"/>
-                     </Core:DataTriggerBehavior>
-            	</Interactivity:Interaction.Behaviors>
-            </TextBlock>
-            </Grid>-->
-            <!--
-            
-            -->
-        </Grid>
+        <Button x:Name="registerButton"
+                Grid.Row="2"
+                Margin="16"  
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center" 
+                d:LayoutOverrides="Width"
+                Command="{x:Bind ViewModel.RegisterCommand}" 
+                Content="Register"
+                TabIndex="2" 
+                
+                />
+        
+    
 
     </Grid>
 

@@ -105,7 +105,9 @@ namespace TextSecure.recipient
                 ids[i++] = Convert.ToUInt32(id);
             }
 
-            return DatabaseFactory.getRecipientDatabase().GetRecipients(ids);
+
+            //return DatabaseFactory.getRecipientDatabase().GetRecipients(ids);
+            return provider.getRecipients(ids, asynchronous);
         }
 
         private static May<long> getRecipientIdFromNumber(String number)

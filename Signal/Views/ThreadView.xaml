@@ -9,7 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.ThreadView"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:back="using:Bezysoftware.Navigation.BackButton"
+    back:BackButtonManager.IsBackButtonEnabled="True">
 
     <Page.Resources>
         <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
@@ -56,7 +58,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <Border Width="64" Height="64">
-                    <drawables:ContactPicture Radius="32" />
+                    <drawables:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}"/>
                     <!--<Image Height="64" Width="64" DataContext="{x:Bind Recipients.PrimaryRecipient.Number, Converter={StaticResource ContactPictureConverter}}" Source="{Binding Result}"/>-->
                 </Border>
                 
@@ -71,18 +73,28 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock x:Name="RecipientNameTextBlock" 
-                                Text="{x:Bind Recipients.ShortString}" 
-                               Style="{StaticResource TitleTextBlockStyle}"
-                               TextWrapping="NoWrap">
-                    </TextBlock>
+                               Text="{x:Bind Recipients.ShortString}" 
+                               TextWrapping="NoWrap"                               
+                               TextTrimming="CharacterEllipsis"
+                               Style="{StaticResource TitleTextBlockStyle}" />
+
+
                     <TextBlock x:Name="DateTextBlock" 
                                Grid.Column="2"
-                               Text="{x:Bind Date, Converter={StaticResource DateConverter}}" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Text="{x:Bind Date, Converter={StaticResource DateConverter}}"
+                               TextWrapping="NoWrap"
+                               Style="{StaticResource BodyTextBlockStyle}" />
 
                     <TextBlock x:Name="LastMessageTextBlock" 
-                               Grid.Row="2" Grid.ColumnSpan="2"
-                               Text="{x:Bind Body}" TextWrapping="NoWrap" VerticalAlignment="Center">
-                    </TextBlock>
+                               Grid.Row="2"
+                               Grid.ColumnSpan="2"
+                               VerticalAlignment="Center"
+                               Text="{x:Bind Snippet}" 
+                               TextWrapping="NoWrap" 
+                               TextTrimming="WordEllipsis" />
+
                 </Grid>
             </Grid>
         </DataTemplate>

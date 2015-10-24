@@ -54,6 +54,12 @@ namespace Signal.database.loaders
             }
         }
 
+        public async void Refresh()
+        {
+            var count = Count;
+            Clear();
+            await LoadMoreItemsAsync((uint)count);
+        }
 
         // overridable
         protected abstract bool HasMoreItemsInternal();

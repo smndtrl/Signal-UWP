@@ -47,6 +47,21 @@ namespace TextSecure.database
         }
 
 
+        public Message GetConversationSnippet(long threadId)
+        {
+            return conn.Table<Message>().Where(m => m.ThreadId == threadId).OrderByDescending(m => m.DateReceived).Take(1).First();
+        }
+
+
+
+
+
+
+
+
+
+
+
         /*
          * Thread related
          */
@@ -436,7 +451,7 @@ namespace TextSecure.database
                 DatabaseFactory.getThreadDatabase().SetUnread(threadId);
             }
 
-            // TODO: var id = DatabaseFactory.getThreadDatabase().update(threadId).Result;
+            DatabaseFactory.getThreadDatabase().Refresh(threadId);
             //notifyConversationListeners(threadId);
             //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
 

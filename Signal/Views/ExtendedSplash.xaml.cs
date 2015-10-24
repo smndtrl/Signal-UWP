@@ -69,6 +69,7 @@ namespace TextSecure
             //DirectoryHelper.refreshDirectory();
 
             rootFrame = new Frame();
+
             BackButtonManager.RegisterFrame(rootFrame, true, true, true);
 
         }
@@ -78,15 +79,16 @@ namespace TextSecure
             await Task.Delay(200);
 
             dismissed = false;
-            if (TextSecurePreferences.getLocalNumber() == "No Stored Number")
+            /*if (TextSecurePreferences.getLocalNumber() == "No Stored Number") TODO: readd
             {
                 Debug.WriteLine("First start, registering");
-                rootFrame.Navigate(typeof(RegistrationView));
+                rootFrame.Navigate(typeof(RegistrationTypeView));
                 Window.Current.Content = rootFrame;
                 return;
-            }
+            }*/
 
-            rootFrame.Navigate(typeof(View));
+            rootFrame.Navigate(typeof(SettingsView));
+            
             //Window.Current.Content = rootFrame;*/
 
             //rootFrame.Navigate(typeof(NarrowView));

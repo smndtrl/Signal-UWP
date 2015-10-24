@@ -1,5 +1,6 @@
 ﻿
 
+using Bezysoftware.Navigation.BackButton;
 using Signal.ViewModel;
 /** 
 * Copyright (C) 2015 smndtrl
@@ -45,7 +46,7 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class View : Page
+    public sealed partial class View : Page, IBackAwareObject
     {
 
         public MainViewModel ViewModel
@@ -54,6 +55,11 @@ namespace Signal.Views
             {
                 return (MainViewModel)DataContext;
             }
+        }
+
+        public bool AllowBackNavigation()
+        {
+            return false;
         }
 
         public View()

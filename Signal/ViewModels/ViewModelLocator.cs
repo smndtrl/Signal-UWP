@@ -15,6 +15,12 @@ namespace Signal.ViewModel
 {
     public class ViewModelLocator
     {
+        public static string REGISTERTYPE_PAGE_KEY = "RegisterTypePageKey";
+        public static string REGISTERING_PAGE_KEY = "RegisterPageKey";
+        public static string PROVISIONING_PAGE_KEY = "ProvisionPageKey";
+
+        public static string SETTINGS_PAGE_KEY = "SettingsPageKey";
+
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -23,10 +29,14 @@ namespace Signal.ViewModel
             nav.Configure("MasterDetail", typeof(View));
             //nav.Configure("ContactPageKey", typeof(ContactView));
             nav.Configure("MessagePageKey", typeof(MessageView));
-            nav.Configure("RegistrationPageKey", typeof(RegistrationView));
+
+            nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
+            nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
+            nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
+
             nav.Configure("VerificationPageKey", typeof(VerificationView));
             nav.Configure("DirectoryPageKey", typeof(DirectoryView));
-            nav.Configure("SettingsPageKey", typeof(SettingsView));
+            nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsView));
 
             SimpleIoc.Default.Register<INavigationService>(() => nav);
 
@@ -47,6 +57,7 @@ namespace Signal.ViewModel
             SimpleIoc.Default.Register<MessageViewModel>();
             SimpleIoc.Default.Register<DirectoryViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<ProvisionViewModel>();
 
         }
 
@@ -73,6 +84,11 @@ namespace Signal.ViewModel
         public RegistrationViewModel Registration
         {
             get { return ServiceLocator.Current.GetInstance<RegistrationViewModel>(); }
+        }
+
+        public ProvisionViewModel Provision
+        {
+            get { return ServiceLocator.Current.GetInstance<ProvisionViewModel>(); }
         }
 
         public DirectoryViewModel Directory
