@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="Signal.Views.SettingsDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+    xmlns:temp="using:Signal.Resources.Templates"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Signal.Resources"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <resources:RadioButtonCheckedConverter x:Key="RadioButtonCheckedConverter" />
+    </Page.Resources>
+    <Page.DataContext>
+        <Binding Source="{Binding Settings, Source={StaticResource Locator}}"/>
+    </Page.DataContext>
+
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock x:Name="textBlock"
+                   HorizontalAlignment="Left"
+                   TextWrapping="Wrap"
+                   Text="Theme"
+                   VerticalAlignment="Top"
+                   Style="{ThemeResource TitleTextBlockStyle}"/>
+
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <RadioButton x:Name="darkThemeButton"
+                         GroupName="Theme"
+                         Content="Dark Theme"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Top"
+                         d:LayoutOverrides="Width"
+                         IsChecked="{x:Bind ViewModel.DarkTheme, Mode=TwoWay}"/>
+            
+            <RadioButton x:Name="lightThemeButton"
+                         GroupName="Theme"
+                         Content="LightTheme"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Top"
+                         d:LayoutOverrides="Width"
+                         IsChecked="{x:Bind ViewModel.LightTheme, Mode=TwoWay}"/>
+        </StackPanel>
+        
+        
+        <temp:PreferenceCategory>
+            <temp:SwitchPreference Grid.Row="2" Title="Sample Title" Text="Sample Text" IsOn="False"/>
+            <temp:SwitchPreference Grid.Row="3" Title="Sample Title" Text="Sample Text" IsOn="True"/>
+            <temp:ListPreference Grid.Row="4" 
+                             Title="Sample List" 
+                             Text="Sample List Text" 
+                             Items="{x:Bind ViewModel.TestItems}" 
+                             SelectedValue="{x:Bind ViewModel.TestResult}"/>
+
+        </temp:PreferenceCategory>
+
+        <TextBlock Grid.Row="5" Text="{x:Bind ViewModel.TestResult}"/>
+    </Grid>
+</Page>

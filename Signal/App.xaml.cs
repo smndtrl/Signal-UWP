@@ -31,6 +31,7 @@ using libtextsecure.messages;
 using Strilanc.Value;
 using System.Reflection;
 using Signal.Views;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Signal
 {
@@ -49,6 +50,13 @@ namespace Signal
         public static string CurrentVersion
         {
             get { return $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}"; }
+        }
+
+        private static Frame _frame;
+         
+        public static Frame Frame
+        {
+            get { return _frame; }
         }
 
         public TaskWorker Worker { get; private set; }
@@ -240,9 +248,10 @@ namespace Signal
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = true;
+                this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+            DispatcherHelper.Initialize();
 
             if (TextSecurePreferences.GetLocalRegistrationId() == -1)
             {
@@ -301,6 +310,8 @@ namespace Signal
             // Ensure the current window is active
 
             Frame rootFrame = Window.Current.Content as Frame;
+
+            _frame = rootFrame;
 
             if (rootFrame == null)
             {

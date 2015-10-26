@@ -43,6 +43,7 @@
             </ResourceDictionary.ThemeDictionaries>
             
             <resource:DateConverter x:Key="DateConverter" />
+            <resource:RadioConverter x:Key="RadioConverter" />
             <resource:ContactRetriever x:Key="ContactRetriever" />
             <resource:ContactPictureConverter x:Key="ContactPictureConverter" />
             <resource:DeliveryStatusConverter x:Key="DeliveryStatusConverter" />

@@ -29,4 +29,21 @@ namespace Signal.Resources
             throw new NotImplementedException();
         }
     }
+
+    public class RadioButtonCheckedConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter,
+            string culture)
+        {
+            Debug.WriteLine($"Value: {value}, Parameter {parameter}");
+            return value == parameter;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+            string culture)
+        {
+            return value == parameter;
+        }
+    }
 }
+

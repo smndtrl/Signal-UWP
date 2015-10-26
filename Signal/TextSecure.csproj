@@ -162,7 +162,14 @@
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
+    <Compile Include="Resources\Templates\PreferenceCategory.xaml.cs">
+      <DependentUpon>PreferenceCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Resources\Templates\ListPreference.cs" />
+    <Compile Include="Resources\Templates\PreferenceBase.cs" />
+    <Compile Include="Resources\Templates\SwitchPreference.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
@@ -220,6 +227,9 @@
     <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
       <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SettingsDetailView.xaml.cs">
+      <DependentUpon>SettingsDetailView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -267,7 +277,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Resources\Templates\PreferenceCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -288,6 +306,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Registration\RegistrationTypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsDetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

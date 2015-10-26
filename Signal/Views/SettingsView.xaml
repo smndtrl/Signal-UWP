@@ -21,7 +21,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MasterListViewItemTemplate"  x:DataType="viewmodels:SettingsItem">
-            <Grid Margin="0,8,0,8">
+            <Grid Margin="0,4,0,4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -32,22 +32,31 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <SymbolIcon Symbol="{x:Bind Icon}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                <Viewbox Grid.RowSpan="2"
+                         Width="40"
+                         Height="40" HorizontalAlignment="Center" VerticalAlignment="Center"
+                >
+                    <SymbolIcon
+                        Margin="4, 4, 4, 4"
+                    Symbol="{x:Bind Icon}" 
+                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                </Viewbox>
                 <TextBlock
 
                     Grid.Column="1"
                     MaxLines="1"
                     Margin="0"
                     Text="{x:Bind Name}"
-                    TextWrapping="NoWrap"/>
+                    TextWrapping="NoWrap"
+                    Style="{StaticResource BodyTextBlockStyle}"/>
 
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="1"
                     Margin="0"
                     Text="{x:Bind Description}"
-                    TextWrapping="NoWrap"/>
+                    TextWrapping="NoWrap"
+                    Style="{StaticResource BodyTextBlockStyle}"/>
             </Grid>
         </DataTemplate>
 
@@ -69,7 +78,8 @@
         </DataTemplate>-->
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
                 <VisualState x:Name="DefaultState">
@@ -94,6 +104,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -103,19 +114,41 @@
         </Grid.ColumnDefinitions>
 
 
-        <StackPanel Padding="4" Grid.ColumnSpan="2" Background="#FF992727" Orientation="Horizontal">
-            <SymbolIcon Symbol="Setting"/>
+        <StackPanel 
+            Padding="12,4,12,4" 
+            Grid.ColumnSpan="2" 
+            Orientation="Horizontal" 
+            Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+
+            <Viewbox Width="24" Height="24"
+                >
+                <SymbolIcon
+                Symbol="Setting" 
+                Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+            </Viewbox>
+
             <TextBlock
-            Text="Settings"
-            Margin="12,8,8,8"
-            Style="{ThemeResource TitleTextBlockStyle}" VerticalAlignment="Center" />
+            Text="SETTINGS"
+            Margin="16,8,8,8"
+            Style="{ThemeResource BaseTextBlockStyle}"
+                VerticalAlignment="Center"
+                />
+        </StackPanel>
+
+        <StackPanel x:Name="serachPanel"
+                    Grid.Row="1"
+                    Padding="12,4,12,4"
+                    Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+
+            <TextBox x:Name="textBox" TextWrapping="Wrap" Text="TextBox"/>
+
         </StackPanel>
 
 
         <ListView
             x:Name="MasterListView"
-            Grid.Row="1"
-             Background="#FF992727"
+            Grid.Row="2"
+             Background="{ThemeResource SystemControlPageBackgroundListLowBrush}"
             ItemContainerTransitions="{x:Null}"
             ItemsSource="{x:Bind ViewModel.Settings}"
             ItemTemplate="{StaticResource MasterListViewItemTemplate}">
@@ -126,6 +159,11 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
+        <local:SettingsDetailView 
+            Grid.Column="1"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            BorderThickness="1,0,0,0"/>
         <!--<ContentPresenter
             x:Name="DetailContentPresenter"
             Grid.Column="1"

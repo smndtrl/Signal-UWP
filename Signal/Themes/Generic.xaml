@@ -1,0 +1,104 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Resources.Templates">
+
+    <Style TargetType="local:SwitchPreference" xmlns:local="using:Signal.Resources.Templates">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SwitchPreference">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+
+                        <StackPanel>
+                            <TextBlock 
+                            Text="{TemplateBinding Title}"
+                            Style="{ThemeResource TitleTextBlockStyle}"/>
+
+                            <TextBlock 
+                            Text="{TemplateBinding Text}"
+                            Style="{ThemeResource BodyTextBlockStyle}"/>
+
+                            <ToggleSwitch IsOn="{TemplateBinding IsOn}"/>
+                        </StackPanel>
+                        
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ListPreference" xmlns:local="using:Signal.Resources.Templates">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate x:Name="base" TargetType="local:ListPreference">
+                    <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <StackPanel x:Name="ControlStackPanel">
+                            <TextBlock 
+                            Text="{TemplateBinding Title}"
+                            Style="{ThemeResource TitleTextBlockStyle}"/>
+
+                            <TextBlock 
+                            Text="{TemplateBinding Text}"
+                            Style="{ThemeResource BodyTextBlockStyle}"/>
+                            <!--ItemsSource="{TemplateBinding Items}"  SelectedItem="{Binding SelectedItem, Converter={StaticResource RadioConverter}, ConverterParameter={RelativeSource Self}, Mode=TwoWay}"-->
+                            <ListView x:Name="list"   SelectionMode="Single">
+                                <ListView.Resources>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewItem" x:Name="item">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <RadioButton IsChecked="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
+                                                        <ContentPresenter Grid.Column="1"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="IsSelected" Value="{TemplateBinding }"/>
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.Items>
+                                    <ListViewItem IsSelected="{Binding Path=SelectedValue, ElementName=base, Mode=TwoWay, Converter={StaticResource RadioConverter}, ConverterParameter={Binding IsSelected}}">Test1</ListViewItem>
+                                    <ListViewItem IsSelected="{TemplateBinding }">Test2</ListViewItem>
+                                    <ListViewItem IsSelected="{Binding Path=SelectedValue, ElementName=base, Mode=TwoWay}">Test3</ListViewItem>
+
+                                </ListView.Items>
+                            </ListView>
+                            
+                            <TextBlock 
+                                
+                            Text="{TemplateBinding SelectedValue}"
+                            Style="{ThemeResource BodyTextBlockStyle}"/>
+                            
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PreferenceBase" xmlns:local="using:Signal.Resources.Templates">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PreferenceBase">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
