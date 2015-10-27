@@ -459,16 +459,16 @@ namespace libaxolotl_test
         {
             ECKeyPair aliceUnsignedPreKey = Curve.generateKeyPair();
             uint aliceUnsignedPreKeyId = KeyHelper.getRandomSequence(Medium.MAX_VALUE);
-            byte[] aliceSignature = Curve.calculateSignature(aliceStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] aliceSignature = Curve.calculateSignature(aliceStore.GetIdentityKeyPair().getPrivateKey(),
                                                                        aliceSignedPreKey.getPublicKey().serialize());
 
             PreKeyBundle alicePreKeyBundle = new PreKeyBundle(1, 1,
                                                               aliceUnsignedPreKeyId, aliceUnsignedPreKey.getPublicKey(),
                                                               aliceSignedPreKeyId, aliceSignedPreKey.getPublicKey(),
-                                                              aliceSignature, aliceStore.getIdentityKeyPair().getPublicKey());
+                                                              aliceSignature, aliceStore.GetIdentityKeyPair().getPublicKey());
 
-            aliceStore.storeSignedPreKey(aliceSignedPreKeyId, new SignedPreKeyRecord(aliceSignedPreKeyId, KeyHelper.getTime(), aliceSignedPreKey, aliceSignature));
-            aliceStore.storePreKey(aliceUnsignedPreKeyId, new PreKeyRecord(aliceUnsignedPreKeyId, aliceUnsignedPreKey));
+            aliceStore.StoreSignedPreKey(aliceSignedPreKeyId, new SignedPreKeyRecord(aliceSignedPreKeyId, KeyHelper.getTime(), aliceSignedPreKey, aliceSignature));
+            aliceStore.StorePreKey(aliceUnsignedPreKeyId, new PreKeyRecord(aliceUnsignedPreKeyId, aliceUnsignedPreKey));
 
             return alicePreKeyBundle;
         }
@@ -477,16 +477,16 @@ namespace libaxolotl_test
         {
             ECKeyPair bobUnsignedPreKey = Curve.generateKeyPair();
             uint bobUnsignedPreKeyId = KeyHelper.getRandomSequence(Medium.MAX_VALUE);
-            byte[] bobSignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                      bobSignedPreKey.getPublicKey().serialize());
 
             PreKeyBundle bobPreKeyBundle = new PreKeyBundle(1, 1,
                                                         bobUnsignedPreKeyId, bobUnsignedPreKey.getPublicKey(),
                                                         bobSignedPreKeyId, bobSignedPreKey.getPublicKey(),
-                                                        bobSignature, bobStore.getIdentityKeyPair().getPublicKey());
+                                                        bobSignature, bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storeSignedPreKey(bobSignedPreKeyId, new SignedPreKeyRecord(bobSignedPreKeyId, KeyHelper.getTime(), bobSignedPreKey, bobSignature));
-            bobStore.storePreKey(bobUnsignedPreKeyId, new PreKeyRecord(bobUnsignedPreKeyId, bobUnsignedPreKey));
+            bobStore.StoreSignedPreKey(bobSignedPreKeyId, new SignedPreKeyRecord(bobSignedPreKeyId, KeyHelper.getTime(), bobSignedPreKey, bobSignature));
+            bobStore.StorePreKey(bobUnsignedPreKeyId, new PreKeyRecord(bobUnsignedPreKeyId, bobUnsignedPreKey));
 
             return bobPreKeyBundle;
         }

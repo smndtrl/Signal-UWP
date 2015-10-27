@@ -42,10 +42,10 @@ namespace libaxolotl_test
 
             AxolotlStore bobStore = new TestInMemoryAxolotlStore();
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                           31337, bobPreKeyPair.getPublicKey(),
                                                           0, null, null,
-                                                          bobStore.getIdentityKeyPair().getPublicKey());
+                                                          bobStore.GetIdentityKeyPair().getPublicKey());
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -59,7 +59,7 @@ namespace libaxolotl_test
             Assert.IsTrue(outgoingMessage.getType() == CiphertextMessage.PREKEY_TYPE);
 
             PreKeyWhisperMessage incomingMessage = new PreKeyWhisperMessage(outgoingMessage.serialize());
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
 
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage);
@@ -83,11 +83,11 @@ namespace libaxolotl_test
             aliceSessionCipher = new SessionCipher(aliceStore, BOB_ADDRESS);
 
             bobPreKeyPair = Curve.generateKeyPair();
-            bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(),
+            bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(),
                                          1, 31338, bobPreKeyPair.getPublicKey(),
-                                         0, null, null, bobStore.getIdentityKeyPair().getPublicKey());
+                                         0, null, null, bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storePreKey(31338, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StorePreKey(31338, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
             aliceSessionBuilder.process(bobPreKey);
 
             outgoingMessage = aliceSessionCipher.encrypt(Encoding.UTF8.GetBytes(originalMessage));
@@ -99,7 +99,7 @@ namespace libaxolotl_test
             }
             catch (UntrustedIdentityException uie)
             {
-                bobStore.saveIdentity(ALICE_ADDRESS.getName(), new PreKeyWhisperMessage(outgoingMessage.serialize()).getIdentityKey());
+                bobStore.SaveIdentity(ALICE_ADDRESS.getName(), new PreKeyWhisperMessage(outgoingMessage.serialize()).getIdentityKey());
             }
 
             plaintext = bobSessionCipher.decrypt(new PreKeyWhisperMessage(outgoingMessage.serialize()));
@@ -108,10 +108,10 @@ namespace libaxolotl_test
             CollectionAssert.AreEqual(plaintext, Encoding.UTF8.GetBytes(originalMessage));
 
 
-            bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                          31337, Curve.generateKeyPair().getPublicKey(),
                                          0, null, null,
-                                         aliceStore.getIdentityKeyPair().getPublicKey());
+                                         aliceStore.GetIdentityKeyPair().getPublicKey());
 
             try
             {
@@ -133,14 +133,14 @@ namespace libaxolotl_test
             AxolotlStore bobStore = new TestInMemoryAxolotlStore();
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                              bobSignedPreKeyPair.getPublicKey().serialize());
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                       31337, bobPreKeyPair.getPublicKey(),
                                                       22, bobSignedPreKeyPair.getPublicKey(),
                                                       bobSignedPreKeySignature,
-                                                      bobStore.getIdentityKeyPair().getPublicKey());
+                                                      bobStore.GetIdentityKeyPair().getPublicKey());
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -154,8 +154,8 @@ namespace libaxolotl_test
             Assert.IsTrue(outgoingMessage.getType() == CiphertextMessage.PREKEY_TYPE);
 
             PreKeyWhisperMessage incomingMessage = new PreKeyWhisperMessage(outgoingMessage.serialize());
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
 
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage/*, new DecryptionCallbackTest().handlePlaintext({ 0x55}, originalMessage, bobStore)*/);
@@ -181,14 +181,14 @@ namespace libaxolotl_test
 
             bobPreKeyPair = Curve.generateKeyPair();
             bobSignedPreKeyPair = Curve.generateKeyPair();
-            bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(), bobSignedPreKeyPair.getPublicKey().serialize());
-            bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(),
+            bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(), bobSignedPreKeyPair.getPublicKey().serialize());
+            bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(),
                                          1, 31338, bobPreKeyPair.getPublicKey(),
                                          23, bobSignedPreKeyPair.getPublicKey(), bobSignedPreKeySignature,
-                                         bobStore.getIdentityKeyPair().getPublicKey());
+                                         bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storePreKey(31338, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(23, new SignedPreKeyRecord(23, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31338, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(23, new SignedPreKeyRecord(23, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
             aliceSessionBuilder.process(bobPreKey);
 
             outgoingMessage = aliceSessionCipher.encrypt(Encoding.UTF8.GetBytes(originalMessage));
@@ -200,17 +200,17 @@ namespace libaxolotl_test
             }
             catch (UntrustedIdentityException uie)
             {
-                bobStore.saveIdentity(ALICE_ADDRESS.getName(), new PreKeyWhisperMessage(outgoingMessage.serialize()).getIdentityKey());
+                bobStore.SaveIdentity(ALICE_ADDRESS.getName(), new PreKeyWhisperMessage(outgoingMessage.serialize()).getIdentityKey());
             }
 
             plaintext = bobSessionCipher.decrypt(new PreKeyWhisperMessage(outgoingMessage.serialize()));
 			plaintextString = Encoding.UTF8.GetString(plaintext, 0, plaintext.Length);
             Assert.IsTrue(plaintextString.Equals(originalMessage));
 
-            bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                          31337, Curve.generateKeyPair().getPublicKey(),
                                          23, bobSignedPreKeyPair.getPublicKey(), bobSignedPreKeySignature,
-                                         aliceStore.getIdentityKeyPair().getPublicKey());
+                                         aliceStore.GetIdentityKeyPair().getPublicKey());
 
             try
             {
@@ -234,7 +234,7 @@ namespace libaxolotl_test
 
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobIdentityKeyStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobIdentityKeyStore.GetIdentityKeyPair().getPrivateKey(),
                                                                           bobSignedPreKeyPair.getPublicKey().serialize());
 
 
@@ -245,10 +245,10 @@ namespace libaxolotl_test
 
                 //modifiedSignature[i / 8] ^= (0x01 << (i % 8)); // TODO: yep
 
-                PreKeyBundle bobPreKey1 = new PreKeyBundle(bobIdentityKeyStore.getLocalRegistrationId(), 1,
+                PreKeyBundle bobPreKey1 = new PreKeyBundle(bobIdentityKeyStore.GetLocalRegistrationId(), 1,
                                                           31337, bobPreKeyPair.getPublicKey(),
                                                           22, bobSignedPreKeyPair.getPublicKey(), modifiedSignature,
-                                                          bobIdentityKeyStore.getIdentityKeyPair().getPublicKey());
+                                                          bobIdentityKeyStore.GetIdentityKeyPair().getPublicKey());
 
                 try
                 {
@@ -261,10 +261,10 @@ namespace libaxolotl_test
                 }
             }
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobIdentityKeyStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobIdentityKeyStore.GetLocalRegistrationId(), 1,
                                                       31337, bobPreKeyPair.getPublicKey(),
                                                       22, bobSignedPreKeyPair.getPublicKey(), bobSignedPreKeySignature,
-                                                      bobIdentityKeyStore.getIdentityKeyPair().getPublicKey());
+                                                      bobIdentityKeyStore.GetIdentityKeyPair().getPublicKey());
 
             aliceSessionBuilder.process(bobPreKey);
         }
@@ -279,16 +279,16 @@ namespace libaxolotl_test
 
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                           bobSignedPreKeyPair.getPublicKey().serialize());
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                       31337, bobPreKeyPair.getPublicKey(),
                                                       0, null, null,
-                                                      bobStore.getIdentityKeyPair().getPublicKey());
+                                                      bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -336,16 +336,16 @@ namespace libaxolotl_test
 
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                           bobSignedPreKeyPair.getPublicKey().serialize());
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                       31337, bobPreKeyPair.getPublicKey(),
                                                       22, bobSignedPreKeyPair.getPublicKey(), bobSignedPreKeySignature,
-                                                      bobStore.getIdentityKeyPair().getPublicKey());
+                                                      bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -398,16 +398,16 @@ namespace libaxolotl_test
 
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                           bobSignedPreKeyPair.getPublicKey().serialize());
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                       31337, bobPreKeyPair.getPublicKey(),
                                                       22, bobSignedPreKeyPair.getPublicKey(), bobSignedPreKeySignature,
-                                                      bobStore.getIdentityKeyPair().getPublicKey());
+                                                      bobStore.GetIdentityKeyPair().getPublicKey());
 
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -438,14 +438,14 @@ namespace libaxolotl_test
                 // good.
             }
 
-            Assert.IsTrue(bobStore.containsPreKey(31337));
+            Assert.IsTrue(bobStore.ContainsPreKey(31337));
 
             plaintext = bobSessionCipher.decrypt(new PreKeyWhisperMessage(goodMessage));
 
             //Assert.IsTrue(originalMessage.Equals(plaintext));
             CollectionAssert.AreEqual(Encoding.UTF8.GetBytes(originalMessage), plaintext);
 
-            Assert.IsTrue(!bobStore.containsPreKey(31337));
+            Assert.IsTrue(!bobStore.ContainsPreKey(31337));
         }
 
         [TestMethod]
@@ -485,7 +485,7 @@ namespace libaxolotl_test
             }
             catch (UntrustedIdentityException e)
             {
-                bobStore.saveIdentity(ALICE_ADDRESS.getName(), aliceKeyExchangeMessage.getIdentityKey());
+                bobStore.SaveIdentity(ALICE_ADDRESS.getName(), aliceKeyExchangeMessage.getIdentityKey());
                 bobKeyExchangeMessage = bobSessionBuilder.process(aliceKeyExchangeMessage);
             }
 
@@ -534,14 +534,14 @@ namespace libaxolotl_test
 
             ECKeyPair bobPreKeyPair = Curve.generateKeyPair();
             ECKeyPair bobSignedPreKeyPair = Curve.generateKeyPair();
-            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.getIdentityKeyPair().getPrivateKey(),
+            byte[] bobSignedPreKeySignature = Curve.calculateSignature(bobStore.GetIdentityKeyPair().getPrivateKey(),
                                                                           bobSignedPreKeyPair.getPublicKey().serialize());
 
-            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.getLocalRegistrationId(), 1,
+            PreKeyBundle bobPreKey = new PreKeyBundle(bobStore.GetLocalRegistrationId(), 1,
                                                       0, null,
                                                       22, bobSignedPreKeyPair.getPublicKey(),
                                                       bobSignedPreKeySignature,
-                                                      bobStore.getIdentityKeyPair().getPublicKey());
+                                                      bobStore.GetIdentityKeyPair().getPublicKey());
 
             aliceSessionBuilder.process(bobPreKey);
 
@@ -557,8 +557,8 @@ namespace libaxolotl_test
             PreKeyWhisperMessage incomingMessage = new PreKeyWhisperMessage(outgoingMessage.serialize());
             Assert.IsTrue(!incomingMessage.getPreKeyId().HasValue);
 
-            bobStore.storePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
-            bobStore.storeSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
+            bobStore.StorePreKey(31337, new PreKeyRecord(bobPreKey.getPreKeyId(), bobPreKeyPair));
+            bobStore.StoreSignedPreKey(22, new SignedPreKeyRecord(22, (ulong)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, bobSignedPreKeyPair, bobSignedPreKeySignature));
 
             SessionCipher bobSessionCipher = new SessionCipher(bobStore, ALICE_ADDRESS);
             byte[] plaintext = bobSessionCipher.decrypt(incomingMessage);
