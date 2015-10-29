@@ -30,7 +30,7 @@ namespace Signal.Resources.Templates
             }
         }
 
-        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedValue", typeof(string), typeof(ListPreference), new PropertyMetadata(string.Empty, OnSelectedItemPropertyChanged));
+        public static readonly DependencyProperty SelectedValueProperty = DependencyProperty.Register("SelectedValue", typeof(string), typeof(ListPreference), new PropertyMetadata(string.Empty, OnSelectedItemPropertyChanged));
 
         private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -50,12 +50,12 @@ namespace Signal.Resources.Templates
 
         public string SelectedValue
         {
-            get { return (string)GetValue(SelectedItemProperty); }
+            get { return (string)GetValue(SelectedValueProperty); }
             set
             {
                 //if (value == null || value == SelectedValue) return;
                 Debug.WriteLine($"Setting Selected value to {value}");
-                SetValue(SelectedItemProperty, value);
+                SetValue(SelectedValueProperty, value);
             }
         }
 

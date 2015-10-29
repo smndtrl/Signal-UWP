@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using Windows.UI.Xaml.Controls;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class ThreadViewModel : ViewModelBase
     {

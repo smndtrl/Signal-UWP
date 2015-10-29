@@ -1,5 +1,5 @@
 ﻿using Bezysoftware.Navigation.BackButton;
-using Signal.ViewModel;
+using Signal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;

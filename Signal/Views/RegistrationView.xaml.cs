@@ -20,7 +20,7 @@ using libaxolotl.state;
 using libaxolotl.util;
 using libtextsecure.push.exceptions;
 using Signal;
-using Signal.ViewModel;
+using Signal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

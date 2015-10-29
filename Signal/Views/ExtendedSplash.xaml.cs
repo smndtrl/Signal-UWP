@@ -87,7 +87,7 @@ namespace TextSecure
                 return;
             }*/
 
-            rootFrame.Navigate(typeof(SettingsView));
+            rootFrame.Navigate(typeof(SettingsViewTest));
             
             //Window.Current.Content = rootFrame;*/
 

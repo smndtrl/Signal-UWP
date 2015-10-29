@@ -1,7 +1,7 @@
 ﻿
 
 using Bezysoftware.Navigation.BackButton;
-using Signal.ViewModel;
+using Signal.ViewModels;
 /** 
 * Copyright (C) 2015 smndtrl
 * 
