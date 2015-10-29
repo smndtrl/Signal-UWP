@@ -1,0 +1,27 @@
+﻿<Page
+    x:Class="Signal.Views.SettingsViewTest"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+    xmlns:temp="using:Signal.Resources.Templates"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+
+    <Grid Background="White">
+        <temp:SettingsPage>
+           <!-- <TextBlock>ASDF</TextBlock>-->
+            <temp:SettingsPage.Categories>
+                <temp:PreferenceCategory Icon="Highlight"  NameI="Test" Description="Test Desc"/>
+                <temp:PreferenceCategory Icon="Cut" NameI="Test 2 " Description="Another Desc"/>
+                <temp:PreferenceCategory Icon="Contact" NameI="Test 4" Description="lOl"/>
+                <temp:PreferenceCategory Icon="Crop" NameI="Test 4" />
+            </temp:SettingsPage.Categories>
+        </temp:SettingsPage>
+    </Grid>
+
+    
+        
+
+</Page>
