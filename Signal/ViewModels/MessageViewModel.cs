@@ -18,7 +18,7 @@ using TextSecure.database;
 using TextSecure.messages;
 using TextSecure.recipient;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class MessageViewModel : ViewModelBase, INavigableViewModel
     {

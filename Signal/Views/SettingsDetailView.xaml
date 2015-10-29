@@ -9,12 +9,12 @@
     xmlns:resources="using:Signal.Resources"
     mc:Ignorable="d">
 
-    <Page.Resources>
+    <!--<Page.Resources>
         <resources:RadioButtonCheckedConverter x:Key="RadioButtonCheckedConverter" />
     </Page.Resources>
     <Page.DataContext>
         <Binding Source="{Binding Settings, Source={StaticResource Locator}}"/>
-    </Page.DataContext>
+    </Page.DataContext>-->
 
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -52,19 +52,22 @@
                          d:LayoutOverrides="Width"
                          IsChecked="{x:Bind ViewModel.LightTheme, Mode=TwoWay}"/>
         </StackPanel>
-        
-        
+
+
         <temp:PreferenceCategory>
             <temp:SwitchPreference Grid.Row="2" Title="Sample Title" Text="Sample Text" IsOn="False"/>
-            <temp:SwitchPreference Grid.Row="3" Title="Sample Title" Text="Sample Text" IsOn="True"/>
-            <temp:ListPreference Grid.Row="4" 
+                <temp:SwitchPreference Grid.Row="3" Title="Sample Title" Text="Sample Text" IsOn="True"/>
+                <temp:ListPreference Grid.Row="4" 
                              Title="Sample List" 
                              Text="Sample List Text" 
                              Items="{x:Bind ViewModel.TestItems}" 
                              SelectedValue="{x:Bind ViewModel.TestResult}"/>
-
+            <temp:ButtonPreference Title="Button Title" Text="Button Description" ButtonText="Button Text"/>
+            
         </temp:PreferenceCategory>
 
+        
+            
         <TextBlock Grid.Row="5" Text="{x:Bind ViewModel.TestResult}"/>
     </Grid>
 </Page>

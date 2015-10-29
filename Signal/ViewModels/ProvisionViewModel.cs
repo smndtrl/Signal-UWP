@@ -49,7 +49,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Signal.Views;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class ProvisionViewModel : ViewModelBase, INavigableViewModel
     {

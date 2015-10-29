@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Signal"
     xmlns:resource="using:Signal.Resources"
-    xmlns:viewmodel="using:Signal.ViewModel"
+    xmlns:viewmodels="using:Signal.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     x:Class="Signal.App"
     RequestedTheme="Light">
@@ -18,8 +18,9 @@
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Templates.xaml"/>
-
+                <local:DataTemplates />
             </ResourceDictionary.MergedDictionaries>
+            
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="Black" />
@@ -47,7 +48,7 @@
             <resource:ContactRetriever x:Key="ContactRetriever" />
             <resource:ContactPictureConverter x:Key="ContactPictureConverter" />
             <resource:DeliveryStatusConverter x:Key="DeliveryStatusConverter" />
-            <viewmodel:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+            <viewmodels:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

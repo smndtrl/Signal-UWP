@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using Windows.UI.Xaml;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {

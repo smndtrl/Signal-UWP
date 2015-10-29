@@ -22,7 +22,7 @@ using Signal.Util;
 using TextSecure.util;
 using System.Windows.Input;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class RegistrationViewModel : ViewModelBase
     {

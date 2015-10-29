@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.recipient;
 
-namespace Signal.ViewModel
+namespace Signal.ViewModels
 {
     public class DirectoryViewModel : ViewModelBase
     {

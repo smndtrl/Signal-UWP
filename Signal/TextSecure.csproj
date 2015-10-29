@@ -162,13 +162,13 @@
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
-    <Compile Include="Resources\Templates\PreferenceCategory.xaml.cs">
-      <DependentUpon>PreferenceCategory.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Resources\Templates\ButtonPreference.cs" />
     <Compile Include="Resources\Templates\ListPreference.cs" />
     <Compile Include="Resources\Templates\PreferenceBase.cs" />
+    <Compile Include="Resources\Templates\PreferenceCategory.cs" />
+    <Compile Include="Resources\Templates\SettingsPage.cs" />
     <Compile Include="Resources\Templates\SwitchPreference.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
@@ -187,6 +187,7 @@
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
     <Compile Include="Tasks\TextSendTask.cs" />
+    <Compile Include="Themes\DataTemplates.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
     <Compile Include="Util\GroupUtil.cs" />
@@ -236,6 +237,9 @@
     <Compile Include="Views\DirectoryView.xaml.cs">
       <DependentUpon>DirectoryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SettingsViewTest.xaml.cs">
+      <DependentUpon>SettingsViewTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ThreadView.xaml.cs">
       <DependentUpon>ThreadView.xaml</DependentUpon>
     </Compile>
@@ -277,13 +281,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Resources\Templates\PreferenceCategory.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Resources\Templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -318,6 +322,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DirectoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsViewTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
