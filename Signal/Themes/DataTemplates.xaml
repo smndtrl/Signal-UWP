@@ -5,9 +5,6 @@
     xmlns:local="using:Signal"
     xmlns:resources="using:Signal.Resources.Templates">
 
-<DataTemplate x:Key="SettingsCategoryListViewItemTemplate" x:DataType="resources:PreferenceCategory">
-    <Grid>
-
         <!--<Interactivity:Interaction.Behaviors>
             <Core:DataTriggerBehavior x:Name="IsFailedTrigger" Binding="{Binding Converter={StaticResource DeliveryStatusConverter}}" Value="0">
                 <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=delivered}" Value="Collapsed"/>
@@ -32,39 +29,5 @@
             </Core:DataTriggerBehavior>
         </Interactivity:Interaction.Behaviors>-->
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Viewbox Grid.RowSpan="2"
-                    Width="40"
-                    Height="40" 
-                    HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <SymbolIcon  Margin="4, 4, 4, 4"
-                            Symbol="{x:Bind Icon}"
-                            Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-        </Viewbox>
-        <TextBlock Grid.Column="1"
-                    MaxLines="1"
-                    Margin="0"
-                    Text="{x:Bind NameI}"
-                    TextWrapping="NoWrap"
-                    Style="{StaticResource BodyTextBlockStyle}"/>
-
-        <TextBlock
-            Grid.Column="1"
-            Grid.Row="1"
-            Margin="0"
-            Text="{x:Bind Description}"
-            TextWrapping="NoWrap"
-            Style="{StaticResource BodyTextBlockStyle}"/>
-    </Grid>
-</DataTemplate>
     
 </ResourceDictionary>

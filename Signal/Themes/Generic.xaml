@@ -140,21 +140,55 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:PreferenceCategory" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:SettingsCategory" xmlns:local="using:Signal.Resources.Templates">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:PreferenceCategory">
+                <ControlTemplate TargetType="local:SettingsCategory">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <ItemsPresenter />
+                        <Grid Margin="0,4,0,4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Viewbox Grid.RowSpan="2"
+                                Width="40"
+                                Height="40" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <SymbolIcon
+                                    Margin="4, 4, 4, 4"
+                                    Symbol="{TemplateBinding Icon}" 
+                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                            </Viewbox>
+                            <TextBlock
+                                Grid.Column="1"
+                                MaxLines="1"
+                                Margin="0"
+                                Text="{TemplateBinding Title}"
+                                TextWrapping="NoWrap"
+                                Style="{StaticResource BodyTextBlockStyle}"/>
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Grid.Row="1"
+                                Margin="0"
+                                Text="{TemplateBinding Description}"
+                                TextWrapping="NoWrap"
+                                Style="{StaticResource BodyTextBlockStyle}"/>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Background" Value="Green"/>
-        <Setter Property="ItemTemplate">
+        <!--<Setter Property="Background" Value="Green"/>-->
+        <!--<Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
                     <Grid Background="Green">
@@ -162,7 +196,7 @@
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
-        </Setter>
+        </Setter>-->
     </Style>
 
     <Style TargetType="local:ButtonPreference" xmlns:local="using:Signal.Resources.Templates">
@@ -196,16 +230,67 @@
     <base:DataTemplates x:Key="test"/>
     
     
-    <Style TargetType="local:SettingsPage" xmlns:local="using:Signal.Resources.Templates">
+    <!--<Style TargetType="local:SettingsPage" xmlns:local="using:Signal.Resources.Templates">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsPage">
                     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <TextBlock>aSdF blub blub</TextBlock>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
+                                <VisualState x:Name="DefaultState">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="720" />
+                                    </VisualState.StateTriggers>
+                                </VisualState>
+
+                                <VisualState x:Name="NarrowState">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="0" />
+                                    </VisualState.StateTriggers>
+
+                                    <VisualState.Setters>
+                                        <Setter Target="MasterColumn.Width" Value="*" />
+                                        <Setter Target="DetailColumn.Width" Value="0" />
+                                        <Setter Target="MasterListView.SelectionMode" Value="None" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="MasterColumn" Width="320" />
+                            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel 
+                            Padding="12,4,12,4" 
+                            Grid.ColumnSpan="2" 
+                            Orientation="Horizontal" 
+                            Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+                            
+                            <Viewbox Width="24" Height="24">
+                                <SymbolIcon
+                                    Symbol="Setting" 
+                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                            </Viewbox>
+                        </StackPanel>
+                        
+                        <TextBlock
+                            Text="SETTINGS"
+                            Margin="16,8,8,8"
+                            Style="{ThemeResource BaseTextBlockStyle}"
+                            VerticalAlignment="Center" />
+
                         <ListView
                             x:Name="MasterListView"
                             Grid.Row="2"
-                             Background="{ThemeResource SystemControlPageBackgroundListLowBrush}"
+                            Background="{ThemeResource SystemControlPageBackgroundListLowBrush}"
                             ItemContainerTransitions="{x:Null}"
                             ItemsSource="{TemplateBinding Categories}"
                             ItemTemplate="{StaticResource SettingsCategoryListViewItemTemplate}">
@@ -215,10 +300,16 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
+
+                        <ContentPresenter
+                            Background="Red"
+                            Grid.Column="1"
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            BorderThickness="1,0,0,0"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
+    </Style>-->
 </ResourceDictionary>

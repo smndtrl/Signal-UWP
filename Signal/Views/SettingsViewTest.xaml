@@ -11,13 +11,30 @@
 
     <Grid Background="White">
         <temp:SettingsPage>
-           <!-- <TextBlock>ASDF</TextBlock>-->
-            <temp:SettingsPage.Categories>
-                <temp:PreferenceCategory Icon="Highlight"  NameI="Test" Description="Test Desc"/>
-                <temp:PreferenceCategory Icon="Cut" NameI="Test 2 " Description="Another Desc"/>
-                <temp:PreferenceCategory Icon="Contact" NameI="Test 4" Description="lOl"/>
-                <temp:PreferenceCategory Icon="Crop" NameI="Test 4" />
-            </temp:SettingsPage.Categories>
+            <temp:SettingsCategory Icon="Highlight"  Title="Page1" Description="Test Desc"/>
+            <temp:SettingsCategory Icon="Cut" Title="Page2" Description="Another Desc"/>
+            <temp:SettingsCategory Icon="Contact" Title="Test 4" Description="lOl"/>
+            <temp:SettingsCategory Icon="Crop" Title="Test 4" />
+            <temp:SettingsCategory Icon="Crop" Title="Test 5" />
+
+            <temp:SettingsPage.Views>
+                <temp:SettingsView x:Name="Page1">
+                    <temp:SwitchPreference Grid.Row="2" Title="Sample Title" Text="Sample Text" IsOn="False"/>
+                    <temp:SwitchPreference Grid.Row="3" Title="Sample Title" Text="Sample Text" IsOn="True"/>
+                    <temp:ListPreference Grid.Row="4" 
+                             Title="Sample List" 
+                             Text="Sample List Text" 
+                             Items="{x:Bind ViewModel.TestItems}" 
+                             SelectedValue="{x:Bind ViewModel.TestResult}"/>
+                    <temp:ButtonPreference Title="Button Title" Text="Button Description" ButtonText="Button Text"/>
+                </temp:SettingsView>
+
+                <temp:SettingsView x:Name="Page2">
+                    <temp:SwitchPreference Grid.Row="2" Title="Sample Title" Text="Sample Text" IsOn="False"/>
+                </temp:SettingsView>
+            </temp:SettingsPage.Views>
+                
+
         </temp:SettingsPage>
     </Grid>
 

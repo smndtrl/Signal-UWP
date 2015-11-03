@@ -1,4 +1,5 @@
 ﻿using Signal.Resources.Templates;
+using Signal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,14 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class SettingsViewTest : Page
     {
+        public SettingsViewModel ViewModel
+        {
+            get
+            {
+                return (SettingsViewModel)DataContext;
+            }
+        }
+
         public SettingsViewTest()
         {
             this.InitializeComponent();
