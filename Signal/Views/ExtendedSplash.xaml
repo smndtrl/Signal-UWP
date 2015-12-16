@@ -9,7 +9,6 @@
     Loaded="OnLoaded">
 
     <Grid>
-        <ContentControl Style="{StaticResource test}"/>
-        <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="128" Height="130"></Image>
+        <Image x:Name="image" HorizontalAlignment="Center" Height="100" VerticalAlignment="Center" Width="100" Source="ms-appx:///Assets/Square150x150Logo.png"/>
     </Grid>
 </Page>

@@ -53,14 +53,21 @@ namespace TextSecure.recipient
             //String number = CanonicalAddressDatabase.getInstance(context).getAddressFromId(recipientId);
             var directory = DatabaseFactory.getDirectoryDatabase().Get(recipientId);
 
-            if (asynchronous)
+
+            cachedRecipient = DatabaseFactory.getRecipientDatabase().Get(recipientId);
+
+            if (cachedRecipient == null)
             {
-                cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };/*, getRecipientDetailsAsync(recipientId, number)*/
+                cachedRecipient = DatabaseFactory.getRecipientDatabase().Add(directory.Number, directory.Name, directory.ContactId);
             }
-            else
-            {
-                cachedRecipient = new Recipient(recipientId/*, getRecipientDetailsSync(context, recipientId, number)*/) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
-            }
+            //if (asynchronous)
+            //{
+            //    cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };/*, getRecipientDetailsAsync(recipientId, number)*/
+            //}
+            //else
+            //{
+           //     cachedRecipient = new Recipient(recipientId/*, getRecipientDetailsSync(context, recipientId, number)*/) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
+           // }
 
             recipientCache.Add(recipientId, cachedRecipient);
             return cachedRecipient;
@@ -87,7 +94,7 @@ namespace TextSecure.recipient
             return cachedRecipients;
         }
 
-        private Recipient getSynchronousRecipient(long recipientId)
+        /*private Recipient getSynchronousRecipient(long recipientId)
         {
             Debug.WriteLine("RecipientProvider", "Cache miss [SYNC]!");
 
@@ -106,21 +113,27 @@ namespace TextSecure.recipient
             }
             else
             {
-                /*final Drawable defaultPhoto = isGroupRecipient
+                final Drawable defaultPhoto = isGroupRecipient
                                                      ? ContactPhotoFactory.getDefaultGroupPhoto(context)
-                                                     : ContactPhotoFactory.getDefaultContactPhoto(context, null);*/
+                                                     : ContactPhotoFactory.getDefaultContactPhoto(context, null);
 
                 recipient = new Recipient(null, number, recipientId, null);
             }
 
             recipientCache.Add(recipientId, recipient);
             return recipient;
-        }
+        }*/
 
         public long getRecipientIdForNumber(string number)
         {
-            var dir = DatabaseFactory.getDirectoryDatabase().GetForNumber(number);
-            return dir.DirectoryId;
+            try
+            {
+                var dir = DatabaseFactory.getRecipientDatabase().GetRecipientIdForNumber(number);
+                return dir;
+            } catch(Exception e) {
+                return -1;
+            }
+            
         }
 
         /*private Recipient gethronousRecipient(final Context context, final long recipientId)

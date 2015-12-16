@@ -13,8 +13,18 @@
     </Interactivity:Interaction.Behaviors>
 
     <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
+        <Interactivity:Interaction.Behaviors>
+            <Core:DataTriggerBehavior Binding="{x:Bind ViewModel.HasVerificationError}" Value="True">
+                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=verificationError}" Value="Visible"/>
+            </Core:DataTriggerBehavior>
+            <Core:DataTriggerBehavior Binding="{x:Bind ViewModel.HasVerificationError}" Value="False">
+                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=verificationError}" Value="Collapsed"/>
+            </Core:DataTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -27,12 +37,24 @@
                          InputScope="Number" 
                          MaxLength="6"/>
         </StackPanel>
-        
 
 
+        <StackPanel x:Name="verificationError"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" 
+            d:LayoutOverrides="Width"
+            Orientation="Horizontal"
+            Margin="16">
+            <SymbolIcon Symbol="Tag" Foreground="Red"/>
+            <TextBlock x:Uid="verificiationError" 
+                       Margin="8,0,0,0"
+                       Text="Connection to verification server failed"
+                       Foreground="Red"/>
+        </StackPanel>
 
         <Button x:Name="verifyButton"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     TabIndex="4"
                     Margin="16"
                     

@@ -120,13 +120,13 @@ namespace TextSecure.database
             return query.Select(d => d.Number).ToList();
         }
 
-        public async Task<List<string>> GetNumbersAsync(string number)
+        /*public async Task<List<string>> GetNumbersAsync(string number)
         {
             await ReloadLocalContacts(number);
             var query = conn.Table<Directory>().Where(d => true);
 
             return query.Select(d => d.Number).ToList();
-        }
+        }*/
 
         public string GetNumberForId(long recipientId)
         {
@@ -233,65 +233,8 @@ namespace TextSecure.database
             }
         }
 
-        private async Task ReloadLocalContacts(string localNumber)
-        {
-            try
-            {
-                var contactStore = await ContactManager.RequestStoreAsync();
-                var contacts = await contactStore.FindContactsAsync();
-
-                foreach (var contact in contacts)
-                {
-                    //Debug.WriteLine($"Name: {contact.DisplayName}");
-                    foreach (var number in contact.Phones)
-                    {
-                        //Debug.WriteLine($"Number: {number.Number}");
-                        try
-                        {
-                            string e164number = PhoneNumberFormatter.formatNumber(number.Number, localNumber);
-
-                            var directory = GetForNumber(e164number);
-
-                            if (directory != null)
-                            {
-                                directory.Name = contact.DisplayName;
-                                directory.Time = TimeUtil.GetDateTimeMillis();
-                                directory.ContactId = contact.Id;
-
-                                conn.Update(directory);
-                            } else
-                            {
-                                var newdir = new Directory()
-                                {
-                                    Name = contact.DisplayName,
-                                    Number = e164number,
-                                    Relay = null,
-                                    Registered = 0,
-                                    Time = TimeUtil.GetDateTimeMillis(),
-                                    ContactId = contact.Id
-                                };
-                                conn.Insert(newdir);
-                            }
-
-                           
-
-                        }
-                        catch (InvalidNumberException e)
-                        {
-                            Debug.WriteLine($"Directory: Invalid number: {number}");
-                        }
-                        catch (SQLiteException e)
-                        {
-                            if (e.Message.Equals("Constraint")) continue;
-                        }
-
-                    }
-                }
 
 
-            }
-            catch (Exception e) { }
-       }
 
         /*public async Task<List<Tuple<string, Contact>>> getPushEligibleContactNumbers(String localNumber)
         {

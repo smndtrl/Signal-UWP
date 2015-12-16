@@ -86,7 +86,7 @@ namespace libtextsecure
          *
          * @throws IOException
          */
-        public async void requestSmsVerificationCode()// throws IOException
+        public async Task requestSmsVerificationCode()// throws IOException
         {
             await this.pushServiceSocket.createAccount(false);
         }
@@ -97,7 +97,7 @@ namespace libtextsecure
          *
           * @throws IOException
          */
-        public async void requestVoiceVerificationCode()// throws IOException
+        public async Task requestVoiceVerificationCode()// throws IOException
         {
             await this.pushServiceSocket.createAccount(true);
         }

@@ -11,27 +11,41 @@
     <Page.DataContext>
         <Binding Source="{Binding Registration, Source={StaticResource Locator}}"/>
     </Page.DataContext>
-    
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
+        <Interactivity:Interaction.Behaviors>
+            <Core:DataTriggerBehavior Binding="{Binding HasRegistrationError}" Value="True">
+                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registerationError}" Value="Visible"/>
+            </Core:DataTriggerBehavior>
+            <Core:DataTriggerBehavior Binding="{Binding HasRegistrationError}" Value="False">
+                <Core:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=registerationError}" Value="Collapsed"/>
+            </Core:DataTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid x:Name="registerGrid" 
+        <StackPanel x:Name="registerGrid" 
               Grid.Row="0"
               Margin="16"
-              Background="Lime" 
-              VerticalAlignment="Center">
+              VerticalAlignment="Center" Background="{ThemeResource ContentDialogBackgroundThemeBrush}">
             <!-- Number -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <TextBlock  Margin="8" Grid.Row="1" x:Name="registrationProgressText123" Text="registrationProgressText" Foreground="White" FontFamily="Segoe UI Light"/>
+
+            <TextBlock  Margin="8" Grid.Row="1" x:Name="registrationProgressText123" Text="registrationProgressText" FontFamily="Segoe UI Light"/>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" >
                 <TextBlock Text="+" Margin="8" VerticalAlignment="Center"/>
@@ -50,9 +64,23 @@
                          BorderThickness="0,0,0,2" 
                          InputScope="Number" 
                          Width="160"/>
-                
+
             </StackPanel>
-        </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="registerationError"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" 
+            d:LayoutOverrides="Width"
+            Orientation="Horizontal"
+            Margin="16">
+            <SymbolIcon Symbol="Tag" Foreground="Red"/>
+            <TextBlock x:Uid="registrationError" 
+                       Margin="8,0,0,0"
+                       Text="Connection to registration server failed"
+                       Foreground="Red"/>
+        </StackPanel>
 
         <Button x:Name="registerButton"
                 Grid.Row="2"
@@ -65,8 +93,8 @@
                 TabIndex="2" 
                 
                 />
-        
-    
+
+
 
     </Grid>
 

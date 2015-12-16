@@ -36,9 +36,9 @@ namespace Signal.Models
     {
         [PrimaryKey,AutoIncrement]
         public long ContactId { get; set; }
-        public string name { get; set; }
+        public string Name { get; set; }
         [Indexed(Name = "number", Unique = true)]
-        public string number { get; set;  }
+        public string Number { get; set;  }
         public string label { get; set; }
         public string SystemId { get; set; }
     }

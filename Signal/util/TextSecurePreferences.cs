@@ -241,7 +241,7 @@ namespace TextSecure.util
 
         public static String getLocalNumber()
         {
-            return GetValueOrDefault<string>(LOCAL_NUMBER_PREF, "No Stored Number");
+            return GetValueOrDefault<string>(LOCAL_NUMBER_PREF, string.Empty);
         }
 
         public static void setLocalNumber(String localNumber)
@@ -302,7 +302,7 @@ namespace TextSecure.util
 
         public static String getMmscUrl()
         {
-            return GetValueOrDefault<string>(MMSC_HOST_PREF, "");
+            return GetValueOrDefault<string>(MMSC_HOST_PREF, string.Empty);
         }
 
         public static void setMmscUrl(String mmsc)
@@ -323,7 +323,7 @@ namespace TextSecure.util
 
         public static String getMmscProxy()
         {
-            return GetValueOrDefault<string>(MMSC_PROXY_HOST_PREF, "");
+            return GetValueOrDefault<string>(MMSC_PROXY_HOST_PREF, string.Empty);
         }
 
         public static void setMmscProxy(String value)
@@ -344,7 +344,7 @@ namespace TextSecure.util
 
         public static String getMmscProxyPort()
         {
-            return GetValueOrDefault<string>(MMSC_PROXY_PORT_PREF, "");
+            return GetValueOrDefault<string>(MMSC_PROXY_PORT_PREF, string.Empty);
         }
 
         public static void setMmscProxyPort(String value)
@@ -365,7 +365,7 @@ namespace TextSecure.util
 
         public static String getMmscUsername()
         {
-            return GetValueOrDefault<string>(MMSC_USERNAME_PREF, "");
+            return GetValueOrDefault<string>(MMSC_USERNAME_PREF, string.Empty);
         }
 
         public static void setMmscUsername(String value)
@@ -386,7 +386,7 @@ namespace TextSecure.util
 
         public static String getMmscPassword()
         {
-            return GetValueOrDefault<string>(MMSC_PASSWORD_PREF, "");
+            return GetValueOrDefault<string>(MMSC_PASSWORD_PREF, string.Empty);
         }
 
         public static void setMmscPassword(String value)

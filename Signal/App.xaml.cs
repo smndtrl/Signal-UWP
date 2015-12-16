@@ -253,7 +253,7 @@ namespace Signal
 #endif
             DispatcherHelper.Initialize();
 
-            if (TextSecurePreferences.GetLocalRegistrationId() == -1)
+            if (TextSecurePreferences.getLocalNumber().Equals(string.Empty))
             {
                 Debug.WriteLine("Launching first launch experience");
                 OnFirstLaunched(e);
@@ -280,7 +280,7 @@ namespace Signal
             Worker = new TaskWorker();
             Worker.Start();
 
-            await DirectoryHelper.refreshDirectory();
+            //await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
             var websocketTask = new WebsocketTask();

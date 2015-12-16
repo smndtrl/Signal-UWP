@@ -44,8 +44,8 @@ namespace TextSecure.util
 
         public static async Task<bool> refreshDirectory(TextSecureAccountManager accountManager, String localNumber)
         {
-            TextSecureDirectory directory = DatabaseFactory.getDirectoryDatabase();
-            List<string> eligibleContactNumbers = await directory.GetNumbersAsync(localNumber);
+            var contactsDb = DatabaseFactory.getContactsDatabase();
+            List<string> eligibleContactNumbers = await contactsDb.GetNumbersAsync(localNumber);
             List<ContactTokenDetails> activeTokens = await accountManager.getContacts(eligibleContactNumbers);
 
             if (activeTokens != null)

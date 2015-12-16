@@ -25,6 +25,15 @@ namespace Signal.Database
             return conn.Get<Recipient>(recipientId);
         }
 
+        public Recipient Add(string name, string number, string contactId)
+        {
+
+            var recipient = new Recipient() { Name = name, Number = number, ContactId = contactId };
+            conn.Insert(recipient);
+
+            return recipient;
+        }
+
         public Recipients GetRecipients(long[] recipientIds)
         {
             //var recipients = conn.Table<Recipient>().Where(s => recipientIds.Contains(s.RecipientId)).ToList();

@@ -75,8 +75,36 @@ namespace Signal.ViewModels
             }
         }
 
-        public string CountryCode = "";
-        public string PhoneNumber = "";
+        private bool _hasRegistrationError = false;
+        public bool HasRegistrationError
+        {
+            get { return _hasRegistrationError; }
+            set { Set(ref _hasRegistrationError, value); }
+        }
+        
+
+        public string _countryCode;
+        public string CountryCode
+        {
+            get { return _countryCode; }
+            set
+            {
+                Set(ref _countryCode, value);
+                RegisterCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string _phoneNumber;
+        public string PhoneNumber
+        {
+            get { return _phoneNumber; }
+            set
+            {
+                Set(ref _phoneNumber, value);
+                RegisterCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         private string getNumber()
         {   try
             {
@@ -88,7 +116,7 @@ namespace Signal.ViewModels
         }
         public string VerificationToken = "";
 
-        public enum RegistrationState { None, Registering, Registered, Verifying, Verified,  Generated, Sat };
+        public enum RegistrationState { None, Registering, Registered, Verifying, Verified,  Generated, Sat, Error };
 
         public const string StatePropertyName = "State";
         private int _state = (int)RegistrationState.None;
@@ -110,30 +138,7 @@ namespace Signal.ViewModels
         }
 
 
-        private RelayCommand _verifyCommand;
-        public RelayCommand VerifyCommand
-        {
-            get
-            {
-                return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
-                   () =>
-                {
-                    IsBusy = true;
 
-                    var success = await handleRegistration(VerificationToken);
-
-                    if (!success)
-                    {
-                        State = (int)RegistrationState.Registered;
-                    }
-
-                    State = (int)RegistrationState.Verified;
-
-                    IsBusy = false;
-                },
-                    () => true));
-            }
-        }
 
         private RelayCommand _registerCommand;
         public RelayCommand RegisterCommand
@@ -158,27 +163,77 @@ namespace Signal.ViewModels
                         await Task.Delay(2000);
 
                         App.Current.accountManager = TextSecureCommunicationFactory.createManager(number, password);
-                        App.Current.accountManager.requestSmsVerificationCode();
+                        await App.Current.accountManager.requestSmsVerificationCode();
                         State = (int)RegistrationState.Registered;
+
+                        HasRegistrationError = false;
+                        IsBusy = false;
 
                         _navigationService.NavigateTo("VerificationPageKey");
 
-                    } catch (Exception e)
+                    }
+                    catch (Exception e)
                     {
-                        Debug.WriteLine(e.Message);
+                        //Debug.WriteLine(e.Message);
+                        HasRegistrationError = true;
                         State = (int)RegistrationState.None;
+                        return;
                     }
 
-                    IsBusy = false;
+
+
 
                 },
                     () => {
-                        PhoneNumberFormatter.isValidNumber(getNumber());
+                        return PhoneNumberFormatter.isValidNumber(getNumber());
                         return true;
                         }));
             }
         }
 
+        /*
+         * VerificationView
+         */
+
+        private bool _hasVerificationError = false;
+        public bool HasVerificationError
+        {
+            get { return _hasVerificationError; }
+            set { Set(ref _hasVerificationError, value); }
+        }
+
+        private RelayCommand _verifyCommand;
+        public RelayCommand VerifyCommand
+        {
+            get
+            {
+                return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
+                   () =>
+                {
+                    IsBusy = true;
+
+                    try
+                    {
+                        await handleRegistration(VerificationToken);
+
+                        State = (int)RegistrationState.Verified;
+                        IsBusy = false;
+
+                        _navigationService.NavigateTo("MasterDetail");
+
+                    }
+                    catch (Exception e)
+                    {
+                        HasRegistrationError = true;
+                        State = (int)RegistrationState.Registered;
+                        return;
+                    }
+
+                    
+                },
+                    () => true));
+            }
+        }
 
         /*
          * ReegistrationTypeView
@@ -217,21 +272,21 @@ namespace Signal.ViewModels
         private string signalingKey;
         private string number;
 
-        private async Task<bool> handleRegistration(string receivedSmsVerificationCode)
+        private async Task handleRegistration(string receivedSmsVerificationCode)
         {
            
-            try
-            {
+            /*try
+            {*/
 
 
                 var registrationId = KeyHelper.generateRegistrationId(false);
                 TextSecurePreferences.setLocalRegistrationId((int)registrationId);
 
                 await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
-                await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
+                //await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
                 State = (int)RegistrationState.Verified;
 
-                Recipient self = RecipientFactory.getRecipientsFromString(number, false).getPrimaryRecipient();
+                Recipient self = RecipientFactory.GetSelf(number).getPrimaryRecipient();
                 IdentityKeyUtil.generateIdentityKeys();
                 IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair();
                 List<PreKeyRecord> records = await PreKeyUtil.generatePreKeys();
@@ -247,33 +302,6 @@ namespace Signal.ViewModels
 
 
                 markAsVerified(number, password, signalingKey);
-
-                _navigationService.NavigateTo("MasterDetail");
-
-            }
-            catch (RateLimitException ex)
-            {
-                return false;
-            }
-            catch (AuthorizationFailedException ex)
-            {
-                return false;
-            }
-            catch (PushNetworkException ex)
-            {
-                return false;
-            }
-            catch (NonSuccessfulResponseCodeException ex)
-            {
-                return false;
-            }
-            catch (Exception ex)
-            {
-                return false;
-                //throw new Exception(ex.Message);
-            }
-
-            return true;
 
         }
 

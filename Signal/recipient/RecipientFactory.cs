@@ -122,7 +122,8 @@ namespace TextSecure.recipient
             }
 
             //return new May<long>(DatabaseFactory.getRecipientDatabase().GetRecipientIdForNumber(number));
-            return new May<long>(provider.getRecipientIdForNumber(number));
+            var id = provider.getRecipientIdForNumber(number);
+            return id == -1 ? May<long>.NoValue : new May<long>(id);
 
         }
 
@@ -142,6 +143,7 @@ namespace TextSecure.recipient
 
             return value;
         }
+
         /*
         public static void clearCache()
         {
