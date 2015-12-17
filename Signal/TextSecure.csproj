@@ -164,12 +164,6 @@
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
-    <Compile Include="Resources\Templates\ButtonPreference.cs" />
-    <Compile Include="Resources\Templates\ListPreference.cs" />
-    <Compile Include="Resources\Templates\PreferenceBase.cs" />
-    <Compile Include="Resources\Templates\PreferenceCategory.cs" />
-    <Compile Include="Resources\Templates\SettingsPage.cs" />
-    <Compile Include="Resources\Templates\SwitchPreference.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
