@@ -352,6 +352,10 @@
       <Project>{7f46463c-899e-48ca-b56c-abc386545f29}</Project>
       <Name>libaxolotl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libsettings\libsettings.csproj">
+      <Project>{0be37c5f-5ce1-4ad4-8f22-7423d0610085}</Project>
+      <Name>libsettings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\libtextsecure\libtextsecure.csproj">
       <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>
       <Name>libtextsecure</Name>
