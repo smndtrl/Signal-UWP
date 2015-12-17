@@ -36,7 +36,7 @@ namespace Signal.ViewModels
 
             nav.Configure("VerificationPageKey", typeof(VerificationView));
             nav.Configure("DirectoryPageKey", typeof(DirectoryView));
-            nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsView));
+            nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));
 
             SimpleIoc.Default.Register<INavigationService>(() => nav);
 

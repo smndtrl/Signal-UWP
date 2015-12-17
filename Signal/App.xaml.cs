@@ -280,7 +280,7 @@ namespace Signal
             Worker = new TaskWorker();
             Worker.Start();
 
-            await DirectoryHelper.refreshDirectory();
+            //await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
             var websocketTask = new WebsocketTask();

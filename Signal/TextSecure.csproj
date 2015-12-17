@@ -164,12 +164,6 @@
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
-    <Compile Include="Resources\Templates\ButtonPreference.cs" />
-    <Compile Include="Resources\Templates\ListPreference.cs" />
-    <Compile Include="Resources\Templates\PreferenceBase.cs" />
-    <Compile Include="Resources\Templates\PreferenceCategory.cs" />
-    <Compile Include="Resources\Templates\SettingsPage.cs" />
-    <Compile Include="Resources\Templates\SwitchPreference.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
@@ -187,7 +181,6 @@
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
     <Compile Include="Tasks\TextSendTask.cs" />
-    <Compile Include="Themes\DataTemplates.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
     <Compile Include="Util\GroupUtil.cs" />
@@ -227,12 +220,6 @@
     </Compile>
     <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
       <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsDetailView.xaml.cs">
-      <DependentUpon>SettingsDetailView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DirectoryView.xaml.cs">
       <DependentUpon>DirectoryView.xaml</DependentUpon>
@@ -285,14 +272,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\DataTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\ExtendedSplash.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -310,14 +289,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Registration\RegistrationTypeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsDetailView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -357,6 +328,10 @@
     <ProjectReference Include="..\libaxolotl\libaxolotl.csproj">
       <Project>{7f46463c-899e-48ca-b56c-abc386545f29}</Project>
       <Name>libaxolotl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libsettings\libsettings.csproj">
+      <Project>{0be37c5f-5ce1-4ad4-8f22-7423d0610085}</Project>
+      <Name>libsettings</Name>
     </ProjectReference>
     <ProjectReference Include="..\libtextsecure\libtextsecure.csproj">
       <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>

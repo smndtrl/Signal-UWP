@@ -1,8 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Signal.Resources.Templates"
-    xmlns:base="using:Signal">
+    xmlns:local="using:Settings.UI.Xaml.Controls"
+    xmlns:base="using:Settings">
 
     <!--<Style TargetType="local:PreferenceCategory" xmlns:local="using:Signal.Resources.Templates">
         <Setter Property="Template">
@@ -41,7 +41,7 @@
             </Setter.Value>
         </Setter>
     </Style>-->
-    <Style TargetType="local:SwitchPreference" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:SwitchPreference">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SwitchPreference">
@@ -59,7 +59,7 @@
                             Text="{TemplateBinding Text}"
                             Style="{ThemeResource BodyTextBlockStyle}"/>
 
-                            <ToggleSwitch IsOn="{TemplateBinding IsOn}"/>
+                            <ToggleSwitch IsOn="{Binding IsOn, Mode=TwoWay}"/> <!-- TemplateBinding is OneWay only -->
                         </StackPanel>
 
                     </Border>
@@ -68,7 +68,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ListPreference" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:ListPreference">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate x:Name="base" TargetType="local:ListPreference">
@@ -126,7 +126,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:PreferenceBase" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:PreferenceBase">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PreferenceBase">
@@ -140,10 +140,10 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:PreferenceCategory" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:SettingsCategory">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:PreferenceCategory">
+                <ControlTemplate TargetType="local:SettingsCategory">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -165,7 +165,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ButtonPreference" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:ButtonPreference">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPreference">
@@ -193,10 +193,10 @@
     </Style>
 
 
-    <base:DataTemplates x:Key="test"/>
+    <!--<base:DataTemplates x:Key="test"/>-->
     
     
-    <Style TargetType="local:SettingsPage" xmlns:local="using:Signal.Resources.Templates">
+    <Style TargetType="local:SettingsPage">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsPage">
