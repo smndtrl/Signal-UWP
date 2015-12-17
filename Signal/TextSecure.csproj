@@ -221,12 +221,6 @@
     <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
       <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsDetailView.xaml.cs">
-      <DependentUpon>SettingsDetailView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DirectoryView.xaml.cs">
       <DependentUpon>DirectoryView.xaml</DependentUpon>
     </Compile>
@@ -295,14 +289,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Registration\RegistrationTypeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsDetailView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Settings.UI.Xaml.Controls
 {
-    public class PreferenceBase : Control
+    public class PreferenceBase : UserControl, IPreferenceBase
     {
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(PreferenceBase), new PropertyMetadata(50.0, OnTitlePropertyChanged));
 
@@ -39,7 +39,7 @@ namespace Settings.UI.Xaml.Controls
 
         public PreferenceBase()
         {
-            this.DefaultStyleKey = typeof(PreferenceBase);
+            //this.DefaultStyleKey = typeof(PreferenceBase);
         }
 
         public string Title

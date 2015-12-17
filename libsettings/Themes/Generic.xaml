@@ -59,7 +59,7 @@
                             Text="{TemplateBinding Text}"
                             Style="{ThemeResource BodyTextBlockStyle}"/>
 
-                            <ToggleSwitch IsOn="{TemplateBinding IsOn}"/>
+                            <ToggleSwitch IsOn="{Binding IsOn, Mode=TwoWay}"/> <!-- TemplateBinding is OneWay only -->
                         </StackPanel>
 
                     </Border>

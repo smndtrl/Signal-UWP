@@ -39,15 +39,15 @@ namespace Settings.UI.Xaml.Controls
         {
             this.DefaultStyleKey = typeof(SettingsView);
             this.InitializeComponent();
-            Children = new ObservableCollection<PreferenceBase>();
+            Children = new ObservableCollection<IPreferenceBase>();
         }
 
-        public ObservableCollection<PreferenceBase> Children
+        public ObservableCollection<IPreferenceBase> Children
         {
             get
             {
-                var t = (ObservableCollection<PreferenceBase>)GetValue(ChildrenProperty);
-                return (ObservableCollection<PreferenceBase>)GetValue(ChildrenProperty);
+                var t = (ObservableCollection<IPreferenceBase>)GetValue(ChildrenProperty);
+                return (ObservableCollection<IPreferenceBase>)GetValue(ChildrenProperty);
             }
             set { SetValue(ChildrenProperty, value); }
         }

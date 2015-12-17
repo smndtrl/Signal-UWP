@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
@@ -24,6 +25,7 @@ namespace Settings.UI.Xaml.Controls
             if (control != null)
             {
                 control.IsOn = (bool)e.NewValue;
+                Debug.WriteLine($"OnIsOnPropertyChanged {control.IsOn}");
             }
         }
 
@@ -35,7 +37,14 @@ namespace Settings.UI.Xaml.Controls
         public bool IsOn
         {
             get { return (bool)GetValue(IsOnProperty); }
-            set { SetValue(IsOnProperty, value); }
+            set { SetValue(IsOnProperty, value); Debug.WriteLine($"Set IsOn to {IsOn}"); }
+        }
+
+        bool _toggleison;
+        public bool ToggleIsOn
+        {
+            get { return _toggleison; }
+            set { _toggleison = value; Debug.WriteLine($"Set ToggleIsOn to {_toggleison}"); }
         }
 
 
