@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Signal.Resources.Templates
+namespace Settings.UI.Xaml.Controls
 {
     public sealed class SettingsCategory : ItemsControl
     {

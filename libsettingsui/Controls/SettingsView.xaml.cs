@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Signal.Resources.Templates
+namespace Settings.UI.Xaml.Controls
 {
     [ContentPropertyAttribute(Name = "Children")]
     public sealed partial class SettingsView : UserControl

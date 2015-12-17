@@ -1,11 +1,11 @@
-﻿using GalaSoft.MvvmLight.Command;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
-namespace Signal.Resources.Templates
+namespace Settings.UI.Xaml.Controls
 {
     public sealed class ListPreference : PreferenceBase
     {
@@ -66,7 +66,7 @@ namespace Signal.Resources.Templates
             set { SetValue(ItemsProperty, value); }
         }
 
-        private RelayCommand<string> _radioButtonCommand;
+        /*private RelayCommand<string> _radioButtonCommand;
         public RelayCommand<string> RadioButtonCommand
         {
             get
@@ -78,6 +78,30 @@ namespace Signal.Resources.Templates
 
                     },
                     (param) => true));
+            }
+        }
+
+        private ICommand _radioButtonCommand;
+        public ICommand RadioButtonCommand
+        {
+            get
+            {
+                return _radioButtonCommand ?? (_radioButtonCommand = new ButtonCommand());
+            }
+        }*/
+
+        private class ButtonCommand : ICommand
+        {
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Execute(object parameter)
+            {
+                throw new NotImplementedException();
             }
         }
 

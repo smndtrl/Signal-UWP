@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 
-namespace Signal.Resources.Templates
+namespace Settings.UI.Xaml.Controls
 {
     [ContentPropertyAttribute(Name = "Categories")]
     public partial class SettingsPage : UserControl

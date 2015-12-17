@@ -1,5 +1,4 @@
-﻿using Signal.Resources.Templates;
-using Signal.ViewModels;
+﻿using Signal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;

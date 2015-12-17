@@ -162,18 +162,9 @@
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
-    <Compile Include="Resources\Templates\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Resources\TestConverter.cs" />
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
-    <Compile Include="Resources\Templates\ButtonPreference.cs" />
-    <Compile Include="Resources\Templates\ListPreference.cs" />
-    <Compile Include="Resources\Templates\PreferenceBase.cs" />
-    <Compile Include="Resources\Templates\SettingsCategory.cs" />
-    <Compile Include="Resources\Templates\SettingsPage.xaml.cs" />
-    <Compile Include="Resources\Templates\SwitchPreference.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
@@ -286,14 +277,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\Templates\SettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Templates\SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -330,10 +313,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Test.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\ThreadView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -358,6 +337,10 @@
     <ProjectReference Include="..\libaxolotl\libaxolotl.csproj">
       <Project>{7f46463c-899e-48ca-b56c-abc386545f29}</Project>
       <Name>libaxolotl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libsettingsui\libsettingsui.csproj">
+      <Project>{ac519a47-1e18-481b-99b1-ba481aa53d6a}</Project>
+      <Name>libsettingsui</Name>
     </ProjectReference>
     <ProjectReference Include="..\libtextsecure\libtextsecure.csproj">
       <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>
