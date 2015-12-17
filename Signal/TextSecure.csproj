@@ -181,7 +181,6 @@
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
     <Compile Include="Tasks\TextSendTask.cs" />
-    <Compile Include="Themes\DataTemplates.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
     <Compile Include="Util\GroupUtil.cs" />
@@ -276,14 +275,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Resources\Templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\DataTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
