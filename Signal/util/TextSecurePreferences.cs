@@ -198,7 +198,7 @@ namespace TextSecure.util
             }
             else
             {*/
-                return GetValueOrDefault<string>(WNS_REGISTRATION_ID_PREF, null);
+                return GetValueOrDefault<string>(WNS_REGISTRATION_ID_PREF, string.Empty);
             //}
         }
 
@@ -241,7 +241,7 @@ namespace TextSecure.util
 
         public static String getLocalNumber()
         {
-            return GetValueOrDefault<string>(LOCAL_NUMBER_PREF, "No Stored Number");
+            return GetValueOrDefault<string>(LOCAL_NUMBER_PREF, string.Empty);
         }
 
         public static void setLocalNumber(String localNumber)
@@ -251,7 +251,7 @@ namespace TextSecure.util
 
         public static String getPushServerPassword()
         {
-            return GetValueOrDefault<string>(GCM_PASSWORD_PREF, null);
+            return GetValueOrDefault<string>(GCM_PASSWORD_PREF, string.Empty);
         }
 
         public static void setPushServerPassword(String password)
@@ -266,7 +266,7 @@ namespace TextSecure.util
 
         public static String getSignalingKey()
         {
-            return GetValueOrDefault<string>(SIGNALING_KEY_PREF, null);
+            return GetValueOrDefault<string>(SIGNALING_KEY_PREF, string.Empty);
         }
 
         public static bool isEnterImeKeyEnabled()
@@ -289,7 +289,7 @@ namespace TextSecure.util
             AddOrUpdateValue(DISABLE_PASSPHRASE_PREF, disabled);
         }
 
-        public static bool getUseCustomMmsc()
+        /*public static bool getUseCustomMmsc()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_HOST_PREF, legacy);
@@ -400,7 +400,7 @@ namespace TextSecure.util
 
             if (useCustom) return GetValueOrDefault<string>(MMS_USER_AGENT, defaultUserAgent);
             else return defaultUserAgent;
-        }
+        }*/
 
         public static String getIdentityContactUri()
         {

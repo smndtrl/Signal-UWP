@@ -75,15 +75,15 @@ namespace Signal.ViewModels
             }
         }
 
-        public string CountryCode = "";
-        public string PhoneNumber = "";
+        public string CountryCode = string.Empty;
+        public string PhoneNumber = string.Empty;
         private string getNumber()
         {   try
             {
                 return PhoneNumberFormatter.formatE164(CountryCode, PhoneNumber);
             } catch (Exception e)
             {
-                return "";
+                return string.Empty;
             }
         }
         public string VerificationToken = "";
@@ -228,7 +228,7 @@ namespace Signal.ViewModels
                 TextSecurePreferences.setLocalRegistrationId((int)registrationId);
 
                 await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
-                await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
+                //await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
                 State = (int)RegistrationState.Verified;
 
                 Recipient self = RecipientFactory.getRecipientsFromString(number, false).getPrimaryRecipient();
@@ -243,7 +243,7 @@ namespace Signal.ViewModels
                 DatabaseFactory.getIdentityDatabase().SaveIdentity(self.getRecipientId(), identityKey.getPublicKey());
                 State = (int)RegistrationState.Generated;
 
-                await DirectoryHelper.refreshDirectory(App.Current.accountManager, TextSecurePreferences.getLocalNumber());
+                //await DirectoryHelper.refreshDirectory(App.Current.accountManager, TextSecurePreferences.getLocalNumber());
 
 
                 markAsVerified(number, password, signalingKey);
@@ -285,7 +285,7 @@ namespace Signal.ViewModels
             TextSecurePreferences.setPushServerPassword(password);
             TextSecurePreferences.setSignalingKey(signalingKey);
             TextSecurePreferences.setSignedPreKeyRegistered(true);
-            TextSecurePreferences.setPromptedPushRegistration(true);
+            //TextSecurePreferences.setPromptedPushRegistration(true);
         }
 
         /*private string generateRandomSignalingKey()

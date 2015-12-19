@@ -79,15 +79,15 @@ namespace TextSecure
             await Task.Delay(200);
 
             dismissed = false;
-            /*if (TextSecurePreferences.getLocalNumber() == "No Stored Number") TODO: readd
+            if (TextSecurePreferences.getLocalNumber() == string.Empty)
             {
                 Debug.WriteLine("First start, registering");
                 rootFrame.Navigate(typeof(RegistrationTypeView));
                 Window.Current.Content = rootFrame;
                 return;
-            }*/
+            }
 
-            rootFrame.Navigate(typeof(SettingsViewTest));
+            rootFrame.Navigate(typeof(View));
             
             //Window.Current.Content = rootFrame;*/
 

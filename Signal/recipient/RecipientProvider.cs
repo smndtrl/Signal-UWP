@@ -117,11 +117,11 @@ namespace TextSecure.recipient
             return recipient;
         }
 
-        public long getRecipientIdForNumber(string number)
+        /*public long getRecipientIdForNumber(string number)
         {
             var dir = DatabaseFactory.getDirectoryDatabase().GetForNumber(number);
             return dir.DirectoryId;
-        }
+        }*/
 
         /*private Recipient gethronousRecipient(final Context context, final long recipientId)
         {

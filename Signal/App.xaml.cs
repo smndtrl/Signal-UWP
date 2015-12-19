@@ -168,7 +168,7 @@ namespace Signal
             return true;
         }*/
 
-        private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
+        /*private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
         {
 
             string typeString = String.Empty;
@@ -197,7 +197,7 @@ namespace Signal
             }
 
             Debug.WriteLine($"Notification recieved: {typeString}");
-        }
+        }*/
 
 
         protected override void OnActivated(IActivatedEventArgs args)
@@ -253,7 +253,7 @@ namespace Signal
 #endif
             DispatcherHelper.Initialize();
 
-            if (TextSecurePreferences.GetLocalRegistrationId() == -1)
+            if (TextSecurePreferences.getLocalNumber() == string.Empty)
             {
                 Debug.WriteLine("Launching first launch experience");
                 OnFirstLaunched(e);
@@ -262,7 +262,7 @@ namespace Signal
 
             Debug.WriteLine("Launching...");
 
-            if (TextSecurePreferences.isPushRegistered() == true)
+            /*if (TextSecurePreferences.isPushRegistered() == true)
             {
                 TaskHelper.getInstance().RegisterPushReceiver();
 
@@ -272,7 +272,7 @@ namespace Signal
                     channel = response.Channel;
                 }
 
-            }
+            }*/
 
             accountManager = TextSecureCommunicationFactory.createManager();
 

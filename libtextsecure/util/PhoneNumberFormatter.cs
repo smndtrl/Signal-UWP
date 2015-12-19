@@ -129,6 +129,7 @@ namespace libtextsecure.util
 
         public static String formatE164(String countryCode, String number)
         {
+            if (countryCode == string.Empty || number == string.Empty) return string.Empty;
             try
             {
                 PhoneNumberUtil util = PhoneNumberUtil.GetInstance();
@@ -139,11 +140,11 @@ namespace libtextsecure.util
                 return util.Format(parsedNumber, PhoneNumberFormat.E164);
             }
             catch (NumberParseException npe) {
-                //Log.w(TAG, npe);
-            } /*catch (NumberFormatException npe)
+                return string.Empty;
+            } catch (Exception npe)
             {
-
-            }*/
+                return string.Empty;
+            }
 
             return "+" +
                 countryCode.ReplaceAll("[^0-9]", "").ReplaceAll("^0*", "") +
