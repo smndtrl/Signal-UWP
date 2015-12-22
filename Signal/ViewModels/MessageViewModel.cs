@@ -17,10 +17,16 @@ using TextSecure;
 using TextSecure.database;
 using TextSecure.messages;
 using TextSecure.recipient;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace Signal.ViewModels
 {
-    public class MessageViewModel : ViewModelBase, INavigableViewModel
+    public class MessageViewModel : ViewModelBase, INavigableViewModel, IAmbientColor
     {
         private readonly INavigationService _navigationService;
         private readonly IDataService _dataService;
@@ -33,6 +39,11 @@ namespace Signal.ViewModels
             _dataService = service;
             _navigationService = navService;
 
+
+            Messages = new MessageCollection(_dataService, 1);
+
+
+
             /*Messenger.Default.Register<PropertyChangedMessage<Thread>>(
                 this,
                 message =>
@@ -40,11 +51,11 @@ namespace Signal.ViewModels
                     SelectedThread = message.NewValue;
                     Messages = new MessageCollection(_dataService, SelectedThread.ThreadId);
                     RaisePropertyChanged("Messages");
-                    Debug.WriteLine($"MessageView got Thread {SelectedThread.ThreadId}");
+                    Debug.WriteLine($"MessageDetailPage got Thread {SelectedThread.ThreadId}");
                 }
             );*/
 
-            
+
 
             /*Messenger.Default.Register<RefreshThreadMessage>(
             this,
@@ -65,7 +76,7 @@ namespace Signal.ViewModels
                 message =>
                 {
                     //SelectedThread = message.NewValue;
-                    Debug.WriteLine("MessageView got Recipients");
+                    Debug.WriteLine("MessageDetailPage got Recipients");
                 }
             );*/
 
@@ -79,6 +90,74 @@ namespace Signal.ViewModels
                }
            );*/
 
+        }
+
+        private RelayCommand _loaded;
+        public RelayCommand Loaded
+        {
+            get
+            {
+                return _loaded ?? (_loaded = new RelayCommand(
+                   () =>
+                        {
+                            Window.Current.SizeChanged += Window_SizeChanged;
+                        },
+                    () => true));
+            }
+        }
+
+        private RelayCommand _unloaded;
+        public RelayCommand Unloaded
+        {
+            get
+            {
+                return _unloaded ?? (_unloaded = new RelayCommand(
+                   () =>
+                    {
+                        Window.Current.SizeChanged -= Window_SizeChanged;
+                    },
+                    () => true));
+            }
+        }
+
+        private bool ShouldGoToWideState()
+        {
+            return Window.Current.Bounds.Width >= 720;
+        }
+
+        private void Window_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            if (ShouldGoToWideState())
+            {
+                Debug.WriteLine("go wide");
+                // Make sure we are no longer listening to window change events.
+                Window.Current.SizeChanged -= Window_SizeChanged;
+
+                // We shouldn't see this page since we are in "wide master-detail" mode.
+                NavigateBackForWideState(useTransition: false);
+            }
+        }
+
+        void NavigateBackForWideState(bool useTransition)
+        {
+            _navigationService.GoBack();
+        }
+
+
+
+
+        private bool _isBackEnabled = true;
+        public bool IsBackEnabled
+        {
+            get
+            {
+                return _isBackEnabled;
+            }
+            set
+            {
+                _isBackEnabled = value;
+                RaisePropertyChanged();
+            }
         }
 
         public const string SelectedThreadPropertyName = "SelectedThread";
@@ -104,9 +183,9 @@ namespace Signal.ViewModels
                 else
                 {
                     Debug.WriteLine($"Cache miss for Thread {_selectedThread.ThreadId}");*/
-                    //var collection = new MessageCollection(_dataService, _selectedThread.ThreadId);
-                    //Cache.Add(_selectedThread.ThreadId, collection);
-                    //Messages = collection;
+                //var collection = new MessageCollection(_dataService, _selectedThread.ThreadId);
+                //Cache.Add(_selectedThread.ThreadId, collection);
+                //Messages = collection;
                 //}
 
 
@@ -136,15 +215,15 @@ namespace Signal.ViewModels
                 RaisePropertyChanged("Messages");
             }
         }*/
-        
-        
-            ObservableCollection<Message> _Messages;
+
+
+        private ObservableCollection<Message> _Messages;
         public ObservableCollection<Message> Messages
         {
             get { return _Messages; }
             set
             {
-                _Messages = value;
+                Set(ref _Messages, value);
                 RaisePropertyChanged("Messages");
             }
         }
@@ -174,7 +253,7 @@ namespace Signal.ViewModels
                    () =>
                    {
                        var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
-                        MessageText = "";
+                       MessageText = "";
 
                        await MessageSender.send(message, SelectedThread.ThreadId);
 
@@ -191,6 +270,9 @@ namespace Signal.ViewModels
         public RelayCommand<Message> DeleteCommand;
 
         private RelayCommand<Message> _updateCommand;
+
+        public event EventHandler AmbientColorChanged;
+
         public RelayCommand<Message> UpdateCommand
         {
             get
@@ -206,14 +288,42 @@ namespace Signal.ViewModels
             }
         }
 
+        public SolidColorBrush AmbientColorBrush = new SolidColorBrush((Color)Application.Current.Resources["SignalBlue"]);
+
+        private Color _ambientColor = (Color)Application.Current.Resources["SignalBlue"];
+        public Color AmbientColor
+        {
+            get
+            {
+                return _ambientColor;
+            }
+
+            set
+            {
+                Set(ref _ambientColor, value);
+                if (AmbientColorChanged != null)
+                {
+                    AmbientColorChanged(this, new EventArgs());
+                }
+            }
+        }
+
         public void Activate(object parameter)
         {
-            var thread = (Thread)parameter;
 
-            SelectedThread = thread;
-            Messages = new MessageCollection(_dataService, thread.ThreadId);
-            RaisePropertyChanged("Messages");
-            Debug.WriteLine($"MessageView got Thread {SelectedThread.ThreadId}");
+
+                var thread = (Thread)parameter;
+
+                if (thread == null)
+                {
+                    Messages = new MessageCollection(_dataService, 0);
+                    return; // TODO:
+                }
+
+                SelectedThread = thread;
+                Messages = new MessageCollection(_dataService, thread.ThreadId);
+                RaisePropertyChanged("Messages");
+                Debug.WriteLine($"MessageDetailPage got Thread in Live View {SelectedThread.ThreadId}");
 
         }
 

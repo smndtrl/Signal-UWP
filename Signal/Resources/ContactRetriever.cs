@@ -33,6 +33,8 @@ namespace Signal.Resources
 
         private async Task<Contact> GetContactForId(string id)
         {
+            if (id == null) return null;
+
             var contactStore = await ContactManager.RequestStoreAsync();
             return await contactStore.GetContactAsync(id);
         }

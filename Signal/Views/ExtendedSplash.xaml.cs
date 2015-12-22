@@ -39,16 +39,17 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Signal.Views;
 using Bezysoftware.Navigation.BackButton;
+using Signal.ViewModels;
 //using TextSecure.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace TextSecure
+namespace Signal.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ExtendedSplash : Page
+    public sealed partial class ExtendedSplash : SignalPage
     {
         internal bool dismissed = false;
         internal Frame rootFrame;
@@ -57,15 +58,6 @@ namespace TextSecure
         public ExtendedSplash()
         {
             this.InitializeComponent();
-
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            var highlightColor = (Color)Application.Current.Resources["SystemColorHighlightColor"];
-            highlightColor.R = (byte)(highlightColor.R - 20);
-            highlightColor.G = (byte)(highlightColor.G - 20);
-            highlightColor.B = (byte)(highlightColor.B - 20);
-            titleBar.BackgroundColor = highlightColor;
-            titleBar.ForegroundColor = Colors.Black;
-            titleBar.ButtonBackgroundColor = highlightColor;
             //DirectoryHelper.refreshDirectory();
 
             rootFrame = new Frame();
@@ -74,25 +66,17 @@ namespace TextSecure
 
         }
 
+        public SplashViewModel ViewModel
+        {
+            get
+            {
+                return (SplashViewModel)DataContext;
+            }
+        }
+
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(200);
-
-            dismissed = false;
-            if (TextSecurePreferences.getLocalNumber() == string.Empty)
-            {
-                Debug.WriteLine("First start, registering");
-                rootFrame.Navigate(typeof(RegistrationTypeView));
-                Window.Current.Content = rootFrame;
-                return;
-            }
-
-            rootFrame.Navigate(typeof(View));
             
-            //Window.Current.Content = rootFrame;*/
-
-            //rootFrame.Navigate(typeof(NarrowView));
-            Window.Current.Content = rootFrame; // rootFrame;
         }
     }
 }

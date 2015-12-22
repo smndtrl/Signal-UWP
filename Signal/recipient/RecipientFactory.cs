@@ -116,17 +116,17 @@ namespace TextSecure.recipient
 
             if (number.Length == 0) return May<long>.NoValue;
 
-            if (hasBracketedNumber(number))
+            /*if (hasBracketedNumber(number))
             {
                 number = parseBracketedNumber(number);
-            }
+            }*/
 
-            //return new May<long>(DatabaseFactory.getRecipientDatabase().GetRecipientIdForNumber(number));
-            return new May<long>(provider.getRecipientIdForNumber(number));
+            return new May<long>(DatabaseFactory.getRecipientDatabase().GetRecipientIdForNumber(number));
+            //return new May<long>(provider.getRecipientIdForNumber(number));
 
         }
 
-        private static bool hasBracketedNumber(String recipient)
+        /*private static bool hasBracketedNumber(String recipient)
         {
             int openBracketIndex = recipient.IndexOf('<');
 
@@ -141,13 +141,19 @@ namespace TextSecure.recipient
             String value = recipient.Substring(begin + 1, end);
 
             return value;
+        }*/
+
+        internal static Recipients getRecipientsFromContact(TextSecureDirectory.Directory selectedContact)
+        {
+            return DatabaseFactory.getRecipientDatabase().GetOrCreateRecipients(selectedContact);
+
         }
         /*
-        public static void clearCache()
-        {
-            ContactPhotoFactory.clearCache();
-            provider.clearCache();
-        }*/
+public static void clearCache()
+{
+   ContactPhotoFactory.clearCache();
+   provider.clearCache();
+}*/
 
     }
 }

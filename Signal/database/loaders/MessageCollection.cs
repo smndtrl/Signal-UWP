@@ -60,7 +60,7 @@ namespace Signal.database.loaders
         public MessageCollection(IDataService service, long threadId)
         {
             this.service = service;
-            this.threadId = threadId;
+            this.threadId = 0; // threadId;
             /*var list = service.getMessages(threadId).ToList();
             max = list.Count;
             //_storage = list.Take(10);
@@ -69,7 +69,7 @@ namespace Signal.database.loaders
                 Add(con);
             }*/
 
-            Messenger.Default.Register<RefreshThreadMessage>(
+            /*Messenger.Default.Register<RefreshThreadMessage>(
                 this,
                 async message =>
                 {
@@ -90,7 +90,7 @@ namespace Signal.database.loaders
                     });
 
                 }
-            );
+            );*/
         }
 
         protected override bool HasMoreItemsInternal()
@@ -100,10 +100,10 @@ namespace Signal.database.loaders
 
         protected override async Task<IEnumerable<Message>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
-            if (max == int.MaxValue)
+            /*if (max == int.MaxValue)
             {
-                max = (await service.getMessages(threadId)).ToList().Count();
-            }
+                max = (await service.getMessages(threadId)).Count();
+            }*/
 
             //Debug.WriteLine($"Messages: Load {count} more, has already {Count}");
 

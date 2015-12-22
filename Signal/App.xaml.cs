@@ -318,9 +318,11 @@ namespace Signal
                 rootFrame = new Frame();
             }
 
-            rootFrame.Navigate(typeof(View), e.Arguments);
+            rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
+
+            
         }
 
         private void OnFirstLaunched(LaunchActivatedEventArgs e)

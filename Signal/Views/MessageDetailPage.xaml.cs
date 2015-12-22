@@ -24,7 +24,7 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageView : Page
+    public sealed partial class MessageDetailPage : SignalPage
     {
         public MessageViewModel ViewModel
         {
@@ -34,21 +34,10 @@ namespace Signal.Views
             }
         }
 
-        public MessageView()
+        public MessageDetailPage()
         {
             this.InitializeComponent();
         }
-
-        /*override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            var parameter = e.Parameter as ThreadDatabase.Thread;
-
-            var viewmodel = (this.DataContext as ViewModelLocator).Message;
-
-            viewmodel.SetThread((long)parameter._id);
-
-            base.OnNavigatedTo(e);
-        }*/
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -57,18 +46,7 @@ namespace Signal.Views
             var navigableViewModel = this.DataContext as INavigableViewModel;
             if (navigableViewModel != null) navigableViewModel.Activate(e.Parameter);
 
-            /*WwwFormUrlDecoder decoder = new WwwFormUrlDecoder((string)(e.Parameter));
-            var dict = decoder.ToDictionary(x => x.Name, x => x.Value);
-
-            if (dict["thread"] != null)
-            {
-                this.DataContext = ViewModelLocator.GetViewModel<MessageViewModel>(dict["thread"]);
-                Messenger.Default.Send(new RefreshThreadMessage() { ThreadId = threadId });
-
-                //((EventDetailViewModel)this.DataContext).RefreshLayout();
-            }*/
-
-            SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
+            //SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -78,11 +56,11 @@ namespace Signal.Views
             var navigableViewModel = this.DataContext as INavigableViewModel;
             if (navigableViewModel != null) navigableViewModel.Deactivate(e.Parameter);
 
-            SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
+            //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
         }
 
 
-
+        
         void NavigateBackForWideState(bool useTransition)
         {
             // Evict this page from the cache as we may not need it again.

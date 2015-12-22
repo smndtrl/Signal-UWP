@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TextSecure.database;
 using TextSecure.recipient;
 
 namespace Signal.Database
@@ -61,6 +62,23 @@ namespace Signal.Database
             return recipient;
         }
 
+        public Recipient GetSelfRecipient(string number)
+        {
+            var query = conn.Table<Recipient>().Where(r => r.Number == number);
+
+            if (query.Count() != 0) return query.First();
+
+            var recipient = new Recipient()
+            {
+                RecipientId = 0,
+                Number = number
+            };
+
+            conn.Insert(recipient);
+
+            return recipient;
+        }
+
         public long GetRecipientIdForNumber(string number)
         {
             var query = conn.Table<Recipient>().Where(r => r.Number == number);
@@ -75,6 +93,38 @@ namespace Signal.Database
             conn.Insert(recipient);
 
             return recipient.RecipientId;
+        }
+
+        public Recipient GetOrCreateRecipient(TextSecureDirectory.Directory d)
+        {
+            var query = conn.Table<Recipient>().Where(r => r.Number == d.Number);
+
+            if (query.Count() != 0) return query.First();
+
+            var recipient = new Recipient()
+            {
+                RecipientId = 0,
+                Number = d.Number,
+                ContactId = d.ContactId,
+                Name = d.Name
+            };
+
+            conn.Insert(recipient);
+
+            return recipient;
+        }
+
+        public Recipients GetOrCreateRecipients(TextSecureDirectory.Directory d)
+        {
+            var recipients = new List<Recipient>();
+            /*foreach (var recipientId in recipientIds)
+            {
+
+            }*/
+
+            recipients.Add(GetOrCreateRecipient(d));
+
+            return RecipientFactory.getRecipientsFor(recipients, false);
         }
     }
 }

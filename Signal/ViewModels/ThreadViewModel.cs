@@ -7,6 +7,7 @@ using Signal.database;
 using Signal.database.loaders;
 using Signal.Models;
 using Signal.ViewModel.Messages;
+using Signal.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Signal.ViewModels
@@ -47,6 +49,8 @@ namespace Signal.ViewModels
             );
         }
 
+        public Frame DetailFrame;
+
         public const string SelectedThreadPropertyName = "SelectedThread";
         private Thread _selectedThread = null;
         public Thread SelectedThread
@@ -54,18 +58,19 @@ namespace Signal.ViewModels
             get { return _selectedThread; }
             set
             {
-                Debug.WriteLine("Setting Thread");
-                if (_selectedThread == value)
+
+                if (State != null && State.Name == "NarrowState") // navigate to detail page
                 {
-                    return;
+                    Debug.WriteLine($"NarrowState -> Thread #{value.ThreadId}");
+                    _navigationService.NavigateTo(ViewModelLocator.MESSAGES_PAGE_KEY, value);
+                } else if (State != null && State.Name == "DefaultState")
+                {
+                    Debug.WriteLine($"WideState -> Thread #{value.ThreadId}");
+                    DetailFrame.Navigate(typeof(MessageDetailPage), value);
                 }
 
-                var oldValue = _selectedThread;
-                _selectedThread = value;
-                //RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
 
-                //Uri eventDetailPageUri = new Uri(string.Format("{0}?key={1}", "MessagePageKey", _selectedThread.ThreadId), UriKind.Relative);
-                _navigationService.NavigateTo("MessagePageKey", _selectedThread);
+                Set(ref _selectedThread, value);
             }
         }
 
@@ -141,6 +146,21 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _loaded;
+        public RelayCommand Loaded
+        {
+            get
+            {
+                return _loaded ?? (_loaded = new RelayCommand(
+                  () =>
+                  {
+                      Debug.WriteLine($"Loaded");
+
+                  },
+                   () => true));
+            }
+        }
+
 
 
         /* private void ShowThread(ThreadDatabase.Thread thread)
@@ -155,6 +175,95 @@ namespace Signal.ViewModels
 
          public RelayCommand<ThreadDatabase.Thread> NavigateCommand { get; private set; }*/
 
-        public static bool CanGoBack = false;
+        /*
+         * VISUAL STATE
+         */
+
+        private RelayCommand<VisualStateChangedEventArgs> _stateChanged;
+        public RelayCommand<VisualStateChangedEventArgs> StateChanged
+        {
+            get
+            {
+                return _stateChanged ?? (_stateChanged = new RelayCommand<VisualStateChangedEventArgs>(
+                    (t) =>
+                    {
+                        State = t.NewState;
+
+                    },
+                    (t) => true));
+            }
+        }
+
+        private VisualState _state;
+        public VisualState State
+        {
+            get { return _state; }
+            set
+            {
+                if (_state != null)
+                {
+                    Debug.WriteLine($"AdaptiveState:  {_state.Name} -> {value.Name}");
+                } else
+                {
+                    Debug.WriteLine($"AdaptiveState: default -> {value.Name}");
+                }
+
+                UpdateForVisualState(value, _state);
+                Set(ref _state, value);
+
+            }
+        }
+
+        public void UpdateForVisualState(VisualState newState, VisualState oldState = null)
+        {
+            var isNarrow = newState.Name == "NarrowState";
+
+            if (isNarrow && oldState != null && oldState.Name == "DefaultState" && SelectedThread != null)
+            {
+                NarrowStateCommand.Execute(null);
+                // Resize down to the detail item. Don't play a transition.
+                //Frame.Navigate(typeof(ConversationView), _lastSelectedItem.number, new SuppressNavigationTransitionInfo());
+            }
+
+
+            /*EntranceNavigationTransitionInfo.SetIsTargetElement(masterFrame, isNarrow);
+            if (detailFrame != null)
+            {
+                EntranceNavigationTransitionInfo.SetIsTargetElement(detailFrame, !isNarrow);
+            }*/
+        }
+
+
+
+        private RelayCommand _narrowStateCommand;
+        public RelayCommand NarrowStateCommand
+        {
+            get
+            {
+                return _narrowStateCommand ?? (_narrowStateCommand = new RelayCommand(
+                    () =>
+                    {
+                        _navigationService.NavigateTo(ViewModelLocator.MESSAGES_PAGE_KEY);
+
+                    },
+                    () => true));
+            }
+        }
+
+        private RelayCommand<Thread> _threadClicked;
+        public RelayCommand<Thread> ThreadClicked
+        {
+            get
+            {
+                return _threadClicked ?? (_threadClicked = new RelayCommand<Thread>(
+                    (t) =>
+                    {
+                        Debug.WriteLine("Thread clicked");
+                        SelectedThread = t;
+
+                    },
+                    (t) => true));
+            }
+        }
     }
 }

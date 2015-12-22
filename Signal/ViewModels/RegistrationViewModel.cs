@@ -118,6 +118,9 @@ namespace Signal.ViewModels
                 return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
                    () =>
                 {
+
+                    FlipIndex += 1; return; // TODO:
+
                     IsBusy = true;
 
                     var success = await handleRegistration(VerificationToken);
@@ -143,6 +146,8 @@ namespace Signal.ViewModels
                 return _registerCommand ?? (_registerCommand = new RelayCommand(async
                    () =>
                 {
+
+                    FlipIndex += 1; return; // TODO:
                     
                     number = $"+{CountryCode}{PhoneNumber}";
                     Debug.WriteLine($"Register: {number}");
@@ -179,6 +184,38 @@ namespace Signal.ViewModels
             }
         }
 
+
+        private int _pivotIndex = 0;
+        public int FlipIndex
+        {
+            get { return _pivotIndex; }
+            set
+            {
+                Set(ref _pivotIndex, value);
+            }
+        }
+
+        private bool _flipEnabled = true;
+        public bool FlipEnabled
+        {
+            get { return _flipEnabled; }
+            set
+            {
+                Set(ref _flipEnabled, value);
+            }
+        }
+
+        private RelayCommand _getStartedCommand;
+        public RelayCommand GetStartedCommand
+        {
+            get
+            {
+                return _getStartedCommand ?? new RelayCommand(
+                    () => { Debug.WriteLine($"getstarted");  FlipIndex += 1; },
+                    () => { return true; }
+                    );
+            }
+        }
 
         /*
          * ReegistrationTypeView
@@ -231,7 +268,7 @@ namespace Signal.ViewModels
                 //await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
                 State = (int)RegistrationState.Verified;
 
-                Recipient self = RecipientFactory.getRecipientsFromString(number, false).getPrimaryRecipient();
+                Recipient self = DatabaseFactory.getRecipientDatabase().GetSelfRecipient(number);
                 IdentityKeyUtil.generateIdentityKeys();
                 IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair();
                 List<PreKeyRecord> records = await PreKeyUtil.generatePreKeys();

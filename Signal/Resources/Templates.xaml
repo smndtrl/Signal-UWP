@@ -2,10 +2,9 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:local="using:TextSecure"
-                    xmlns:views="using:TextSecure.Views">
-    
-    
+                    xmlns:local="using:TextSecure">
+
+
     <Style x:Key="test" TargetType="ContentControl">
         <Setter Property="Template">
             <Setter.Value>

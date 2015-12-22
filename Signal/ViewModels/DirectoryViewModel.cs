@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.recipient;
+using TextSecure.util;
 
 namespace Signal.ViewModels
 {
@@ -33,6 +34,20 @@ namespace Signal.ViewModels
 
         }
 
+        private bool _isBackEnabled = true;
+        public bool IsBackEnabled
+        {
+            get
+            {
+                return _isBackEnabled;
+            }
+            set
+            {
+                _isBackEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         ObservableCollection<TextSecureDirectory.Directory> _Contacts;
         public ObservableCollection<TextSecureDirectory.Directory> Contacts
         {
@@ -44,7 +59,7 @@ namespace Signal.ViewModels
             }
         }
 
-        GroupedDirectoryCollection _GroupedContacts;
+        /*GroupedDirectoryCollection _GroupedContacts;
         public GroupedDirectoryCollection GroupedContacts
         {
             get { return _GroupedContacts ?? (_GroupedContacts = new GroupedDirectoryCollection(_dataService)); }
@@ -53,7 +68,7 @@ namespace Signal.ViewModels
                 _GroupedContacts = value;
                 RaisePropertyChanged("GroupedContacts");
             }
-        }
+        }*/
 
         /* public ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>> GroupedContacts
          {
@@ -113,17 +128,38 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _refreshCommand;
+        public RelayCommand RefreshCommand
+        {
+            get
+            {
+                return _refreshCommand ?? (_refreshCommand = new RelayCommand(
+                   () => { refreshCommandInternal(); },
+                   () => true
+                   ));
+            }
+        }
+
+        private async Task refreshCommandInternal()
+        {
+            DirectoryHelper.refreshDirectory();
+        }
+
         private async void addCommandInternal()
         {
 
-            Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.Number, true);
+            //Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.Number, true);
+
+            Recipients recipients = DatabaseFactory.getRecipientDatabase().GetOrCreateRecipients(SelectedContact); //RecipientFactory.getRecipientsFromContact(SelectedContact);
 
             var threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients, 0);
 
             Messenger.Default.Send(new AddThreadMessage() { ThreadId = threadId });
 
+            _navigationService.NavigateTo(ViewModelLocator.MESSAGES_PAGE_KEY, DatabaseFactory.getThreadDatabase().Get(threadId));
+
             //_navigationService.NavigateTo("MasterDetail");
-            _navigationService.GoBack();
+            // _navigationService.GoBack();
         }
     }
 }

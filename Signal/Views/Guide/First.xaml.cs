@@ -1,5 +1,4 @@
-﻿using Signal.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,22 +15,14 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Signal.Views
+namespace Signal.Views.Guide
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VerificationView : Page
+    public sealed partial class First : Page
     {
-        public RegistrationViewModel ViewModel
-        {
-            get
-            {
-                return (RegistrationViewModel)DataContext;
-            }
-        }
-
-        public VerificationView()
+        public First()
         {
             this.InitializeComponent();
         }
