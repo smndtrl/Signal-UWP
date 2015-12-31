@@ -16,7 +16,70 @@
             </Setter.Value>
         </Setter>   
     </Style>
-    
+
+    <ControlTemplate x:Key="EmptyThreadListViewControlTemplate" TargetType="ListView">
+        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="ThreadListViewEmptyTextBlock" x:Uid="ThreadListViewEmptyTextBlock" Text="Welcome" HorizontalAlignment="Center"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+                <TextBlock x:Name="ThreadListViewEmpty2TextBlock" x:Uid="ThreadListViewEmpty2TextBlock" Text="Start a new conversation."
+                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="EmptyMessageListViewControlTemplate" TargetType="ListView">
+        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="MessageListViewEmptyTextBlock" x:Uid="MessageListViewEmptyTextBlock" Text="Say hello" HorizontalAlignment="Center"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+                <TextBlock x:Name="MessageListViewEmpty2TextBlock" x:Uid="MessageListViewEmpty2TextBlock" Text="Send a message."
+                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="EmptyDirectoryListViewControlTemplate" TargetType="ListView">
+        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="No Signal user" HorizontalAlignment="Center"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+                <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text="Invite a friend to Signal."
+                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ListViewTemplate" TargetType="ListView">
+        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                Background="{TemplateBinding Background}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+            <ScrollViewer x:Name="ScrollViewer"
+                        TabNavigation="{TemplateBinding TabNavigation}"
+                        HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                        HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                        IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                        VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                        VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                        IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                        IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                        IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                        ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                        IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                        BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                        AutomationProperties.AccessibilityView="Raw">
+                <ItemsPresenter
+                Header="{TemplateBinding Header}"
+                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                Footer="{TemplateBinding Footer}"
+                FooterTemplate="{TemplateBinding FooterTemplate}"
+                FooterTransitions="{TemplateBinding FooterTransitions}"
+                Padding="{TemplateBinding Padding}"/>
+            </ScrollViewer>
+        </Border>
+    </ControlTemplate>
+   
     <!--<DataTemplate  x:Key="DetailContentTemplate2" x:DataType="views:TestContact">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>

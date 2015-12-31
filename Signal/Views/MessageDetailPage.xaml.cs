@@ -1,4 +1,5 @@
-﻿using Signal.ViewModels;
+﻿using Signal.Models;
+using Signal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,16 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class MessageDetailPage : SignalPage
     {
+        private static DependencyProperty _threadProperty = DependencyProperty.Register("Thread", typeof(Thread), typeof(MessageDetailPage), new PropertyMetadata(null));
+
+        public static DependencyProperty ThreadProperty { get { return _threadProperty; } }
+
+        public Thread Thread
+        {
+            get { return (Thread)GetValue(_threadProperty); }
+            set { SetValue(_threadProperty, value); }
+        }
+
         public MessageViewModel ViewModel
         {
             get
@@ -38,27 +49,6 @@ namespace Signal.Views
         {
             this.InitializeComponent();
         }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.Activate(e.Parameter);
-
-            //SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-
-            var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.Deactivate(e.Parameter);
-
-            //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
-        }
-
 
         
         void NavigateBackForWideState(bool useTransition)
@@ -115,7 +105,7 @@ namespace Signal.Views
             }
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        /*private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             OnBackRequested();
         }
@@ -135,7 +125,7 @@ namespace Signal.Views
             e.Handled = true;
 
             OnBackRequested();
-        }
+        }*/
 
 
     }

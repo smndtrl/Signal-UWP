@@ -5,7 +5,9 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
+using Signal.Database;
 using Signal.Models;
+using Signal.Resources;
 using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
@@ -20,12 +22,12 @@ using TextSecure.util;
 
 namespace Signal.ViewModels
 {
-    public class DirectoryViewModel : ViewModelBase
+    public class DirectoryViewModel : ViewModelBase, INavigableViewModel
     {
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
-        public DirectoryViewModel(IDataService service, INavigationService navService)
+        public DirectoryViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
@@ -128,6 +130,18 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _multiSelectCommand;
+        public RelayCommand MultiSelectCommand
+        {
+            get
+            {
+                return _multiSelectCommand ?? (_multiSelectCommand = new RelayCommand(
+                   () => { return; },
+                   () => true
+                   ));
+            }
+        }
+
         private RelayCommand _refreshCommand;
         public RelayCommand RefreshCommand
         {
@@ -160,6 +174,16 @@ namespace Signal.ViewModels
 
             //_navigationService.NavigateTo("MasterDetail");
             // _navigationService.GoBack();
+        }
+
+        public void Activate(object parameter)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void Deactivate(object parameter)
+        {
+            _navigationService.RemoveBackEntry();
         }
     }
 }

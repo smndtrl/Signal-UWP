@@ -14,6 +14,8 @@ using TextSecure.database;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace Signal.database.loaders
 {
@@ -51,6 +53,8 @@ namespace Signal.database.loaders
             );*/
         }
 
+        
+
         protected override bool HasMoreItemsInternal()
         {
             return Count < max;
@@ -58,10 +62,10 @@ namespace Signal.database.loaders
 
         protected override async Task<IEnumerable<Thread>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
-            if (max == int.MaxValue)
+           /* if (max == int.MaxValue)
             {
                 max = (await service.getThreads()).Count();
-            }
+            }*/
 
             //Debug.WriteLine($"Loading {count} more");
             return (await service.getThreads()).ToList().Skip(Count).Take((int)count);

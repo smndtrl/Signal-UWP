@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
 using Signal.Models;
+using Signal.Database;
 
 namespace TextSecure.recipient
 {

@@ -23,25 +23,25 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using Signal.Resources;
+using Signal.Views;
 
 namespace Signal.ViewModels
 {
     public class MessageViewModel : ViewModelBase, INavigableViewModel, IAmbientColor
     {
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
 
         //private Dictionary<long, MessageCollection> Cache = new Dictionary<long, MessageCollection>();
 
-        public MessageViewModel(IDataService service, INavigationService navService)
+        
+
+        public MessageViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
-
-
-            Messages = new MessageCollection(_dataService, 1);
-
 
 
             /*Messenger.Default.Register<PropertyChangedMessage<Thread>>(
@@ -129,7 +129,6 @@ namespace Signal.ViewModels
         {
             if (ShouldGoToWideState())
             {
-                Debug.WriteLine("go wide");
                 // Make sure we are no longer listening to window change events.
                 Window.Current.SizeChanged -= Window_SizeChanged;
 
@@ -149,15 +148,8 @@ namespace Signal.ViewModels
         private bool _isBackEnabled = true;
         public bool IsBackEnabled
         {
-            get
-            {
-                return _isBackEnabled;
-            }
-            set
-            {
-                _isBackEnabled = value;
-                RaisePropertyChanged();
-            }
+            get { return _isBackEnabled; }
+            set { Set(ref _isBackEnabled, value); }
         }
 
         public const string SelectedThreadPropertyName = "SelectedThread";
@@ -165,32 +157,7 @@ namespace Signal.ViewModels
         public Thread SelectedThread
         {
             get { return _selectedThread; }
-            set
-            {
-                if (_selectedThread == value || value == null)
-                {
-                    return;
-                }
-
-                var oldValue = _selectedThread;
-                _selectedThread = value;
-
-                /*if (Cache.ContainsKey(_selectedThread.ThreadId))
-                {
-                    Debug.WriteLine($"Cache hit for Thread {_selectedThread.ThreadId}");
-                    Messages = Cache[_selectedThread.ThreadId];
-                }
-                else
-                {
-                    Debug.WriteLine($"Cache miss for Thread {_selectedThread.ThreadId}");*/
-                //var collection = new MessageCollection(_dataService, _selectedThread.ThreadId);
-                //Cache.Add(_selectedThread.ThreadId, collection);
-                //Messages = collection;
-                //}
-
-
-                RaisePropertyChanged(SelectedThreadPropertyName);
-            }
+            set { Set(ref _selectedThread, value); }
         }
 
         string _messageText { get; set; } = "";
@@ -217,15 +184,11 @@ namespace Signal.ViewModels
         }*/
 
 
-        private ObservableCollection<Message> _Messages;
+        private ObservableCollection<Message> _messages;
         public ObservableCollection<Message> Messages
         {
-            get { return _Messages; }
-            set
-            {
-                Set(ref _Messages, value);
-                RaisePropertyChanged("Messages");
-            }
+            get { return _messages; }
+            set { Set(ref _messages, value); }
         }
 
         private RelayCommand _scrollCommand;
@@ -311,19 +274,21 @@ namespace Signal.ViewModels
         public void Activate(object parameter)
         {
 
+            var args = parameter as NavigationEventArgs;
 
-                var thread = (Thread)parameter;
+            var thread = (Thread)args.Parameter;
 
-                if (thread == null)
-                {
-                    Messages = new MessageCollection(_dataService, 0);
-                    return; // TODO:
-                }
+            if (thread == null)
+            {
+                Debug.WriteLine($"{GetType().FullName}: Activate without Thread");
+                Messages = new MessageCollection(_dataService, 0);
+                return; // TODO:
+            }
 
-                SelectedThread = thread;
-                Messages = new MessageCollection(_dataService, thread.ThreadId);
-                RaisePropertyChanged("Messages");
-                Debug.WriteLine($"MessageDetailPage got Thread in Live View {SelectedThread.ThreadId}");
+            SelectedThread = thread;
+            Messages = new MessageCollection(_dataService, thread.ThreadId);
+            RaisePropertyChanged("Messages");
+            Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 
         }
 

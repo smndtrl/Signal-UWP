@@ -1,5 +1,6 @@
 ﻿
 
+using Signal.Database;
 using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl

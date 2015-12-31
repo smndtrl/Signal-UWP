@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.Models;
+using Signal.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,12 +16,12 @@ using Windows.UI.Xaml;
 
 namespace Signal.ViewModels
 {
-    public class SplashViewModel : ViewModelBase
+    public class SplashViewModel : ViewModelBase, INavigableViewModel
     {
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
-        public SplashViewModel(IDataService service, INavigationService navService)
+        public SplashViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
@@ -54,5 +55,14 @@ namespace Signal.ViewModels
             }
         }
 
+        public void Activate(object parameter)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void Deactivate(object parameter)
+        {
+            _navigationService.RemoveBackEntry();
+        }
     }
 }

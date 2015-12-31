@@ -9,7 +9,26 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <settings:SettingsPage>
+        <settings:ListView>
+            <settings:ListView.Placeholder>
+                <DataTemplate>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock>asdf</TextBlock>
+                        <TextBlock>ASDF</TextBlock>
+                    </StackPanel>
+                    
+                </DataTemplate>
+            </settings:ListView.Placeholder>
+            <!--<settings:ListView.Items>
+                <ListViewItem Content="Test1"/>
+                <ListViewItem Content="Test2"/>
+                <ListViewItem Content="Test3"/>
+            </settings:ListView.Items>-->
+        </settings:ListView>
+        <Button Command="{x:Bind AddCommand}" Content="Add" Margin="10,598,0,10"/>
+        <Button Command="{x:Bind RemoveCommand}" Content="Remove" Margin="277,598,0,10"/>
+
+        <!--<settings:SettingsPage>
             <settings:SettingsCategory Icon="Highlight"  Title="Page1" Description="Test Desc"/>
             <settings:SettingsCategory Icon="Cut" Title="Page2" Description="Another Desc"/>
             <settings:SettingsCategory Icon="Contact" Title="Test 4" Description="lOl"/>
@@ -21,21 +40,21 @@
                     <settings:SwitchPreference Grid.Row="2" Title="Sample Title 1" Text="Sample Text 1" IsOn="{x:Bind Switch1, Mode=TwoWay}" />
                     <settings:ToggleSwitch Grid.Row="3" Title="Sample Title 1" Text="Sample Text 1" IsOn="{x:Bind Switch1, Mode=TwoWay}" />
                     <settings:Button Grid.Row="4" Title="Sample Title 4" Text="Sample Text 4" ButtonText="ButtonText" ButtonCommand="{x:Bind ButtonCommand1, Mode=TwoWay}" />
-                    <!--<settings:SwitchPreference Grid.Row="3" Title="Sample Title 2" Text="Sample Text 2" IsOn="{x:Bind Switch2, Mode=TwoWay}"/>-->
-                    <!--<settings:ListPreference Grid.Row="4" 
+                    <settings:SwitchPreference Grid.Row="3" Title="Sample Title 2" Text="Sample Text 2" IsOn="{x:Bind Switch2, Mode=TwoWay}"/>
+                    <settings:ListPreference Grid.Row="4" 
                              Title="Sample List" 
                              Text="Sample List Text" 
                              Items="{x:Bind TestItems}" 
-                             SelectedValue="{x:Bind TestResult}"/>-->
+                             SelectedValue="{x:Bind TestResult}"/>
                     <settings:ButtonPreference Title="Button Title" Text="Button Description" ButtonText="Button Text"/>
                 </settings:SettingsView>
 
-                <!--<settings:SettingsView x:Name="Page2">
+                <settings:SettingsView x:Name="Page2">
                     <settings:SwitchPreference Grid.Row="2" Title="Sample Title" Text="Sample Text" IsOn="False"/>
-                </settings:SettingsView>-->
+                </settings:SettingsView>
             </settings:SettingsPage.Views>
 
 
-        </settings:SettingsPage>
+        </settings:SettingsPage>-->
     </Grid>
 </Page>

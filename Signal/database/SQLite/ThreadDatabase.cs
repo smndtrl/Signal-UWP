@@ -32,8 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.recipient;
 
-namespace TextSecure.database
-{
+namespace Signal.Database { 
     public class ThreadDatabase : ThreadDatabaseHelper
     {
 
@@ -102,7 +101,7 @@ namespace TextSecure.database
 
         public async Task<List<Thread>> GetAllAsync()
         {
-            var query = conn.Table<Thread>().Where(v => true);
+            var query = conn.Table<Thread>().Where(v => true).OrderByDescending(v => v.Date);
             return query.ToList();
         }
 

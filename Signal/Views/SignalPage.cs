@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Navigation;
 
 namespace Signal.Views
 {
@@ -18,6 +19,26 @@ namespace Signal.Views
         {
             this.DataContextChanged += this.OnDataContextChanged;
             SetDefaultAmbientColor();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            var navigableViewModel = this.DataContext as INavigableViewModel;
+            if (navigableViewModel != null) navigableViewModel.Activate(e);
+
+            //SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            var navigableViewModel = this.DataContext as INavigableViewModel;
+            if (navigableViewModel != null) navigableViewModel.Deactivate(e);
+
+            //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
         }
 
         private void OnDataContextChanged(object sender, DataContextChangedEventArgs e)

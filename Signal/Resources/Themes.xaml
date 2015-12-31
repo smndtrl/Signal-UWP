@@ -19,6 +19,11 @@
             <Color x:Key="SystemColorWindowColor">#ffffffff</Color>
             <Color x:Key="SystemColorWindowTextColor">#ff000000</Color>
 
+            <!-- TextBox -->
+            <!--<SolidColorBrush x:Key="TextControlBackgroundRestOpacity" Opacity="0.4" />-->
+            <!--<SolidColorBrush x:Key="TextControlBackgroundFocusedOpacity" Opacity="0.8" />
+            <SolidColorBrush x:Key="TextControlBackgroundHoverOpacity" Opacity="0.6" />-->
+
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="White" />
             <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
             <!-- Own definitions -->

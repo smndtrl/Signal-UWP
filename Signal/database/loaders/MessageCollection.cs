@@ -21,7 +21,7 @@ namespace Signal.database.loaders
         IDataService service;
         //IEnumerable<Contact> _storage;
 
-        int max = int.MaxValue;
+        long max = long.MaxValue;
         long threadId = -1;
 
         /*public MessageCollection(IDataService service)
@@ -60,7 +60,9 @@ namespace Signal.database.loaders
         public MessageCollection(IDataService service, long threadId)
         {
             this.service = service;
-            this.threadId = 0; // threadId;
+            this.threadId = threadId;
+
+            max = service.getMessagesCount(threadId);
             /*var list = service.getMessages(threadId).ToList();
             max = list.Count;
             //_storage = list.Take(10);
@@ -69,7 +71,7 @@ namespace Signal.database.loaders
                 Add(con);
             }*/
 
-            /*Messenger.Default.Register<RefreshThreadMessage>(
+            Messenger.Default.Register<RefreshThreadMessage>(
                 this,
                 async message =>
                 {
@@ -82,6 +84,8 @@ namespace Signal.database.loaders
                         return;
                     }
 
+                    max = service.getMessagesCount(threadId);
+
 
                     Debug.WriteLine($"Refreshing message Collection for Trhead {message.ThreadId}");
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -90,7 +94,7 @@ namespace Signal.database.loaders
                     });
 
                 }
-            );*/
+            );
         }
 
         protected override bool HasMoreItemsInternal()

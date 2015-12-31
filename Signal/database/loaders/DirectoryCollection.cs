@@ -1,4 +1,5 @@
-﻿using Signal.Models;
+﻿using Signal.Database;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TextSecure.database;
+
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 

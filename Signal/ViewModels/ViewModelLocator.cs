@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Signal.database;
+using Signal.Resources;
 using Signal.ViewModels;
 using Signal.Views;
 using System;
@@ -24,13 +25,14 @@ namespace Signal.ViewModels
 
         public static string THREADS_PAGE_KEY = "ThreadsPageKey";
         public static string MESSAGES_PAGE_KEY = "MessagesPageKey";
+        public static string DIRECTORY_PAGE_KEY = "DirectoryPageKey";
 
 
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            var nav = new NavigationService();
+            var nav = new SignalNavigationService();
             nav.Configure(THREADS_PAGE_KEY, typeof(ThreadMasterPage));
             nav.Configure(MESSAGES_PAGE_KEY, typeof(MessageDetailPage));
 
@@ -38,10 +40,10 @@ namespace Signal.ViewModels
             nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
             nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
 
-            nav.Configure("DirectoryPageKey", typeof(DirectoryView));
+            nav.Configure(DIRECTORY_PAGE_KEY, typeof(DirectoryView));
             nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));
 
-            SimpleIoc.Default.Register<INavigationService>(() => nav);
+            SimpleIoc.Default.Register<INavigationServiceSignal>(() => nav);
 
             if (ViewModelBase.IsInDesignModeStatic)
             {

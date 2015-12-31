@@ -20,6 +20,7 @@ namespace Signal.database
         void CreateThread(Thread thread);
         Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary();
         Task<IEnumerable<Message>> getMessages(long threadId);
+        long getMessagesCount(long threadId);
     }
 
     public class Design : IDataService
@@ -91,6 +92,11 @@ namespace Signal.database
         {
             Threads.Add(thread);
         }
+
+        public long getMessagesCount(long threadId)
+        {
+            return (Messages.Where(p => p.ThreadId == threadId)).Count();
+        }
     }
 
     public class Sqlite : IDataService
@@ -130,6 +136,11 @@ namespace Signal.database
         public void CreateThread(Thread thread)
         {
             throw new NotImplementedException();
+        }
+
+        public long getMessagesCount(long threadId)
+        {
+            return DatabaseFactory.getTextMessageDatabase().getMessagesCount(threadId);
         }
     }
 }

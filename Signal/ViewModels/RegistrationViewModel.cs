@@ -21,94 +21,83 @@ using TextSecure.recipient;
 using Signal.Util;
 using TextSecure.util;
 using System.Windows.Input;
+using Signal.Resources;
+using Windows.UI.Xaml;
+using System.Globalization;
+using System.Collections;
+using System.Xml.Serialization;
+using System.Xml;
+using System.IO;
+using System.Reflection;
+using Signal.Database;
 
 namespace Signal.ViewModels
 {
-    public class RegistrationViewModel : ViewModelBase
+    public class Country
     {
-        private readonly INavigationService _navigationService;
+        public string code { get; set; }
+        public string phoneCode { get; set; }
+        public string name { get; set; }
+    }
+
+    public class RegistrationViewModel : ViewModelBase, INavigableViewModel
+    {
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
 
 
-        public RegistrationViewModel(IDataService service, INavigationService navService)
+        public RegistrationViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
 
+            /*XmlSerializer ser = new XmlSerializer(typeof(Country));
+
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.Load.GetExecutingAssembly().Location), );
+            var reader = new StreamReader(Application.Start);
+            var test = ser.Deserializeread()*/
+
+
         }
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
-        private Thread _selectedThread = null;
-        public Thread SelectedThread
+        private IEnumerable Countries;
+
+        private string _countryCode = string.Empty;
+        public string CountryCode
         {
-            get { return _selectedThread; }
-            set
-            {
-                Debug.WriteLine("Setting Thread");
-                if (_selectedThread == value)
-                {
-                    return;
-                }
-
-                var oldValue = _selectedThread;
-                _selectedThread = value;
-                RaisePropertyChanged(SelectedThreadPropertyName, oldValue, _selectedThread, true);
-            }
+            get { return _countryCode; }
+            set { Set(ref _countryCode, value); RegisterCommand.RaiseCanExecuteChanged(); }
         }
 
-        public const string IsBusyPropertyName = "IsBusy";
-        private bool _isBusy = false;
-        public bool IsBusy
+        private string _phoneNumber = string.Empty;
+        public string PhoneNumber
         {
-            get { return _isBusy; }
-            set
-            {
-                if (_isBusy == value)
-                {
-                    return;
-                }
-
-                var oldValue = _isBusy;
-                _isBusy = value;
-                RaisePropertyChanged(IsBusyPropertyName, oldValue, _isBusy, true);
-            }
+            get { return _phoneNumber; }
+            set { Set(ref _phoneNumber, value); RegisterCommand.RaiseCanExecuteChanged(); }
         }
 
-        public string CountryCode = string.Empty;
-        public string PhoneNumber = string.Empty;
         private string getNumber()
-        {   try
+        {
+            try
             {
                 return PhoneNumberFormatter.formatE164(CountryCode, PhoneNumber);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return string.Empty;
             }
         }
         public string VerificationToken = "";
 
-        public enum RegistrationState { None, Registering, Registered, Verifying, Verified,  Generated, Sat };
 
-        public const string StatePropertyName = "State";
-        private int _state = (int)RegistrationState.None;
-        public int State
+        private bool _isVerifying = false;
+        public bool IsVerifying
         {
-            get { return _state; }
-            set
-            {
-                if (_state == value)
-                {
-                    return;
-                }
+            get { return _isVerifying; }
+            set { Set(ref _isVerifying, value); RaisePropertyChanged("IsVerifying"); Debug.WriteLine($"Veriying {_isVerifying}"); }
 
-                var oldValue = _state;
-                _state = value;
-                Debug.WriteLine($"State: {_state}");
-                RaisePropertyChanged(StatePropertyName, oldValue, _state, true);
-            }
         }
-
 
         private RelayCommand _verifyCommand;
         public RelayCommand VerifyCommand
@@ -116,25 +105,48 @@ namespace Signal.ViewModels
             get
             {
                 return _verifyCommand ?? (_verifyCommand = new RelayCommand(async
-                   () =>
-                {
+                   () => {
+                       IsVerifying = true;
+                       VerifyCommand.RaiseCanExecuteChanged();
 
-                    FlipIndex += 1; return; // TODO:
+                       var success = await handleRegistration(VerificationToken);
+                       if (!success)
+                       {
+                           IsVerifying = false;
+                           VerifyCommand.RaiseCanExecuteChanged();
 
-                    IsBusy = true;
+                           return; // TODO:
+                       }
 
-                    var success = await handleRegistration(VerificationToken);
+                       _navigationService.NavigateTo(ViewModelLocator.THREADS_PAGE_KEY);
+                   },
+                   () => !_isVerifying));
+            }
+        }
 
-                    if (!success)
+        private bool _isRegistering = false;
+        public bool IsRegistering
+        {
+            get { return _isRegistering; }
+            set { Set(ref _isRegistering, value); RaisePropertyChanged("IsRegistering"); Debug.WriteLine($"Registering {_isRegistering}"); }
+
+        }
+
+        private RelayCommand _testCommand;
+        public RelayCommand TestCommand
+        {
+            get
+            {
+                return _testCommand ?? (_testCommand = new RelayCommand(
+                    () =>
                     {
-                        State = (int)RegistrationState.Registered;
+                        CountryCode = "+49";
+                            Debug.WriteLine("TestCommand");
+                    },
+                    () => {
+                        return true;
                     }
-
-                    State = (int)RegistrationState.Verified;
-
-                    IsBusy = false;
-                },
-                    () => true));
+                    ));
             }
         }
 
@@ -146,10 +158,10 @@ namespace Signal.ViewModels
                 return _registerCommand ?? (_registerCommand = new RelayCommand(async
                    () =>
                 {
+                    IsRegistering = true;
+                    RegisterCommand.RaiseCanExecuteChanged();
 
-                    FlipIndex += 1; return; // TODO:
-                    
-                    number = $"+{CountryCode}{PhoneNumber}";
+                    number = getNumber();
                     Debug.WriteLine($"Register: {number}");
 
 
@@ -157,30 +169,27 @@ namespace Signal.ViewModels
                     password = Utils.getSecret(18);
                     signalingKey = Utils.getSecret(52);
 
-                    State = (int)RegistrationState.Registering;
-                    IsBusy = true;
-                    try {
-                        await Task.Delay(2000);
-
+                    try
+                    {
                         App.Current.accountManager = TextSecureCommunicationFactory.createManager(number, password);
-                        App.Current.accountManager.requestSmsVerificationCode();
-                        State = (int)RegistrationState.Registered;
+                        await App.Current.accountManager.requestSmsVerificationCode();
 
-                        _navigationService.NavigateTo("VerificationPageKey");
 
-                    } catch (Exception e)
+                        FlipIndex += 1;
+                    }
+                    catch (Exception e)
                     {
                         Debug.WriteLine(e.Message);
-                        State = (int)RegistrationState.None;
                     }
 
-                    IsBusy = false;
+                    IsRegistering = false;
+                    RegisterCommand.RaiseCanExecuteChanged();
 
                 },
-                    () => {
-                        PhoneNumberFormatter.isValidNumber(getNumber());
-                        return true;
-                        }));
+                    () =>
+                    {
+                        return !IsRegistering && (CountryCode != string.Empty) && PhoneNumberFormatter.isValidNumber(getNumber());
+                    }));
             }
         }
 
@@ -195,24 +204,16 @@ namespace Signal.ViewModels
             }
         }
 
-        private bool _flipEnabled = true;
-        public bool FlipEnabled
-        {
-            get { return _flipEnabled; }
-            set
-            {
-                Set(ref _flipEnabled, value);
-            }
-        }
-
         private RelayCommand _getStartedCommand;
         public RelayCommand GetStartedCommand
         {
             get
             {
-                return _getStartedCommand ?? new RelayCommand(
-                    () => { Debug.WriteLine($"getstarted");  FlipIndex += 1; },
-                    () => { return true; }
+                return _getStartedCommand ?? (
+                    _getStartedCommand = new RelayCommand(
+                        () => { Debug.WriteLine($"getstarted"); FlipIndex += 1; },
+                        () => { return true; }
+                        )
                     );
             }
         }
@@ -249,14 +250,14 @@ namespace Signal.ViewModels
          * ProvisioningView
          */
 
-        
+
         private string password;
         private string signalingKey;
         private string number;
 
         private async Task<bool> handleRegistration(string receivedSmsVerificationCode)
         {
-           
+
             try
             {
 
@@ -266,7 +267,6 @@ namespace Signal.ViewModels
 
                 await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
                 //await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
-                State = (int)RegistrationState.Verified;
 
                 Recipient self = DatabaseFactory.getRecipientDatabase().GetSelfRecipient(number);
                 IdentityKeyUtil.generateIdentityKeys();
@@ -278,14 +278,13 @@ namespace Signal.ViewModels
                 await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
                 DatabaseFactory.getIdentityDatabase().SaveIdentity(self.getRecipientId(), identityKey.getPublicKey());
-                State = (int)RegistrationState.Generated;
 
                 //await DirectoryHelper.refreshDirectory(App.Current.accountManager, TextSecurePreferences.getLocalNumber());
 
 
                 markAsVerified(number, password, signalingKey);
 
-                _navigationService.NavigateTo("MasterDetail");
+
 
             }
             catch (RateLimitException ex)
@@ -325,15 +324,23 @@ namespace Signal.ViewModels
             //TextSecurePreferences.setPromptedPushRegistration(true);
         }
 
-        /*private string generateRandomSignalingKey()
-        {
-            IBuffer randBuffer = CryptographicBuffer.GenerateRandom(52);
-            byte[] value;
-            CryptographicBuffer.CopyToByteArray(randBuffer, out value);
 
-            string signalingKey = Base64.encodeBytes(value);
-            ApplicationData.Current.LocalSettings.Values["prefs_install_signalingKey"] = signalingKey;
-            return signalingKey.Replace("=", "");
-        }*/
+        /*
+         * INavigableViewModel
+         */
+
+        public void Activate(object parameter)
+        {
+            var prefs = Windows.System.UserProfile.GlobalizationPreferences.Languages;
+            var prefs2 = Windows.System.UserProfile.GlobalizationPreferences.HomeGeographicRegion;
+
+
+            var ci = new CultureInfo(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
+        }
+
+        public void Deactivate(object parameter)
+        {
+            _navigationService.RemoveBackEntry();
+        }
     }
 }

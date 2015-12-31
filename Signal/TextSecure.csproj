@@ -98,6 +98,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\CountryCodes.xml" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -115,6 +116,7 @@
     <Compile Include="crypto\storage\TextSecurePreKeyStore.cs" />
     <Compile Include="crypto\storage\TextSecureSessionStore.cs" />
     <Compile Include="Database\ContactsDatabase.cs" />
+    <Compile Include="Database\Database.cs" />
     <Compile Include="Database\interfaces\IThreadDatabase.cs" />
     <Compile Include="Database\loaders\GroupedDirectoryCollection.cs" />
     <Compile Include="Database\PushDatabase.cs" />
@@ -164,9 +166,11 @@
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
+    <Compile Include="Resources\ItemClickCommand.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Resources\SignalNavigationService.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />

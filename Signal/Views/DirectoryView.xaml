@@ -4,12 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Signal.Views"
     xmlns:models="using:Signal.Models"
-    xmlns:database="using:TextSecure.database"
+    xmlns:database="using:Signal.Database"
     xmlns:viewmodels="using:Signal.ViewModels"
     xmlns:drawables="using:Signal.Drawables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
+    xmlns:settings="using:Settings.UI.Xaml.Controls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
     mc:Ignorable="d">
 
@@ -18,7 +20,7 @@
     </Page.DataContext>
 
     <Page.Resources>
-        <!--<CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}" IsSourceGrouped="True" />-->
+        <CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}" />
 
         <DataTemplate x:Key="DirectoryItemNarrow" x:DataType="database:TextSecureDirectory+Directory">
             <Grid Padding="4">
@@ -51,6 +53,7 @@
                     Style="{ThemeResource BodyTextBlockStyle}"/>
             </Grid>
         </DataTemplate>
+        
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -93,12 +96,11 @@
             </TextBlock>
         </StackPanel>
 
-        <ListView x:Name="DirectoryListView"
+        <settings:ListView x:Name="DirectoryListView"
             Grid.Row="1"
-            ItemsSource="{x:Bind ViewModel.Contacts}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
+            ItemsSource="{Binding Source={StaticResource directoryCvs}}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
             HorizontalContentAlignment="Stretch"
-                  SelectedItem="{Binding SelectedContact, Mode=TwoWay}"
-            >
+                  SelectedItem="{Binding SelectedContact, Mode=TwoWay}">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -117,25 +119,39 @@
                     <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
-            <!--<GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid x:Name="ItemsWrapGrid" MaximumRowsOrColumns="2" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8" Background="#FFD6AEAE"/>
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>-->
-        </ListView>
+
+            <settings:ListView.Placeholder>
+                <DataTemplate>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="No Signal user" HorizontalAlignment="Center"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+                        <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text="Invite a friend to Signal."
+                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </settings:ListView.Placeholder>
+        </settings:ListView>
 
         <CommandBar x:Name="DirectoryCommandBar"
             Grid.Row="2"
-            Padding="8"
             Template="{StaticResource CommandBarNoMore}">
-            <AppBarButton x:Name="refreshButton" 
+            <CommandBar.Content>
+                <AppBarButton x:Name="refreshButton" 
                 Label="Refresh"
+                              IsCompact="True"
                 Command="{x:Bind ViewModel.RefreshCommand}"
                 Icon="Refresh"/>
+            </CommandBar.Content>
+            
+            
+            <AppBarToggleButton x:Name="multiSelectButton"
+                                Label="Select"
+                                Command="{x:Bind ViewModel.MultiSelectCommand}"
+                                Icon="Bullets"/>
             <AppBarButton x:Name="addButton" 
                 Label="Add"
                 Command="{x:Bind ViewModel.AddCommand}"
-                Icon="Add"/>
+                Icon="Send"/>
         </CommandBar>
 
     </Grid>

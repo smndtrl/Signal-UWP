@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 using TextSecure.util;
 using Windows.ApplicationModel.Contacts;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
 
     public class TextSecureDirectory

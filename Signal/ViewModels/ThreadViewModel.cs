@@ -5,7 +5,9 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
+using Signal.Database;
 using Signal.Models;
+using Signal.Resources;
 using Signal.ViewModel.Messages;
 using Signal.Views;
 using System;
@@ -15,7 +17,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TextSecure.database;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -23,16 +24,16 @@ namespace Signal.ViewModels
 {
     public class ThreadViewModel : ViewModelBase
     {
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
-        public ThreadViewModel(IDataService service, INavigationService navService)
+        public ThreadViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
             Threads = new ThreadCollection(service);
 
-            Messenger.Default.Register<RefreshThreadMessage>(
+            /*Messenger.Default.Register<RefreshThreadMessage>(
                 this,
                 async message =>  
                 {
@@ -46,12 +47,24 @@ namespace Signal.ViewModels
                     
                    
                 }
-            );
+            );*/
         }
 
         public Frame DetailFrame;
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
+        private VisualStateGroup _vsg;
+        public VisualStateGroup AdaptiveStates {
+            get
+            {
+                return _vsg;
+            }
+            set
+            {
+                State = value.CurrentState;
+                Set(ref _vsg, value);
+            }
+        }
+
         private Thread _selectedThread = null;
         public Thread SelectedThread
         {
@@ -78,11 +91,7 @@ namespace Signal.ViewModels
         public ThreadCollection Threads
         {
             get { return _Threads ?? (Threads = new ThreadCollection(_dataService)); }
-            set
-            {
-                _Threads = value;
-                RaisePropertyChanged("Threads");
-            }
+            set { Set(ref _Threads, value); }
         }
 
         private RelayCommand _addCommand;
@@ -93,9 +102,24 @@ namespace Signal.ViewModels
                 return _addCommand ?? (_addCommand = new RelayCommand(
                   () =>
                 {
-                    _navigationService.NavigateTo("DirectoryPageKey");
+                    _navigationService.NavigateTo(ViewModelLocator.DIRECTORY_PAGE_KEY);
                    
                 },
+                    () => true));
+            }
+        }
+
+        private RelayCommand _addCommand2;
+        public RelayCommand CommandTest
+        {
+            get
+            {
+                return _addCommand2 ?? (_addCommand2 = new RelayCommand(
+                  () =>
+                  {
+                      Debug.WriteLine("CommandTest executed");
+
+                  },
                     () => true));
             }
         }
@@ -112,6 +136,7 @@ namespace Signal.ViewModels
                       Debug.WriteLine($"Should delete {thread.Recipients.ShortString}");
 
                       DatabaseFactory.getThreadDatabase().DeleteConversation(thread.ThreadId);
+                      Threads.Remove(thread);
                       //deleteConversations(selectedConversations);
 
                       /*var menuFlyoutItem = sender as MenuFlyoutItem;
@@ -139,7 +164,6 @@ namespace Signal.ViewModels
                 return _flyoutCommand ?? (_flyoutCommand = new RelayCommand(
                   () =>
                   {
-                      Debug.WriteLine($"Show flyout");
 
                   },
                    () => true));
@@ -154,6 +178,7 @@ namespace Signal.ViewModels
                 return _loaded ?? (_loaded = new RelayCommand(
                   () =>
                   {
+                      //if (_selectedThread != null) SelectedThread = _selectedThread;
                       Debug.WriteLine($"Loaded");
 
                   },
@@ -162,18 +187,6 @@ namespace Signal.ViewModels
         }
 
 
-
-        /* private void ShowThread(ThreadDatabase.Thread thread)
-         {
-             if (!SimpleIoc.Default.ContainsCreated<MessageViewModel>("Thread-" + thread._id))
-             {
-                 SimpleIoc.Default.Register(() => new MessageViewModel(_dataService, _navigationService) { ThreadId = thread._id.Value }, "Thread-" + thread._id, true);
-             }
-
-             _navigationService.NavigateTo("Thread-" + thread._id, "test");              
-         } 
-
-         public RelayCommand<ThreadDatabase.Thread> NavigateCommand { get; private set; }*/
 
         /*
          * VISUAL STATE
@@ -185,12 +198,19 @@ namespace Signal.ViewModels
             get
             {
                 return _stateChanged ?? (_stateChanged = new RelayCommand<VisualStateChangedEventArgs>(
-                    (t) =>
+                    (e) =>
                     {
-                        State = t.NewState;
+                        var old = e.OldState;
+                        var n = e.NewState;
+
+                        Debug.WriteLine($"{GetType().Name}: AdaptiveState:  {old.Name} -> {n.Name}");
+
+                        UpdateForVisualState(e.NewState, e.OldState);
+
+                        State = n;
 
                     },
-                    (t) => true));
+                    (e) => true));
             }
         }
 
@@ -200,15 +220,6 @@ namespace Signal.ViewModels
             get { return _state; }
             set
             {
-                if (_state != null)
-                {
-                    Debug.WriteLine($"AdaptiveState:  {_state.Name} -> {value.Name}");
-                } else
-                {
-                    Debug.WriteLine($"AdaptiveState: default -> {value.Name}");
-                }
-
-                UpdateForVisualState(value, _state);
                 Set(ref _state, value);
 
             }

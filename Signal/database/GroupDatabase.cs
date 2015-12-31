@@ -31,7 +31,7 @@ using TextSecure.recipient;
 using TextSecure.util;
 using Windows.Security.Cryptography;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
     public class GroupDatabase
     {

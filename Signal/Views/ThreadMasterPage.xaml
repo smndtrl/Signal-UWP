@@ -4,14 +4,16 @@
     xmlns:local="using:Signal.Views"
     xmlns:resources="using:Signal.Resources"
     xmlns:models="using:Signal.Models"
+    xmlns:settings="using:Settings.UI.Xaml.Controls"
     xmlns:drawables="using:Signal.Drawables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.ThreadMasterPage"
     mc:Ignorable="d"
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
-    back:BackButtonManager.IsBackButtonEnabled="True">
+    back:BackButtonManager.IsBackButtonEnabled="False">
 
     <Interactivity:Interaction.Behaviors>
         <Core:EventTriggerBehavior EventName="Loaded">
@@ -29,12 +31,12 @@
             <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
             <Setter Property="TextLineBounds" Value="Full"/>
         </Style>
-        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource SubtitleTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+            <!--<Setter Property="FontWeight" Value="SemiBold"/>-->
             <Setter Property="Foreground" Value="Black"/>
         </Style>
-        <Style x:Key="RecipientNameUnreadTextBlockStyle" BasedOn="{StaticResource TitleTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style x:Key="RecipientNameUnreadTextBlockStyle" BasedOn="{StaticResource SubtitleTextBlockStyle}" TargetType="TextBlock">
+            <!--<Setter Property="FontWeight" Value="SemiBold"/>-->
             <Setter Property="Foreground" Value="Black"/>
         </Style>
 
@@ -44,77 +46,97 @@
         </MenuFlyout>
 
         <DataTemplate x:Key="ThreadTemplate" x:DataType="models:Thread">
-            <Grid Padding="4" FlyoutBase.AttachedFlyout="{StaticResource ThreadMenuFlyout}">
+            <Grid x:Name="ThreadTemplateGrid"
+                  Height="64"
+                  FlyoutBase.AttachedFlyout="{StaticResource ThreadMenuFlyout}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior x:Name="ReadFalseDataTrigger" Binding="{Binding Read}" Value="False">
                         <Core:ChangePropertyAction PropertyName="Style" Value="{StaticResource RecipientNameUnreadTextBlockStyle}" TargetObject="{Binding ElementName=RecipientNameTextBlock}"/>
                         <Core:ChangePropertyAction PropertyName="Style" Value="{StaticResource LastMessageUnreadTextBlockStyle}" TargetObject="{Binding ElementName=LastMessageTextBlock}"/>
                     </Core:DataTriggerBehavior>
-                    <Core:EventTriggerBehavior EventName="RightTapped">
+                    <!--<Core:EventTriggerBehavior EventName="RightTapped">
                         <resources:OpenMenuFlyoutAction />
                     </Core:EventTriggerBehavior>
                     <Core:EventTriggerBehavior EventName="Holding">
                         <resources:OpenMenuFlyoutAction />
-                    </Core:EventTriggerBehavior>
+                    </Core:EventTriggerBehavior>-->
                 </Interactivity:Interaction.Behaviors>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
-                <Border Width="64" Height="64">
-                    <drawables:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}"/>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="0.5*"/>
+                </Grid.RowDefinitions>
+
+                <Border x:Name="ImageBorder"
+                        Grid.RowSpan="2"
+                        Width="64" Height="64">
+                    <drawables:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <!--<Image Height="64" Width="64" DataContext="{x:Bind Recipients.PrimaryRecipient.Number, Converter={StaticResource ContactPictureConverter}}" Source="{Binding Result}"/>-->
                 </Border>
-                
-                <Grid Grid.Column="1" Margin="10,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="0.5*"/>
-                        <RowDefinition Height="0.5*"/>
-                    </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="RecipientNameTextBlock" 
+
+
+                <TextBlock x:Name="RecipientNameTextBlock" 
+                               Grid.Column="1"
                                Text="{x:Bind Recipients.ShortString}" 
                                TextWrapping="NoWrap"                               
                                TextTrimming="CharacterEllipsis"
-                               Style="{StaticResource TitleTextBlockStyle}" />
+                               Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="8,0,0,0" />
 
 
-                    <TextBlock x:Name="DateTextBlock" 
+                <TextBlock x:Name="DateTextBlock" 
                                Grid.Column="2"
                                HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
+                               VerticalAlignment="Top"
                                Text="{x:Bind Date, Converter={StaticResource DateConverter}}"
                                TextWrapping="NoWrap"
                                Style="{StaticResource BodyTextBlockStyle}" />
 
-                    <TextBlock x:Name="LastMessageTextBlock" 
+                <TextBlock x:Name="LastMessageTextBlock" 
                                Grid.Row="2"
+                               Grid.Column="1"
                                Grid.ColumnSpan="2"
-                               VerticalAlignment="Center"
+                               VerticalAlignment="Top"
                                Text="{x:Bind Snippet}" 
                                TextWrapping="NoWrap" 
-                               TextTrimming="WordEllipsis" />
+                               TextTrimming="WordEllipsis" HorizontalAlignment="Left" Margin="8,0,0,0" />
 
-                </Grid>
             </Grid>
         </DataTemplate>
-        <CollectionViewSource x:Key="threadCvs" Source="{x:Bind ViewModel.Threads}">
-        </CollectionViewSource>
+
+        <CollectionViewSource x:Key="threadCvs" Source="{x:Bind ViewModel.Threads}"/>
+
     </Page.Resources>
-    
+
     <Page.DataContext>
         <Binding Source="{Binding Thread, Source={StaticResource Locator}}"/>
     </Page.DataContext>
 
+    <Page.BottomAppBar>
+        <CommandBar Grid.Row="2">
+            <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="Select Items">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="AddItemButton" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
+            <AppBarButton x:Name="AddThreadBtn" Label="Add Thread" Icon="AddFriend" />
+            <AppBarButton x:Name="AddGroupThreadButton" Label="Add Groupchat" Icon="AddFriend" />
+
+            <!--<AppBarButton x:Name="DeleteItemBtn" Label="Delete Item" Icon="Delete" />
+                <AppBarButton x:Name="CancelSelectionBtn" Label="Cancel" Icon="Cancel"/>-->
+        </CommandBar>
+    </Page.BottomAppBar>
 
 
-    <Grid x:Name="grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="ThreadGrid" 
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates" >
                 <!-- CurrentStateChanged -->
@@ -138,18 +160,18 @@
                     <VisualState.Setters>
                         <Setter Target="MasterColumn.Width" Value="*" />
                         <Setter Target="DetailColumn.Width" Value="0" />
-                        <!--<Setter Target="MasterListView.SelectionMode" Value="None" />-->
+                        <Setter Target="ThreadListView.SelectionMode" Value="None" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="MasterColumn" Width="320" />
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
@@ -160,7 +182,8 @@
                     Padding="4"
                     Orientation="Horizontal"
                     Height="48"
-                    Background="{StaticResource SignalDimmedBrush}">
+                    Background="{StaticResource SignalDimmedBrush}"
+                    >
             <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
             <TextBlock x:Name="ThreadTitleText" x:Uid="DirectoryTitle"
                        Style="{ThemeResource BaseTextBlockStyle}"
@@ -168,41 +191,41 @@
                 THREADS
             </TextBlock>
         </StackPanel>
-        
-        <ListView Grid.Row="1"
-			x:Name="MasterListView"
-			Margin="0" d:LayoutOverrides="LeftPosition, RightPosition, TopPosition, BottomPosition"
-			ItemsSource="{Binding Source={StaticResource threadCvs}}"
-			IncrementalLoadingTrigger="Edge"
-            IncrementalLoadingThreshold="1"
-            DataFetchSize="1"
-                  SelectionMode="Single"
-            ItemTemplate="{StaticResource ThreadTemplate}">
-            <Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="SelectionChanged">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.ThreadClicked}" CommandParameter="{Binding SelectedItem, ElementName=MasterListView}"/>
+
+        <settings:ListView x:Name="ThreadListView"
+                           Grid.Row="1"
+                           ItemsSource="{Binding Source={StaticResource threadCvs}}"
+                           SelectionMode="Single"
+                           ItemTemplate="{StaticResource ThreadTemplate}"
+                           IsItemClickEnabled="True"
+                           resources:ItemClickCommand.Command="{x:Bind ViewModel.ThreadClicked}"
+                           >
+
+            <!--<Interactivity:Interaction.Behaviors>
+                <Core:EventTriggerBehavior EventName="ItemClick">
+                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.ThreadClicked}" />
                 </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>
-            
-            <ListView.ItemContainerStyle>
+            </Interactivity:Interaction.Behaviors>-->
+
+            <settings:ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+            </settings:ListView.ItemContainerStyle>
 
-        <CommandBar Grid.Row="2">
-            <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="Select Items">
-                <AppBarButton.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-            <AppBarButton x:Name="AddItemBtn" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
-            <AppBarButton x:Name="AddThreadBtn" Label="Add Thread" Icon="AddFriend" />
+            <settings:ListView.Placeholder>
+                <DataTemplate>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock x:Name="ThreadListViewEmptyTextBlock" x:Uid="ThreadListViewEmptyTextBlock" Text="Welcome" HorizontalAlignment="Center"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+                        <TextBlock x:Name="ThreadListViewEmpty2TextBlock" x:Uid="ThreadListViewEmpty2TextBlock" Text="Start a new conversation."
+                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </settings:ListView.Placeholder>
+        </settings:ListView>
 
-            <!--<AppBarButton x:Name="DeleteItemBtn" Label="Delete Item" Icon="Delete" />
-                <AppBarButton x:Name="CancelSelectionBtn" Label="Cancel" Icon="Cancel"/>-->
-        </CommandBar>
+        
 
         <Frame x:Name="detailFrame" Grid.Column="1"
             Grid.RowSpan="2"

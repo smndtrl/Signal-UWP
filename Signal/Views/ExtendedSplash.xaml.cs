@@ -62,7 +62,7 @@ namespace Signal.Views
 
             rootFrame = new Frame();
 
-            BackButtonManager.RegisterFrame(rootFrame, true, true, true);
+            
 
         }
 

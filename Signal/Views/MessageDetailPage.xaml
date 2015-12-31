@@ -245,39 +245,53 @@
 
 
 
-
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel x:Name="MessageTitle" 
+    <Page.BottomAppBar>
+        <CommandBar Grid.Row="3" Template="{StaticResource CommandBarNoMore}">
+            <AppBarButton Icon="Attach" />
+            <AppBarButton Icon="Send"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+    
+    <Page.TopAppBar>
+        <CommandBar Template="{StaticResource CommandBarNoMore}">
+            <CommandBar.Content>
+                <StackPanel x:Name="MessageTitle"
+                             d:LayoutOverrides="Width"
                     Padding="4"
                     Orientation="Vertical"
                     Height="48"
                     Background="{StaticResource SignalDimmedBrush}">
-            <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
-            <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
+                    <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
+                    <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Foreground="White"
-                       Text="{x:Bind ViewModel.SelectedThread.Recipients.PrimaryRecipient.Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                       Text="{x:Bind ViewModel.SelectedThread.Recipients.PrimaryRecipient.Name}" VerticalAlignment="Center"/>
 
 
-        </StackPanel>
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.TopAppBar>
+
+    <ScrollViewer x:Name="RootViewer">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
 
         <ListView 
-			x:Name="listView" Grid.Row="1"
+			x:Name="listView"
             ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{x:Bind ViewModel.Messages}"
 			IncrementalLoadingTrigger="Edge"
             IncrementalLoadingThreshold="1"
             DataFetchSize="1"
 			HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
             IsItemClickEnabled="True"
-			SelectionMode="None"
+			SelectionMode="None" VerticalAlignment="Bottom"
                   >
 
             <!--<Interactivity:Interaction.Behaviors>
@@ -291,7 +305,7 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <Grid Grid.Row="2" Padding="10">
+        <Grid Grid.Row="1" Padding="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -311,12 +325,10 @@
                      Style="{StaticResource SendMessageTextBox}"/>
         </Grid>
 
-        <CommandBar Grid.Row="3" Template="{StaticResource CommandBarNoMore}">
-            <AppBarButton Icon="Attach" />
-            <AppBarButton Icon="Send"/>
-        </CommandBar>
+
 
 
 
     </Grid>
+    </ScrollViewer>
 </local:SignalPage>

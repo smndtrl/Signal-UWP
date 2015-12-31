@@ -12,6 +12,7 @@ using TextSecure.database;
 using Signal.Push;
 using Signal.Util;
 using TextSecure.util;
+using Signal.Database;
 
 namespace Signal.Tasks
 {

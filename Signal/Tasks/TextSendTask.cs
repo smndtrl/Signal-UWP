@@ -3,6 +3,7 @@ using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal.database.models;
+using Signal.Database;
 using Signal.Models;
 using Signal.Tasks.Library;
 using Signal.Util;
