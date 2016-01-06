@@ -163,6 +163,7 @@
     <Compile Include="recipient\Recipients.cs" />
     <Compile Include="Resources\ContactRetriever.cs" />
     <Compile Include="Resources\ContactPictureConverter.cs" />
+    <Compile Include="Resources\CountryCollection.cs" />
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Views\Guide\First.xaml.cs">
       <DependentUpon>First.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IInputAwarePage.cs" />
     <Compile Include="Views\ItemClickCommand.cs" />
     <Compile Include="Views\MessageDetailPage.xaml.cs">
       <DependentUpon>MessageDetailPage.xaml</DependentUpon>

@@ -19,6 +19,25 @@ namespace Signal.Views
         {
             this.DataContextChanged += this.OnDataContextChanged;
             SetDefaultAmbientColor();
+
+            this.Loaded += (s,e) => OnLoaded(s, e);
+            this.Unloaded += (s, e) => OnUnloaded(s, e);
+        }
+
+
+
+        protected void OnUnloaded(object s, RoutedEventArgs e)
+        {
+            var inputPane = InputPane.GetForCurrentView();
+            inputPane.Showing -= OnInputPaneShowing;
+            inputPane.Hiding -= OnInputPaneHiding;
+        }
+
+        protected void OnLoaded(object s, RoutedEventArgs e)
+        {
+            var inputPane = InputPane.GetForCurrentView();
+            inputPane.Showing += OnInputPaneShowing;
+            inputPane.Hiding += OnInputPaneHiding;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,6 +58,17 @@ namespace Signal.Views
             if (navigableViewModel != null) navigableViewModel.Deactivate(e);
 
             //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            //var inputAwarePage = this as IInputAwarePage;
+            if (this != null)
+            {
+                
+            }
         }
 
         private void OnDataContextChanged(object sender, DataContextChangedEventArgs e)
@@ -90,5 +120,18 @@ namespace Signal.Views
             }
         }
 
+        private void OnInputPaneShowing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            UpdatePanelLayout(args.OccludedRect.Height);
+        }
+
+        private void OnInputPaneHiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            UpdatePanelLayout(args.OccludedRect.Height);
+        }
+
+        protected virtual void UpdatePanelLayout(double height)
+        {
+        }
     }
 }

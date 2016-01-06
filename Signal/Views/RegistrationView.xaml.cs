@@ -70,9 +70,21 @@ namespace Signal.Views
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void UpdatePanelLayout(double height)
         {
-            base.OnNavigatedTo(e);
+            /*Debug.WriteLine($"update panel layout {height}");
+
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                RootViewer.Height -= height;
+                RootViewer.VerticalScrollMode = ScrollMode.Enabled;
+                RootViewer.ChangeView(null, height, null);
+                //RootViewer.VerticalScrollMode = ScrollMode.Disabled;
+
+                //RootViwer.ScrollToVerticalOffset(2 * height);
+              // RootViewer.UpdateLayout();
+            });*/
+            
         }
     }
 }

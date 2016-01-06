@@ -30,14 +30,27 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using Signal.Database;
+using System.Collections.ObjectModel;
+using Windows.UI.Xaml.Controls;
 
 namespace Signal.ViewModels
 {
-    public class Country
+    /*public class Country
     {
         public string code { get; set; }
         public string phoneCode { get; set; }
         public string name { get; set; }
+    }*/
+
+    public class Country : ObservableObject
+    {
+        public string Name { get; set; }
+        public string Code { get; set; }
+
+        public Country(string Name, string Code)
+        {
+            this.Name = Name; this.Code = Code;
+        }
     }
 
     public class RegistrationViewModel : ViewModelBase, INavigableViewModel
@@ -61,7 +74,36 @@ namespace Signal.ViewModels
 
         }
 
-        private IEnumerable Countries;
+        private ICollection<Country> _unfilteredCountries = new CountryCollection();
+
+        public ICollection<Country> _filteredCountries;
+
+        public ICollection<Country> FilteredCountries
+        {
+            get { return _filteredCountries ?? _unfilteredCountries; }
+            set { Set(ref _filteredCountries, value); }
+        }
+
+        private string _countryText = string.Empty;
+        public string CountryText
+        {
+            get { return _countryText; }
+            set {
+
+                Set(ref _countryText, value);
+                Debug.WriteLine($"Searching for {value}");
+                var fr = from fobjs in _unfilteredCountries
+                         where fobjs.Name.Contains(value)
+                         select fobjs;
+
+                //if (FilteredCountries.Count() == fr.Count()) return;
+
+                FilteredCountries = new ObservableCollection<Country>(fr);
+                Debug.WriteLine($"Found {fr.Count()}");
+
+                RaisePropertyChanged("FilteredCountries");
+            }
+        }
 
         private string _countryCode = string.Empty;
         public string CountryCode
@@ -213,6 +255,31 @@ namespace Signal.ViewModels
                     _getStartedCommand = new RelayCommand(
                         () => { Debug.WriteLine($"getstarted"); FlipIndex += 1; },
                         () => { return true; }
+                        )
+                    );
+            }
+        }
+
+        private RelayCommand<AutoSuggestBoxSuggestionChosenEventArgs> _countrySelectedCommand;
+        public RelayCommand<AutoSuggestBoxSuggestionChosenEventArgs> CountrySelectedCommand
+        {
+            get
+            {
+                return _countrySelectedCommand ?? (
+                    _countrySelectedCommand = new RelayCommand<AutoSuggestBoxSuggestionChosenEventArgs>(
+                        (t) =>
+                        {
+                            Debug.WriteLine("selected");
+                            var country = t.SelectedItem as Country;
+
+                            if (country != null)
+                            {
+                                CountryCode = "+" + country.Code;
+                            }
+
+
+                        },
+                        (t) => { return true; }
                         )
                     );
             }
