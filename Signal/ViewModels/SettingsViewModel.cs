@@ -29,10 +29,10 @@ namespace Signal.ViewModels
     {
 
 
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
-        public SettingsViewModel(IDataService service, INavigationService navService)
+        public SettingsViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;

@@ -1,73 +1,220 @@
-﻿<Page
+﻿<local:SignalPage
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Signal"
+    xmlns:local="using:Signal.Views"
+    xmlns:viewmodels="using:Signal.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settings="using:Settings.UI.Xaml.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.RegistrationView"
     mc:Ignorable="d">
 
+
     <Page.DataContext>
         <Binding Source="{Binding Registration, Source={StaticResource Locator}}"/>
     </Page.DataContext>
-    
-    <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
+
+    <Page.Resources>
+    </Page.Resources>
+
+    <Interactivity:Interaction.Behaviors>
+        <Core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
+            <Core:GoToStateAction StateName="RegistratingState" TargetObject="{Binding ElementName=registerButton}"/>
+            <Core:InvokeCommandAction Command="{x:Bind ViewModel.TestCommand}"/>
+        </Core:DataTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>
+
+
+        <Grid x:Name="RegistrationGrid"  Background="{ThemeResource ApplicationForegroundThemeBrush}">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="RegistrationStateGroup">
+                    <VisualState x:Name="FlipRegister">
+                        <VisualState.Setters>
+                            <Setter Target="WelcomePivot.(UIElement.Visibility)" Value="Collapsed"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="FlipStarted"/>
+                    <VisualState x:Name="FlipVerify">
+                        <VisualState.Setters>
+                            <Setter Target="WelcomePivot.(UIElement.Visibility)" Value="Collapsed"/>
+                            <Setter Target="RegisterPivot.(UIElement.Visibility)" Value="Collapsed"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid x:Name="registerGrid" 
-              Grid.Row="0"
-              Margin="16"
-              Background="Lime" 
-              VerticalAlignment="Center">
-            <!-- Number -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <TextBlock  Margin="8" Grid.Row="1" x:Name="registrationProgressText123" Text="registrationProgressText" Foreground="White" FontFamily="Segoe UI Light"/>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" >
-                <TextBlock Text="+" Margin="8" VerticalAlignment="Center"/>
-                <TextBox x:Name="countryCode"
-                         Text="{x:Bind ViewModel.CountryCode, Mode=TwoWay}" 
-                         TabIndex="0" 
-                         Margin="8" 
+
+
+            <FlipView x:Name="RegistrationFlipView"
+                  SelectedIndex="{x:Bind ViewModel.FlipIndex, Mode=TwoWay}">
+
+                <FlipViewItem x:Name="WelcomePivot" ManipulationMode="All">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="WelcomePivotHeaderTextBlock" x:Uid="WelcomePivotHeaderTextBlock"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource BlueSubheaderTextBlockStyle}"
+                               Text="Welcome to Signal"/>
+
+
+                        <TextBlock x:Name="WelcomePivotCaptionTextBlock" x:Uid="WelcomePivotCaptionTextBlock"
+                               HorizontalAlignment="Center" 
+                               Style="{StaticResource BlueCaptionTextBlockStyle}"
+                               Text="for Windows"/>
+
+                        <Button x:Name="WelcomePivotGetStartedButton" x:Uid="WelcomePivotGetStartedButton"
+                            Margin="32"  
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center" 
+                            d:LayoutOverrides="Width"
+                            Command="{x:Bind ViewModel.GetStartedCommand}"
+                            Content="GET STARTED"
+                            Style="{StaticResource BlueButton}"
+                            ManipulationMode="All" />
+                    </StackPanel>
+                </FlipViewItem>
+            <FlipViewItem x:Name="RegisterPivot"  ManipulationMode="All">
+                <Grid VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="RegisterPivotHeaderTextBlock" x:Uid="RegisterPivotHeaderTextBlock"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource BlueSubheaderTextBlockStyle}"
+                               Text="Register"/>
+
+                    <TextBlock x:Name="RegisterPivotCaptionTextBlock" x:Uid="RegisterPivotCaptionTextBlock"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center" 
+                               Style="{StaticResource BlueCaptionTextBlockStyle}"
+                               Text="with your phone number" />
+
+                    <AutoSuggestBox x:Name="RegisterPivotCountrySuggestBox" x:Uid="RegisterPivotCountrySuggestBox"
+                                        Grid.Row="2"
+                                        Margin="32,16,32,8"
+                                    HorizontalAlignment="Stretch"
+                                    PlaceholderText="Country"
+                                    QueryIcon="Globe"
+                                    ItemsSource="{x:Bind ViewModel.FilteredCountries, Mode=OneWay}"
+                                    Text="{Binding CountryText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                    TextMemberPath="Name"
+                                    >
+                        <AutoSuggestBox.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </AutoSuggestBox.ItemContainerStyle>
+
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:Country">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock 
+                                        Grid.Column="0"
+                                        Text="{x:Bind Name}" 
+                                        HorizontalAlignment="Left"
+                                        TextWrapping="NoWrap"
+                                        TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock 
+                                        Grid.Column="1"
+                                        Text="{x:Bind Code}"
+                                        HorizontalAlignment="Right" />
+                                </Grid>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior x:Name="QuerySubmittedEventTrigger" EventName="SuggestionChosen">
+                                <Core:InvokeCommandAction Command="{Binding CountrySelectedCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+
+                    </AutoSuggestBox>
+
+
+
+                    <settings:PrefixTextBox x:Name="RegisterPivotNumberTextBox" x:Uid="RegisterPivotNumberTextBox"
+                                                Grid.Row="3"
+                             Margin="32,0,32,0"
+                                            Prefix="{x:Bind ViewModel.CountryCode, Mode=OneWay}"
+                             Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
+                             Style="{StaticResource BlueTextBox}"
+                             BorderThickness="0,0,0,2"
+                             PlaceholderText="555 1505"
+                             InputScope="TelephoneNumber"/>
+
+                    <Button x:Name="RegisterPivotRegisterButton" x:Uid="RegisterPivotRegisterButton"
+                                Grid.Row="4"
+                            d:LayoutOverrides="Width"
+                            Margin="32,16,32,32"  
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.RegisterCommand}"
+                            Style="{StaticResource BlueButton}"
+                            ManipulationMode="All"
+                            >
+
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="RegisterPivotRegisterButtonTextBlock" x:Uid="RegisterPivotRegisterButtonTextBlock"
+                                       Text="REGISTER"/>
+                            <TextBlock x:Name="RegisterPivotRegisteringButtonTextBlock" x:Uid="RegisterPivotRegisteringButtonTextBlock"
+                                       Text="REGISTERING"
+                                       Visibility="Collapsed"/>
+                            <ProgressRing x:Name="RegisterPivotRegisteringButtonProgressRing" x:Uid="RegisterPivotRegisteringButtonProgressRing"
+                                          Foreground="Black"
+                                          Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </FlipViewItem>
+                <FlipViewItem x:Name="VerifyPivot"  ManipulationMode="All">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="VerifyPivotHeaderTextBlock" x:Uid="VerifyPivotHeaderTextBlock"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource BlueSubheaderTextBlockStyle}"
+                               Text="Verify"/>
+
+                        <TextBlock x:Name="VerifyPivotCaptionTextBlock" x:Uid="VerifyPivotCaptionTextBlock"
+                               HorizontalAlignment="Center" 
+                               Style="{StaticResource BlueCaptionTextBlockStyle}"
+                               Text="with your 6-digit code" />
+
+                        <TextBox x:Name="VerifyPivotTokenTextBox" x:Uid="VerifyPivotTokenTextBox"
+                             Margin="0,16,0,0"
+                             Text="{x:Bind ViewModel.VerificationToken, Mode=TwoWay}" 
                          BorderThickness="0,0,0,2" 
                          InputScope="Number" 
-                         MaxLength="3" 
-                         Width="32" />
-                <TextBox x:Name="phoneNumber" 
-                         Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}" 
-                         TabIndex="1" 
-                         Margin="8" 
-                         BorderThickness="0,0,0,2" 
-                         InputScope="Number" 
-                         Width="160"/>
-                
-            </StackPanel>
-        </Grid>
+                         MaxLength="6" HorizontalAlignment="Center"/>
 
-        <Button x:Name="registerButton"
-                Grid.Row="2"
-                Margin="16"  
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center" 
-                d:LayoutOverrides="Width"
-                Command="{x:Bind ViewModel.RegisterCommand}" 
-                Content="Register"
-                TabIndex="2" 
-                
-                />
-        
-    
-
+                        <Button x:Name="VerifyPivotVerifyButton" x:Uid="VerifyPivotVerifyButton"
+                            Margin="32"
+                            Command="{x:Bind ViewModel.VerifyCommand}"
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Center"
+                            d:LayoutOverrides="Width"
+                            Style="{StaticResource BlueButton}"
+                            Content="VERIFY"/>
+                    </StackPanel>
+                </FlipViewItem>
+            </FlipView>
     </Grid>
 
-</Page>
+
+
+</local:SignalPage>

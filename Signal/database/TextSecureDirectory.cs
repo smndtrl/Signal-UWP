@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 using TextSecure.util;
 using Windows.ApplicationModel.Contacts;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
 
     public class TextSecureDirectory
@@ -110,7 +110,7 @@ namespace TextSecure.database
         {
             var query = conn.Table<Directory>().Where(d => d.Number == number);
 
-            return query.First();
+            return query.Count() == 1 ? query.First() : null;
         }
 
         public List<string> GetNumbers(string number)

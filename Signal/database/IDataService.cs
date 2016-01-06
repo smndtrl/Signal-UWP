@@ -20,6 +20,7 @@ namespace Signal.database
         void CreateThread(Thread thread);
         Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary();
         Task<IEnumerable<Message>> getMessages(long threadId);
+        long getMessagesCount(long threadId);
     }
 
     public class Design : IDataService
@@ -40,6 +41,8 @@ namespace Signal.database
             for (var i = 0; i <= 100; i++)
             {
                 if (i < 7) Contacts.Add(new Contact() { name = "Simon" + i, number = "+491122330" + i, label = "mobile" });
+                if (i < 7) Directory.Add(new TextSecureDirectory.Directory() {Name = "Name " + i, ContactId = ""+i, DirectoryId = i, Number = "01234"+i, Registered =  i% 2, Relay = "", Time = DateTime.Now });
+
                 if (i < 5) Threads.Add(new Thread() { Body = "Last message", Read = (i % 2) == 1, Count = i, Date = DateTime.Now.AddSeconds(-60 * i), Recipients = new Recipients(new List<Recipient>() { new Recipient("Recip " + i, "+49001122" + i, i, null) }, null), ThreadId = i % 2 });
                 //                     var msg = new Message() { MessageId = i, ThreadId = i % 2, Body = "Message " + i, IsFailed = i % 5 == 0, IsOutgoing = i % 3 == 0, Date = DateTime.Now.AddSeconds(-15 * i) ;
 
@@ -55,7 +58,8 @@ namespace Signal.database
                         DateReceived = DateTime.Now.AddSeconds(-15 * i),
                         Read = i % 2 == 1 ? true : false,
                         ReceiptCount = 1,
-                        Type = 1
+                        Type = 1,
+                        ThreadId = i % 5
                     };
 
                     Messages.Add(msg);
@@ -87,6 +91,11 @@ namespace Signal.database
         public void CreateThread(Thread thread)
         {
             Threads.Add(thread);
+        }
+
+        public long getMessagesCount(long threadId)
+        {
+            return (Messages.Where(p => p.ThreadId == threadId)).Count();
         }
     }
 
@@ -127,6 +136,11 @@ namespace Signal.database
         public void CreateThread(Thread thread)
         {
             throw new NotImplementedException();
+        }
+
+        public long getMessagesCount(long threadId)
+        {
+            return DatabaseFactory.getTextMessageDatabase().getMessagesCount(threadId);
         }
     }
 }

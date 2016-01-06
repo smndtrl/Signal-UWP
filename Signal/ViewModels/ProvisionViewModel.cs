@@ -48,15 +48,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Signal.Views;
+using Signal.Resources;
 
 namespace Signal.ViewModels
 {
     public class ProvisionViewModel : ViewModelBase, INavigableViewModel
     {
-        private readonly INavigationService _navigationService;
+        private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 
-        public ProvisionViewModel(IDataService service, INavigationService navService)
+        public ProvisionViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;

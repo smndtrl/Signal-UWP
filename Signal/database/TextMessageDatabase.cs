@@ -28,7 +28,7 @@ using TextSecure.recipient;
 using Signal.database.models;
 using Signal.Models;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
     public class TextMessageDatabase : MessageDatabase
     {

@@ -1,0 +1,7 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:resources="using:Settings.UI.Xaml.Resources"
+    xmlns:controls="using:Settings.UI.Xaml.Controls">
+    <controls:ListView x:Key="test"/>
+</ResourceDictionary>

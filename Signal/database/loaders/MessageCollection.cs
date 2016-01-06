@@ -21,7 +21,7 @@ namespace Signal.database.loaders
         IDataService service;
         //IEnumerable<Contact> _storage;
 
-        int max = int.MaxValue;
+        long max = long.MaxValue;
         long threadId = -1;
 
         /*public MessageCollection(IDataService service)
@@ -61,6 +61,8 @@ namespace Signal.database.loaders
         {
             this.service = service;
             this.threadId = threadId;
+
+            max = service.getMessagesCount(threadId);
             /*var list = service.getMessages(threadId).ToList();
             max = list.Count;
             //_storage = list.Take(10);
@@ -82,6 +84,8 @@ namespace Signal.database.loaders
                         return;
                     }
 
+                    max = service.getMessagesCount(threadId);
+
 
                     Debug.WriteLine($"Refreshing message Collection for Trhead {message.ThreadId}");
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -100,10 +104,10 @@ namespace Signal.database.loaders
 
         protected override async Task<IEnumerable<Message>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
-            if (max == int.MaxValue)
+            /*if (max == int.MaxValue)
             {
-                max = (await service.getMessages(threadId)).ToList().Count();
-            }
+                max = (await service.getMessages(threadId)).Count();
+            }*/
 
             //Debug.WriteLine($"Messages: Load {count} more, has already {Count}");
 

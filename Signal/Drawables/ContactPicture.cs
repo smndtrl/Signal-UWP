@@ -131,6 +131,11 @@ namespace Signal.Drawables
                 text.Text = Contact.FirstName[0].ToString() + Contact.LastName[0].ToString();
                 circle.Fill = new SolidColorBrush(Color.FromArgb(255, 80, 80, 80));
                 text.Visibility = Visibility.Visible;
+            } else
+            {
+                text.Text = "#";
+                circle.Fill = new SolidColorBrush(Color.FromArgb(255, 80, 80, 80));
+                text.Visibility = Visibility.Visible;
             }
 
             Children.Add(grid);

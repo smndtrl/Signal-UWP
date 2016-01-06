@@ -1,4 +1,5 @@
-﻿using Signal.Models;
+﻿using Signal.Database;
+using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

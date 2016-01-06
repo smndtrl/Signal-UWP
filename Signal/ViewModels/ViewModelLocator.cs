@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Signal.database;
+using Signal.Resources;
 using Signal.ViewModels;
 using Signal.Views;
 using System;
@@ -19,38 +20,42 @@ namespace Signal.ViewModels
         public static string REGISTERING_PAGE_KEY = "RegisterPageKey";
         public static string PROVISIONING_PAGE_KEY = "ProvisionPageKey";
 
+        public static string SPLASH_PAGE_KEY = "SplashPageKey";
         public static string SETTINGS_PAGE_KEY = "SettingsPageKey";
+
+        public static string THREADS_PAGE_KEY = "ThreadsPageKey";
+        public static string MESSAGES_PAGE_KEY = "MessagesPageKey";
+        public static string DIRECTORY_PAGE_KEY = "DirectoryPageKey";
+
 
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            var nav = new NavigationService();
-            nav.Configure("MasterDetail", typeof(View));
-            //nav.Configure("ContactPageKey", typeof(ContactView));
-            nav.Configure("MessagePageKey", typeof(MessageView));
+            var nav = new SignalNavigationService();
+            nav.Configure(THREADS_PAGE_KEY, typeof(ThreadMasterPage));
+            nav.Configure(MESSAGES_PAGE_KEY, typeof(MessageDetailPage));
 
             nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
             nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
             nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
 
-            nav.Configure("VerificationPageKey", typeof(VerificationView));
-            nav.Configure("DirectoryPageKey", typeof(DirectoryView));
+            nav.Configure(DIRECTORY_PAGE_KEY, typeof(DirectoryView));
             nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));
 
-            SimpleIoc.Default.Register<INavigationService>(() => nav);
+            SimpleIoc.Default.Register<INavigationServiceSignal>(() => nav);
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 SimpleIoc.Default.Register<IDataService, Design>();
-                //SimpleIoc.Default.Register<IDataService, Sqlite>();
             }
             else
             {
                 SimpleIoc.Default.Register<IDataService, Sqlite>();
             }
 
-            SimpleIoc.Default.Register<MainViewModel>();
+
+            SimpleIoc.Default.Register<SplashViewModel>();
             SimpleIoc.Default.Register<RegistrationViewModel>();
             SimpleIoc.Default.Register<ThreadViewModel>();
             //SimpleIoc.Default.Register<ContactViewModel>();
@@ -61,10 +66,11 @@ namespace Signal.ViewModels
 
         }
 
-        public MainViewModel Main
+        public SplashViewModel Splash
         {
-            get { return ServiceLocator.Current.GetInstance<MainViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<SplashViewModel>(); }
         }
+
 
         public MessageViewModel Message
         {

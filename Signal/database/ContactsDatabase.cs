@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.contacts;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
     /**
  * Database to supply all types of contacts that TextSecure needs to know about

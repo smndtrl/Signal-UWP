@@ -28,7 +28,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.util;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
     public class IdentityDatabase
     {
