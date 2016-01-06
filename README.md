@@ -16,7 +16,7 @@ It is intended to have a working Signal-like client for the UWP (Universal Windo
 * SignalTest: Unit tests for libaxolotl
 
 Please excuse the code quality, lots of strange comments and all the other creepy stuff. 
-All of my C# programming experience comes from porting these libraries.
+All of my C# programming experience comes from porting the libraries and creating this app.
 
 ## Contact
 * smndtrl (xmpp:simon@ssl.tophostingteam.de)
