@@ -60,6 +60,10 @@ namespace TestApp
 
         public ICommand ButtonCommand1 = new TestCommand();
 
+        public ICommand AddCommand = new AddCommandI(true);
+
+        public ICommand RemoveCommand = new AddCommandI(false);
+
 
         public class TestCommand : ICommand
         {
@@ -81,6 +85,36 @@ namespace TestApp
                 //throw new NotImplementedException();
             }
         }
+
+
+        public class AddCommandI : ICommand
+        {
+            private bool execute = true;
+
+            private bool remove = false;
+
+            public event EventHandler CanExecuteChanged;
+
+            public AddCommandI(bool remove)
+            {
+                this.remove = remove;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                //throw new NotImplementedException();
+                return execute;
+            }
+
+            public void Execute(object parameter)
+            {
+                Debug.WriteLine("Button execute");
+                execute = false;
+                CanExecuteChanged(this, EventArgs.Empty);
+                //throw new NotImplementedException();
+            }
+        }
+
 
     }
 }

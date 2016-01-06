@@ -32,9 +32,9 @@ using TextSecure.messages;
 using TextSecure.recipient;
 using TextSecure.util;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
-    public class MessageDatabase : MessageTypes
+    public class MessageDatabase : Database
     {
 
 
@@ -152,7 +152,7 @@ namespace TextSecure.database
             }
         }
 
-        public async Task<int> getMessageCountForThread(long threadId)
+        public int getMessagesCount(long threadId)
         {
 
             try
@@ -171,6 +171,11 @@ namespace TextSecure.database
             }
 
             return 0;
+        }
+
+        public int getMessageCountForThread(long threadId)
+        {
+            return getMessagesCount(threadId);
         }
 
         public void markAsEndSession(long id)
@@ -324,7 +329,7 @@ namespace TextSecure.database
             long threadId = getThreadIdForMessage(messageId);
 
             DatabaseFactory.getThreadDatabase().update(threadId);
-            //notifyConversationListeners(threadId);
+            notifyConversationListeners(threadId);
             //notifyConversationListListeners();
 
             return new Pair<long, long>(messageId, threadId);
@@ -452,7 +457,7 @@ namespace TextSecure.database
             }
 
             DatabaseFactory.getThreadDatabase().Refresh(threadId);
-            //notifyConversationListeners(threadId);
+            notifyConversationListeners(threadId);
             //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
 
             return new Pair<long, long>(messageId, threadId);
@@ -629,7 +634,7 @@ namespace TextSecure.database
             //long messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);
             long messageId = conn.Insert(insert);
             // TODO: await DatabaseFactory.getThreadDatabase().update(threadId);
-            //notifyConversationListeners(threadId);
+            notifyConversationListeners(threadId);
             //jobManager.add(new TrimThreadJob(context, threadId));
 
             return insert.MessageId;
@@ -644,7 +649,7 @@ namespace TextSecure.database
             count += DatabaseFactory.getMediaMessagingDatabase().getMessageCountForThread(threadId);*/
 
 
-            return await getMessageCountForThread(threadId);
+            return getMessageCountForThread(threadId);
         }
 
 

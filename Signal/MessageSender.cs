@@ -37,6 +37,7 @@ using TextSecure.util;
 using Signal.Util;
 using GalaSoft.MvvmLight.Messaging;
 using Signal.ViewModel.Messages;
+using Signal.Database;
 
 namespace TextSecure
 {

@@ -30,6 +30,7 @@ using libtextsecure;
 using Strilanc.Value;
 using libtextsecure.push;
 using libaxolotl.util;
+using Signal.Database;
 
 namespace TextSecure.util
 {

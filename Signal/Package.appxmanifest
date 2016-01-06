@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:r="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilites" IgnorableNamespaces="uap mp r">
-  <Identity Name="39705SimonDieterle.TextSecure" Publisher="CN=D7D38CBF-3113-497A-88DB-52B717888A39" Version="0.0.11.0" />
+  <Identity Name="39705SimonDieterle.TextSecure" Publisher="CN=D7D38CBF-3113-497A-88DB-52B717888A39" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="e13539c9-2506-4444-bf9d-ddbe92b4a5c8" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>TextSecure</DisplayName>
@@ -24,22 +24,22 @@
         </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.SmsReceiverTask">
-          <BackgroundTasks>
-            <Task Type="general" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
-          <BackgroundTasks>
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
         <uap:Extension Category="windows.protocol" EntryPoint="Views.ProvisioningProtocolView">
           <uap:Protocol Name="tsdevice">
             <uap:Logo>Assets\StoreLogo.png</uap:Logo>
             <uap:DisplayName>TextSecure</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.SmsReceiverTask">
+          <BackgroundTasks>
+            <Task Type="general" />
+          </BackgroundTasks>
+        </Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -54,10 +54,12 @@
     <DeviceCapability Name="microphone" />
   </Capabilities>
   <!-- Required for curve25519 (for now). Would like NuGet to do this one day automatically. For now, it's manual. -->
-  <!--<Extension Category="windows.activatableClass.inProcessServer">
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
         <Path>curve25519.dll</Path>
         <ActivatableClass ActivatableClassId="curve25519.Curve25519Native" ThreadingModel="both" />
       </InProcessServer>
-    </Extension>-->
+    </Extension>
+  </Extensions>
 </Package>

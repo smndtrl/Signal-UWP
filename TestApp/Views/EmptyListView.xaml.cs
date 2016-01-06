@@ -1,6 +1,4 @@
-﻿using Bezysoftware.Navigation.BackButton;
-using Signal.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,34 +15,16 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Signal.Views
+namespace TestApp.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ThreadView : Page, IBackAwareObject
+    public sealed partial class EmptyListView : Page
     {
-        public ThreadViewModel ViewModel
-        {
-            get
-            {
-                return (ThreadViewModel)DataContext;
-            }
-        }
-
-        public ThreadView()
+        public EmptyListView()
         {
             this.InitializeComponent();
-        }
-
-        public bool AllowBackNavigation()
-        {
-            return ThreadViewModel.CanGoBack;
-        }
-
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
         }
     }
 }

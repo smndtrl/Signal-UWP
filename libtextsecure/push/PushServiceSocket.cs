@@ -522,15 +522,9 @@ namespace libtextsecure.push
         private async Task<String> makeRequest(String urlFragment, String method, String body)
         //throws NonSuccessfulResponseCodeException, PushNetworkException
         {
-
-            String connection = await makeBaseRequest(urlFragment, method, body); //makeBaseRequest(urlFragment, method, body);
-
-            //var connection = await Task.Run(makeBaseRequest(urlFragment, method, body));
-
             try
             {
-                String response = connection;
-                //connection.disconnect();
+                String response = await makeBaseRequest(urlFragment, method, body);
 
                 return response;
             }

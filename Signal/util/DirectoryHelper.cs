@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
 using Signal.Push;
+using Signal.Database;
 
 namespace TextSecure.util
 {

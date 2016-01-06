@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using Signal.Database;
 using SQLite.Net.Attributes;
 using SQLiteNetExtensions.Attributes;
 using System;

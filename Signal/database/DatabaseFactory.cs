@@ -25,7 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TextSecure.database
+namespace Signal.Database
 {
 
 

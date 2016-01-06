@@ -20,6 +20,9 @@
     <PackageCertificateKeyFile>Signal_StoreKey.pfx</PackageCertificateKeyFile>
     <ApplicationInsightsResourceId>/subscriptions/540d2d1d-a70d-43fc-acfb-009d942767c2/resourcegroups/Default-ApplicationInsights-CentralUS/providers/microsoft.insights/components/Signal</ApplicationInsightsResourceId>
     <PackageCertificateThumbprint>3711D0EF9CCB1D23578AF379B776CF4971A1D4CE</PackageCertificateThumbprint>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -95,6 +98,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\CountryCodes.xml" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -112,6 +116,7 @@
     <Compile Include="crypto\storage\TextSecurePreKeyStore.cs" />
     <Compile Include="crypto\storage\TextSecureSessionStore.cs" />
     <Compile Include="Database\ContactsDatabase.cs" />
+    <Compile Include="Database\Database.cs" />
     <Compile Include="Database\interfaces\IThreadDatabase.cs" />
     <Compile Include="Database\loaders\GroupedDirectoryCollection.cs" />
     <Compile Include="Database\PushDatabase.cs" />
@@ -158,12 +163,15 @@
     <Compile Include="recipient\Recipients.cs" />
     <Compile Include="Resources\ContactRetriever.cs" />
     <Compile Include="Resources\ContactPictureConverter.cs" />
+    <Compile Include="Resources\CountryCollection.cs" />
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
+    <Compile Include="Resources\ItemClickCommand.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
     <Compile Include="Resources\RadioConverter.cs" />
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Resources\SignalNavigationService.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
@@ -193,7 +201,9 @@
     <Compile Include="Util\TextSecurePreferences.cs" />
     <Compile Include="Util\TimeUtil.cs" />
     <Compile Include="Util\Util.cs" />
+    <Compile Include="ViewModels\IAmbientColor.cs" />
     <Compile Include="ViewModels\INavigableViewModel.cs" />
+    <Compile Include="ViewModels\SplashViewModel.cs" />
     <Compile Include="ViewModels\Messages\AddMessageMessage.cs" />
     <Compile Include="ViewModels\Messages\RefreshThreadMessage.cs" />
     <Compile Include="ViewModels\Messages\AddThreadMessage.cs" />
@@ -203,14 +213,17 @@
     <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="ViewModels\RegistrationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\ExtendedSplash.xaml.cs">
       <DependentUpon>ExtendedSplash.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Guide\First.xaml.cs">
+      <DependentUpon>First.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IInputAwarePage.cs" />
     <Compile Include="Views\ItemClickCommand.cs" />
-    <Compile Include="Views\MessageView.xaml.cs">
-      <DependentUpon>MessageView.xaml</DependentUpon>
+    <Compile Include="Views\MessageDetailPage.xaml.cs">
+      <DependentUpon>MessageDetailPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Registration\ProtocolProvisioningView.xaml.cs">
       <DependentUpon>ProtocolProvisioningView.xaml</DependentUpon>
@@ -227,17 +240,12 @@
     <Compile Include="Views\SettingsViewTest.xaml.cs">
       <DependentUpon>SettingsViewTest.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ThreadView.xaml.cs">
-      <DependentUpon>ThreadView.xaml</DependentUpon>
+    <Compile Include="Views\SignalPage.cs" />
+    <Compile Include="Views\ThreadMasterPage.xaml.cs">
+      <DependentUpon>ThreadMasterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegistrationView.xaml.cs">
       <DependentUpon>RegistrationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\VerificationView.xaml.cs">
-      <DependentUpon>VerificationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\View.xaml.cs">
-      <DependentUpon>View.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -268,15 +276,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Resources\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ExtendedSplash.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MessageView.xaml">
+    <Page Include="Views\Guide\First.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -300,23 +320,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Test.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ThreadView.xaml">
+    <Page Include="Views\ThreadMasterPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RegistrationView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\VerificationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -345,6 +353,12 @@
   <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>BehaviorsXamlSDKManaged</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsDesktop, Version=10.0.10240.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup />

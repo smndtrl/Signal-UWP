@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using TextSecure;
-using Signal.Push;
 using TextSecure.util;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -310,6 +308,7 @@ namespace Signal
             // Ensure the current window is active
 
             Frame rootFrame = Window.Current.Content as Frame;
+            
 
             _frame = rootFrame;
 
@@ -318,9 +317,12 @@ namespace Signal
                 rootFrame = new Frame();
             }
 
-            rootFrame.Navigate(typeof(View), e.Arguments);
+            rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
+
+            BackButtonManager.RegisterFrame(rootFrame, true, true, true);
+
         }
 
         private void OnFirstLaunched(LaunchActivatedEventArgs e)

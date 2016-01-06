@@ -116,7 +116,9 @@
     <Compile Include="Controls\ButtonPreference.cs" />
     <Compile Include="Controls\ListPreference.cs" />
     <Compile Include="Controls\IPreferenceBase.cs" />
+    <Compile Include="Controls\ListView.cs" />
     <Compile Include="Controls\PreferenceBase.cs" />
+    <Compile Include="Controls\PrefixTextBox.cs" />
     <Compile Include="Controls\SettingsCategory.cs" />
     <Compile Include="Controls\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -132,7 +134,6 @@
     <Compile Include="Resources\TestConverter.cs" />
     <EmbeddedResource Include="Properties\libsettings.rd.xml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="Controls\BaseUserControl.xaml">
       <SubType>Designer</SubType>
@@ -153,6 +154,11 @@
     <Page Include="Controls\ToggleSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>

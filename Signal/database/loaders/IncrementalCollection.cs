@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -25,6 +26,13 @@ namespace Signal.database.loaders
                 return HasMoreItemsInternal();
             }
         }
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            base.OnCollectionChanged(e);
+            //Debug.WriteLine($"Collection has {Count} items");
+        }
+
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             return AsyncInfo.Run((c) => LoadMoreItemsAsync(c, count));
@@ -44,6 +52,11 @@ namespace Signal.database.loaders
                     Add(item);
                 }
 
+                if(PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Items"));
+                }
+
                 //NotifyOfInsertedItems(baseindex, items.Count);
 
                 return new LoadMoreItemsResult { Count = (uint)items.LongCount() };
@@ -53,6 +66,9 @@ namespace Signal.database.loaders
 
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         public async void Refresh()
         {

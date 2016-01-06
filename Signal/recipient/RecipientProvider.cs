@@ -1,5 +1,6 @@
 ﻿
 
+using Signal.Database;
 using Signal.Models;
 /** 
 * Copyright (C) 2015 smndtrl
@@ -51,16 +52,18 @@ namespace TextSecure.recipient
             if (cachedRecipient != null && true/*!cachedRecipient.isStale()*/) return cachedRecipient;
 
             //String number = CanonicalAddressDatabase.getInstance(context).getAddressFromId(recipientId);
-            var directory = DatabaseFactory.getDirectoryDatabase().Get(recipientId);
+            /*var directory = DatabaseFactory.getDirectoryDatabase().Get(recipientId);
 
             if (asynchronous)
             {
-                cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };/*, getRecipientDetailsAsync(recipientId, number)*/
+                cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
             }
             else
             {
-                cachedRecipient = new Recipient(recipientId/*, getRecipientDetailsSync(context, recipientId, number)*/) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
-            }
+                cachedRecipient = new Recipient(recipientId) { Number = directory.Number, Name = directory.Name, ContactId = directory.ContactId };
+            }*/
+
+            cachedRecipient = DatabaseFactory.getRecipientDatabase().Get(recipientId);
 
             recipientCache.Add(recipientId, cachedRecipient);
             return cachedRecipient;
@@ -87,7 +90,7 @@ namespace TextSecure.recipient
             return cachedRecipients;
         }
 
-        private Recipient getSynchronousRecipient(long recipientId)
+        /*private Recipient getSynchronousRecipient(long recipientId)
         {
             Debug.WriteLine("RecipientProvider", "Cache miss [SYNC]!");
 
@@ -106,16 +109,16 @@ namespace TextSecure.recipient
             }
             else
             {
-                /*final Drawable defaultPhoto = isGroupRecipient
+                final Drawable defaultPhoto = isGroupRecipient
                                                      ? ContactPhotoFactory.getDefaultGroupPhoto(context)
-                                                     : ContactPhotoFactory.getDefaultContactPhoto(context, null);*/
+                                                     : ContactPhotoFactory.getDefaultContactPhoto(context, null);
 
                 recipient = new Recipient(null, number, recipientId, null);
             }
 
             recipientCache.Add(recipientId, recipient);
             return recipient;
-        }
+        }*/
 
         /*public long getRecipientIdForNumber(string number)
         {
