@@ -21,7 +21,6 @@
     <Interactivity:Interaction.Behaviors>
         <Core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
             <Core:GoToStateAction StateName="RegistratingState" TargetObject="{Binding ElementName=registerButton}"/>
-            <Core:InvokeCommandAction Command="{x:Bind ViewModel.TestCommand}"/>
         </Core:DataTriggerBehavior>
     </Interactivity:Interaction.Behaviors>
 
