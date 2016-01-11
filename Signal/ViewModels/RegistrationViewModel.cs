@@ -44,12 +44,15 @@ namespace Signal.ViewModels
 
     public class Country : ObservableObject
     {
+        public string DisplayName { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
 
         public Country(string Name, string Code)
         {
-            this.Name = Name; this.Code = Code;
+            this.DisplayName = Name;
+            this.Code = Code;
+            this.Name = Name.ToLower();
         }
     }
 
@@ -57,7 +60,6 @@ namespace Signal.ViewModels
     {
         private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
-
 
 
         public RegistrationViewModel(IDataService service, INavigationServiceSignal navService)
@@ -92,8 +94,9 @@ namespace Signal.ViewModels
 
                 Set(ref _countryText, value);
                 Debug.WriteLine($"Searching for {value}");
+                string containsThis = value.ToLower();
                 var fr = from fobjs in _unfilteredCountries
-                         where fobjs.Name.Contains(value)
+                         where fobjs.Name.Contains(containsThis)
                          select fobjs;
 
                 //if (FilteredCountries.Count() == fr.Count()) return;
