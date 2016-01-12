@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "libtextsecure-uwp": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "Strilanc.Value.May": "1.0.2"
   },

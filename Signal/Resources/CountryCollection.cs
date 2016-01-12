@@ -29,7 +29,7 @@ namespace Signal.Resources
 
             foreach(var c in countries)
             {
-                Debug.WriteLine($"{c.Name} : {c.Code}");
+                Debug.WriteLine($"{c.DisplayName} : {c.Code}");
                 Add(c);
             }
         }
