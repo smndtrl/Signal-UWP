@@ -125,7 +125,7 @@
 
                                     <TextBlock 
                                         Grid.Column="0"
-                                        Text="{x:Bind Name}" 
+                                        Text="{x:Bind DisplayName}" 
                                         HorizontalAlignment="Left"
                                         TextWrapping="NoWrap"
                                         TextTrimming="CharacterEllipsis"/>
