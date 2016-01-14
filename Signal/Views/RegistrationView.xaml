@@ -107,7 +107,7 @@
                                     QueryIcon="Globe"
                                     ItemsSource="{x:Bind ViewModel.FilteredCountries, Mode=OneWay}"
                                     Text="{Binding CountryText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                    TextMemberPath="Name"
+                                    TextMemberPath="DisplayName"
                                     >
                         <AutoSuggestBox.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
