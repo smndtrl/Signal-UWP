@@ -68,7 +68,7 @@ namespace TextSecure
             long messageId = await database.insertMessageOutbox(allocatedThreadId, message, type, TimeUtil.GetDateTimeMillis());
 
             // notify user interface
-            Messenger.Default.Send(new AddMessageMessage() { ThreadId = allocatedThreadId, MessageId = messageId });
+           // TODO: Remove Messenger.Default.Send(new AddMessageMessage() { ThreadId = allocatedThreadId, MessageId = messageId });
 
 
             await sendTextMessage(recipients, keyExchange, messageId);

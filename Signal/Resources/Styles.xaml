@@ -29,7 +29,6 @@
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" />
         <Setter Property="SelectionHighlightColor" Value="White" />
         <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
-        <Setter Target="BackgroundElement" Property="Opacity" Value="1"/>
     </Style>
 
     <!--<Style x:Key="CommandBarNoMoreSimple" TargetType="CommandBar">

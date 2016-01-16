@@ -160,14 +160,14 @@ namespace Signal.ViewModels
             set { Set(ref _selectedThread, value); }
         }
 
-        string _messageText { get; set; } = "";
+        private string _messageText = string.Empty;
         public string MessageText
         {
             get { return _messageText; }
             set
             {
-                Debug.WriteLine("changed");
-                _messageText = value;
+                Set(ref _messageText, value);
+                SendCommand.RaiseCanExecuteChanged();
                 RaisePropertyChanged("MessageText");
             }
         }
@@ -199,9 +199,7 @@ namespace Signal.ViewModels
                 return _scrollCommand ?? (_scrollCommand = new RelayCommand(
                    () =>
                    {
-                       //DatabaseFactory.getTextMessageDatabase().Test(message.MessageId);
 
-                       Debug.WriteLine($"Marked as sent:");
                    },
                     () => true));
             }
@@ -212,17 +210,29 @@ namespace Signal.ViewModels
         {
             get
             {
-                return _sendCommand ?? (_sendCommand = new RelayCommand(async
-                   () =>
-                   {
+                return _sendCommand ?? (_sendCommand = new RelayCommand(
+                    async () =>
+                    {
                        var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
-                       MessageText = "";
+                       MessageText = string.Empty;
 
                        await MessageSender.send(message, SelectedThread.ThreadId);
+                    },
+                    () => !MessageText.Equals(string.Empty)));
+            }
+        }
 
-                       Debug.WriteLine($"Sending:");
-                   },
-                    () => true));
+        private RelayCommand _attachCommand;
+        public RelayCommand AttachCommand
+        {
+            get
+            {
+                return _attachCommand ?? (_attachCommand = new RelayCommand(
+                    async () =>
+                    {
+ 
+                    },
+                    () => false )); // TODO: attachment enable
             }
         }
 
