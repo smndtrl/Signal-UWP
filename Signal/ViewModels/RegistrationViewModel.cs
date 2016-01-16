@@ -32,6 +32,7 @@ using System.Reflection;
 using Signal.Database;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Signal.ViewModels
 {
@@ -399,7 +400,7 @@ namespace Signal.ViewModels
          * INavigableViewModel
          */
 
-        public void Activate(object parameter)
+        public void NavigateTo(NavigationEventArgs parameter)
         {
             var prefs = Windows.System.UserProfile.GlobalizationPreferences.Languages;
             var prefs2 = Windows.System.UserProfile.GlobalizationPreferences.HomeGeographicRegion;
@@ -408,7 +409,7 @@ namespace Signal.ViewModels
             var ci = new CultureInfo(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateFrom(NavigationEventArgs parameter)
         {
             _navigationService.RemoveBackEntry();
         }

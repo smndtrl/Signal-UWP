@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.recipient;
 using TextSecure.util;
+using Windows.UI.Xaml.Navigation;
 
 namespace Signal.ViewModels
 {
@@ -176,12 +177,12 @@ namespace Signal.ViewModels
             // _navigationService.GoBack();
         }
 
-        public void Activate(object parameter)
+        public void NavigateFrom(NavigationEventArgs parameter)
         {
             //throw new NotImplementedException();
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateTo(NavigationEventArgs parameter)
         {
             _navigationService.RemoveBackEntry();
         }

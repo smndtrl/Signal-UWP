@@ -281,10 +281,8 @@ namespace Signal.ViewModels
             }
         }
 
-        public void Activate(object parameter)
+        public void NavigateTo(NavigationEventArgs args)
         {
-
-            var args = parameter as NavigationEventArgs;
 
             var thread = (Thread)args.Parameter;
 
@@ -302,7 +300,7 @@ namespace Signal.ViewModels
 
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateFrom(NavigationEventArgs args)
         {
             //throw new NotImplementedException();
         }

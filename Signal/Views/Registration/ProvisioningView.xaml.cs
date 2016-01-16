@@ -34,7 +34,7 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ProvisioningView : Page
+    public sealed partial class ProvisioningView : SignalPage
     {
         public ProvisionViewModel ViewModel
         {
@@ -44,29 +44,11 @@ namespace Signal.Views
             }
         }
 
-        
+
 
         public ProvisioningView()
         {
             this.InitializeComponent();
-        }
-
-
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
-
-        var navigableViewModel = this.DataContext as INavigableViewModel;
-        if (navigableViewModel != null) navigableViewModel.Activate(e.Parameter);
-    }
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-
-            var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.Deactivate(e.Parameter);
-
         }
     }
 }
