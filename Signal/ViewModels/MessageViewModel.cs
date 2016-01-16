@@ -188,7 +188,7 @@ namespace Signal.ViewModels
         public ObservableCollection<Message> Messages
         {
             get { return _messages; }
-            set { Set(ref _messages, value); }
+            set { Set(ref _messages, value); RaisePropertyChanged("Messages"); }
         }
 
         private RelayCommand _scrollCommand;
@@ -289,13 +289,14 @@ namespace Signal.ViewModels
             if (thread == null)
             {
                 Debug.WriteLine($"{GetType().FullName}: Activate without Thread");
+                _messages = null;
                 Messages = new MessageCollection(_dataService, 0);
                 return; // TODO:
             }
 
             SelectedThread = thread;
+            _messages = null;
             Messages = new MessageCollection(_dataService, thread.ThreadId);
-            RaisePropertyChanged("Messages");
             Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 
         }
