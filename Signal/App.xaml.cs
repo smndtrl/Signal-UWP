@@ -81,6 +81,10 @@ namespace Signal
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
+#if DEBUG
+            libtextsecure.util.HttpClientCertificatePolicyState.Policy = libtextsecure.util.HttpClientCertificatePolicy.DevelopmentMode;
+#endif
+
             /* using (var db = new SignalContext())
              {
                  Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
@@ -250,6 +254,9 @@ namespace Signal
             }
 #endif
             DispatcherHelper.Initialize();
+
+            //Note: for development purposes, if you want to quickly re-register the device to another number, just do this:
+            //TextSecurePreferences.setLocalNumber("");
 
             if (TextSecurePreferences.getLocalNumber() == string.Empty)
             {
