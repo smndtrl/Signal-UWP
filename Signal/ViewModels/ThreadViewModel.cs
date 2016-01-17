@@ -31,23 +31,8 @@ namespace Signal.ViewModels
         {
             _dataService = service;
             _navigationService = navService;
+
             Threads = new ThreadCollection(service);
-
-            /*Messenger.Default.Register<RefreshThreadMessage>(
-                this,
-                async message =>  
-                {
-
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        Threads.Refresh();
-                        Debug.WriteLine("Thread Refresh");
-
-                    });
-                    
-                   
-                }
-            );*/
         }
 
         public Frame DetailFrame;
@@ -179,7 +164,6 @@ namespace Signal.ViewModels
                   () =>
                   {
                       //if (_selectedThread != null) SelectedThread = _selectedThread;
-                      Debug.WriteLine($"Loaded");
 
                   },
                    () => true));
@@ -269,9 +253,7 @@ namespace Signal.ViewModels
                 return _threadClicked ?? (_threadClicked = new RelayCommand<Thread>(
                     (t) =>
                     {
-                        Debug.WriteLine("Thread clicked");
                         SelectedThread = t;
-
                     },
                     (t) => true));
             }

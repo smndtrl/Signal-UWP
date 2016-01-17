@@ -12,7 +12,7 @@
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
     back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled">
+    NavigationCacheMode="Disabled">
 
     <Page.DataContext>
         <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>

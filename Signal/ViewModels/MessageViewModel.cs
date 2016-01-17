@@ -42,54 +42,7 @@ namespace Signal.ViewModels
         {
             _dataService = service;
             _navigationService = navService;
-
-
-            /*Messenger.Default.Register<PropertyChangedMessage<Thread>>(
-                this,
-                message =>
-                {
-                    SelectedThread = message.NewValue;
-                    Messages = new MessageCollection(_dataService, SelectedThread.ThreadId);
-                    RaisePropertyChanged("Messages");
-                    Debug.WriteLine($"MessageDetailPage got Thread {SelectedThread.ThreadId}");
-                }
-            );*/
-
-
-
-            /*Messenger.Default.Register<RefreshThreadMessage>(
-            this,
-            async message =>
-            {
-
-                Debug.WriteLine($"(MessageViewModel)Refreshing message Collection for Thread {message.ThreadId}");
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    //Clear();
-                });
-                
-            }
-        );*/
-
-            /*Messenger.Default.Register<PropertyChangedMessage<Recipients>>(
-                this,
-                message =>
-                {
-                    //SelectedThread = message.NewValue;
-                    Debug.WriteLine("MessageDetailPage got Recipients");
-                }
-            );*/
-
-            /*Messenger.Default.Register<AddMessageMessage>(
-               this,
-               msg =>
-               {
-                   Debug.WriteLine($"New Message for Thread {msg.ThreadId}: #{msg.MessageId}");
-                   var message = DatabaseFactory.getTextMessageDatabase().Get(msg.MessageId);
-                   Cache[msg.ThreadId].Add(message);
-               }
-           );*/
-
+        
         }
 
         private RelayCommand _loaded;
@@ -152,12 +105,11 @@ namespace Signal.ViewModels
             set { Set(ref _isBackEnabled, value); }
         }
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
         private Thread _selectedThread = null;
         public Thread SelectedThread
         {
             get { return _selectedThread; }
-            set { Set(ref _selectedThread, value); }
+            set { Set(ref _selectedThread, value); RaisePropertyChanged("SelectedThread"); }
         }
 
         private string _messageText = string.Empty;
@@ -171,18 +123,6 @@ namespace Signal.ViewModels
                 RaisePropertyChanged("MessageText");
             }
         }
-
-        /*MessageCollection _Messages;
-        public MessageCollection Messages
-        {
-            get { return _Messages; }
-            set
-            {
-                _Messages = value;
-                RaisePropertyChanged("Messages");
-            }
-        }*/
-
 
         private ObservableCollection<Message> _messages;
         public ObservableCollection<Message> Messages
@@ -289,13 +229,13 @@ namespace Signal.ViewModels
             if (thread == null)
             {
                 Debug.WriteLine($"{GetType().FullName}: Activate without Thread");
-                _messages = null;
+                //_messages = null;
                 Messages = new MessageCollection(_dataService, 0);
                 return; // TODO:
             }
 
             SelectedThread = thread;
-            _messages = null;
+           // _messages = null;
             Messages = new MessageCollection(_dataService, thread.ThreadId);
             Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 

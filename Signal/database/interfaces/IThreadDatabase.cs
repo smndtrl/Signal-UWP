@@ -25,7 +25,7 @@ namespace Signal.Database.interfaces
         Task DeleteAllThreads();
     }
 
-    public abstract class ThreadDatabaseHelper {
+    public abstract class ThreadDatabaseHelper : Database {
 
         public static long[] getRecipientIds(Recipients recipients)
         {
