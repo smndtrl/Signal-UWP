@@ -20,19 +20,16 @@ namespace Signal.database.loaders
         IDataService service;
         IEnumerable<Contact> _storage;
 
-        int max = 10;
+        int max = Int32.MaxValue;
 
         public DirectoryCollection(IDataService service)
         {
             this.service = service;
-            /*var list = (await service.getDictionary()).ToList();
-            max = list.Count;
-            _storage = list.Take(10);
-            foreach (var con in _storage)
-            {
-                Debug.WriteLine($"Adding {con.name}");
-                Add(con);
-            }*/
+        }
+
+        public void Requery()
+        {
+            Clear();
         }
 
         protected override bool HasMoreItemsInternal()

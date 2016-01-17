@@ -70,14 +70,14 @@ namespace Signal.ViewModels
             return allCameras.FirstOrDefault();
         }
 
-        public async void Activate(object parameter)
+        public async void NavigateFrom(NavigationEventArgs parameter)
         {
             var cam = await GetCamera();
 
             if (cam != null) HasCamera = true;
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateTo(NavigationEventArgs parameter)
         {
             //throw new NotImplementedException();
         }

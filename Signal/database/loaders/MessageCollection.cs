@@ -23,39 +23,7 @@ namespace Signal.database.loaders
 
         long max = long.MaxValue;
         long threadId = -1;
-
-        /*public MessageCollection(IDataService service)
-        {
-            this.service = service;
-
-            Messenger.Default.Register<RefreshThreadMessage>(
-    this,
-    async message =>
-    {
-        Debug.WriteLine($"(MessageCollection)Refreshing message Collection for Thread {message.ThreadId}");
-
-                    // Refresh Collection loader
-                    if (threadId != message.ThreadId)
-        {
-            Debug.WriteLine($"Thread #{threadId} got message for {message.ThreadId}, sleeping.");
-            return;
-        }
-
-
-        Debug.WriteLine($"Refreshing message Collection for Trhead {message.ThreadId}");
-        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-        {
-            Clear();
-        });
-
-    }
-);
-        }
-
-        public void Show(long threadId)
-        {
-            this.threadId = threadId;
-        }*/
+        private bool IsUpdating = false;
 
         public MessageCollection(IDataService service, long threadId)
         {
@@ -75,6 +43,10 @@ namespace Signal.database.loaders
                 this,
                 async message =>
                 {
+
+                    if (IsUpdating) return;
+
+                    IsUpdating = true;
                     Debug.WriteLine($"(MessageCollection)Refreshing message Collection for Thread {message.ThreadId}");
 
                     // Refresh Collection loader
@@ -91,6 +63,7 @@ namespace Signal.database.loaders
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
                         Clear();
+                        IsUpdating = false;
                     });
 
                 }

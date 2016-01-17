@@ -14,5 +14,10 @@ namespace Signal.Database
         {
             Messenger.Default.Send(new RefreshThreadMessage() { ThreadId = threadId });
         }
+
+        protected void notifyConversationListListeners()
+        {
+            Messenger.Default.Send(new RefreshThreadListMessage());
+        }
     }
 }

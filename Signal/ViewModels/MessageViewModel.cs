@@ -42,54 +42,7 @@ namespace Signal.ViewModels
         {
             _dataService = service;
             _navigationService = navService;
-
-
-            /*Messenger.Default.Register<PropertyChangedMessage<Thread>>(
-                this,
-                message =>
-                {
-                    SelectedThread = message.NewValue;
-                    Messages = new MessageCollection(_dataService, SelectedThread.ThreadId);
-                    RaisePropertyChanged("Messages");
-                    Debug.WriteLine($"MessageDetailPage got Thread {SelectedThread.ThreadId}");
-                }
-            );*/
-
-
-
-            /*Messenger.Default.Register<RefreshThreadMessage>(
-            this,
-            async message =>
-            {
-
-                Debug.WriteLine($"(MessageViewModel)Refreshing message Collection for Thread {message.ThreadId}");
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    //Clear();
-                });
-                
-            }
-        );*/
-
-            /*Messenger.Default.Register<PropertyChangedMessage<Recipients>>(
-                this,
-                message =>
-                {
-                    //SelectedThread = message.NewValue;
-                    Debug.WriteLine("MessageDetailPage got Recipients");
-                }
-            );*/
-
-            /*Messenger.Default.Register<AddMessageMessage>(
-               this,
-               msg =>
-               {
-                   Debug.WriteLine($"New Message for Thread {msg.ThreadId}: #{msg.MessageId}");
-                   var message = DatabaseFactory.getTextMessageDatabase().Get(msg.MessageId);
-                   Cache[msg.ThreadId].Add(message);
-               }
-           );*/
-
+        
         }
 
         private RelayCommand _loaded;
@@ -152,43 +105,30 @@ namespace Signal.ViewModels
             set { Set(ref _isBackEnabled, value); }
         }
 
-        public const string SelectedThreadPropertyName = "SelectedThread";
         private Thread _selectedThread = null;
         public Thread SelectedThread
         {
             get { return _selectedThread; }
-            set { Set(ref _selectedThread, value); }
+            set { Set(ref _selectedThread, value); RaisePropertyChanged("SelectedThread"); }
         }
 
-        string _messageText { get; set; } = "";
+        private string _messageText = string.Empty;
         public string MessageText
         {
             get { return _messageText; }
             set
             {
-                Debug.WriteLine("changed");
-                _messageText = value;
+                Set(ref _messageText, value);
+                SendCommand.RaiseCanExecuteChanged();
                 RaisePropertyChanged("MessageText");
             }
         }
-
-        /*MessageCollection _Messages;
-        public MessageCollection Messages
-        {
-            get { return _Messages; }
-            set
-            {
-                _Messages = value;
-                RaisePropertyChanged("Messages");
-            }
-        }*/
-
 
         private ObservableCollection<Message> _messages;
         public ObservableCollection<Message> Messages
         {
             get { return _messages; }
-            set { Set(ref _messages, value); }
+            set { Set(ref _messages, value); RaisePropertyChanged("Messages"); }
         }
 
         private RelayCommand _scrollCommand;
@@ -199,9 +139,7 @@ namespace Signal.ViewModels
                 return _scrollCommand ?? (_scrollCommand = new RelayCommand(
                    () =>
                    {
-                       //DatabaseFactory.getTextMessageDatabase().Test(message.MessageId);
 
-                       Debug.WriteLine($"Marked as sent:");
                    },
                     () => true));
             }
@@ -212,17 +150,29 @@ namespace Signal.ViewModels
         {
             get
             {
-                return _sendCommand ?? (_sendCommand = new RelayCommand(async
-                   () =>
-                   {
+                return _sendCommand ?? (_sendCommand = new RelayCommand(
+                    async () =>
+                    {
                        var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
-                       MessageText = "";
+                       MessageText = string.Empty;
 
                        await MessageSender.send(message, SelectedThread.ThreadId);
+                    },
+                    () => !MessageText.Equals(string.Empty)));
+            }
+        }
 
-                       Debug.WriteLine($"Sending:");
-                   },
-                    () => true));
+        private RelayCommand _attachCommand;
+        public RelayCommand AttachCommand
+        {
+            get
+            {
+                return _attachCommand ?? (_attachCommand = new RelayCommand(
+                    async () =>
+                    {
+ 
+                    },
+                    () => false )); // TODO: attachment enable
             }
         }
 
@@ -271,28 +221,27 @@ namespace Signal.ViewModels
             }
         }
 
-        public void Activate(object parameter)
+        public void NavigateTo(NavigationEventArgs args)
         {
-
-            var args = parameter as NavigationEventArgs;
 
             var thread = (Thread)args.Parameter;
 
             if (thread == null)
             {
                 Debug.WriteLine($"{GetType().FullName}: Activate without Thread");
+                //_messages = null;
                 Messages = new MessageCollection(_dataService, 0);
                 return; // TODO:
             }
 
             SelectedThread = thread;
+           // _messages = null;
             Messages = new MessageCollection(_dataService, thread.ThreadId);
-            RaisePropertyChanged("Messages");
             Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateFrom(NavigationEventArgs args)
         {
             //throw new NotImplementedException();
         }

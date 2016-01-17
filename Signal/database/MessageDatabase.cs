@@ -89,16 +89,17 @@ namespace Signal.Database
         private async Task updateTypeBitmask(long messageId, long maskOff, long maskOn)
         {
             Debug.WriteLine($"MessageDatabase: Updating ID: {messageId} to base type: {maskOn}");
+            
 
             var message = conn.Get<Message>(messageId);
-            message.PropertyChanged += (s, e) => { Debug.WriteLine("property changed"); };
 
             message.Type = (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
-            Debug.WriteLine("before save");
             conn.Update(message);
-            Debug.WriteLine("after save");
 
             DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
+
+            notifyConversationListeners(message.ThreadId);
+            notifyConversationListListeners();
         }
 
         /*public async Task Test(long messageId)
