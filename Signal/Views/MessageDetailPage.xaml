@@ -11,7 +11,8 @@
     xmlns:resources="using:Signal.Resources"
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
     back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    NavigationCacheMode="Disabled">
 
     <Page.DataContext>
         <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>
@@ -245,12 +246,12 @@
 
 
 
-    <Page.BottomAppBar>
+    <!--<Page.BottomAppBar>
         <CommandBar Grid.Row="3" Template="{StaticResource CommandBarNoMore}">
             <AppBarButton Icon="Attach" />
-            <AppBarButton Icon="Send"/>
+            <AppBarButton Icon="Send" Command="{x:Bind ViewModel.SendCommand}"/>
         </CommandBar>
-    </Page.BottomAppBar>
+    </Page.BottomAppBar>-->
     
     <Page.TopAppBar>
         <CommandBar Template="{StaticResource CommandBarNoMore}">
@@ -273,16 +274,15 @@
         </CommandBar>
     </Page.TopAppBar>
 
-    <ScrollViewer x:Name="RootViewer">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
 
 
-        <ListView 
+            <ListView 
 			x:Name="listView"
             ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{x:Bind ViewModel.Messages}"
 			IncrementalLoadingTrigger="Edge"
@@ -294,41 +294,49 @@
 			SelectionMode="None" VerticalAlignment="Bottom"
                   >
 
-            <!--<Interactivity:Interaction.Behaviors>
+                <!--<Interactivity:Interaction.Behaviors>
                 <resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
             </Interactivity:Interaction.Behaviors>-->
 
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
 
-        <Grid Grid.Row="1" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+            <Grid Grid.Row="1" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button 
-                x:Name="button" 
-                Content="Button" 
-                VerticalAlignment="Stretch" d:LayoutOverrides="Height"
-                Command="{x:Bind ViewModel.SendCommand}"/>
+            <Button x:Name="MessageAttachmentButton" x:Uid="MessageAttachmentButton" 
+                    Command="{x:Bind ViewModel.AttachCommand}">
+                <SymbolIcon Symbol="Attach" />
+            </Button>
 
-            <TextBox Grid.Column="2" 
-                     x:Uid="MessageTextBox"
-                     x:Name="textBox" 
-                     TextWrapping="Wrap" 
-                     Text="{x:Bind ViewModel.MessageText, Mode=TwoWay}" d:LayoutOverrides="Width, Height"
+            <TextBox x:Name="MessageTextBox" x:Uid="MessageTextBox"
+                     Grid.Column="1"
+                     PlaceholderText="Type a message"
+                     TextWrapping="Wrap"
+                     MaxHeight="172"
+                     AcceptsReturn="True"
+                     Text="{Binding MessageText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:LayoutOverrides="Width, Height"
                      Style="{StaticResource SendMessageTextBox}"/>
+
+            <Button x:Name="MessageSendButton" x:Uid="MessageSendButton"
+                    Grid.Column="2"
+                    Command="{x:Bind ViewModel.SendCommand}">
+                <SymbolIcon Symbol="Send" />
+            </Button>
+                
         </Grid>
 
 
 
 
 
-    </Grid>
-    </ScrollViewer>
+        </Grid>
 </local:SignalPage>

@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Signal.Util;
 
 namespace Signal.database.loaders
 {
@@ -38,19 +39,18 @@ namespace Signal.database.loaders
                 Add(con);
             }*/
 
-            /*Messenger.Default.Register<RefreshThreadMessage>(
+            Messenger.Default.Register<RefreshThreadListMessage>(
                 this,
                 async message =>
                 {
-                    // Refresh Collection loader
-                    Debug.WriteLine("Refreshing Thread Collection");
+                    Log.Debug($"Test");
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
                         Clear();
                     });
                    
                 }
-            );*/
+            );
         }
 
         

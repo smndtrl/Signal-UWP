@@ -166,7 +166,11 @@ namespace Signal.Database {
 
         public long Delete(long threadId)
         {
-            return conn.Delete<Thread>(threadId);
+            var rows = conn.Delete<Thread>(threadId);
+
+            notifyConversationListeners(threadId);
+            notifyConversationListListeners();
+            return rows;
         }
 
         public long DeleteConversation(long threadId)

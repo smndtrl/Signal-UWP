@@ -194,6 +194,7 @@
     <Compile Include="Util\GroupUtil.cs" />
     <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\Hex.cs" />
+    <Compile Include="Util\Log.cs" />
     <Compile Include="Util\LRUCache.cs" />
     <Compile Include="Util\MessageSender.cs" />
     <Compile Include="Util\PushHelper.cs" />
@@ -204,9 +205,7 @@
     <Compile Include="ViewModels\IAmbientColor.cs" />
     <Compile Include="ViewModels\INavigableViewModel.cs" />
     <Compile Include="ViewModels\SplashViewModel.cs" />
-    <Compile Include="ViewModels\Messages\AddMessageMessage.cs" />
-    <Compile Include="ViewModels\Messages\RefreshThreadMessage.cs" />
-    <Compile Include="ViewModels\Messages\AddThreadMessage.cs" />
+    <Compile Include="ViewModels\Messages.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\DirectoryViewModel.cs" />
     <Compile Include="ViewModels\ProvisionViewModel.cs" />

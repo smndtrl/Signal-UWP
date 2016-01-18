@@ -45,7 +45,7 @@ namespace Signal.Views
             base.OnNavigatedTo(e);
 
             var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.Activate(e);
+            if (navigableViewModel != null) navigableViewModel.NavigateTo(e);
 
             //SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
         }
@@ -55,7 +55,7 @@ namespace Signal.Views
             base.OnNavigatedFrom(e);
 
             var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.Deactivate(e);
+            if (navigableViewModel != null) navigableViewModel.NavigateFrom(e);
 
             //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
         }

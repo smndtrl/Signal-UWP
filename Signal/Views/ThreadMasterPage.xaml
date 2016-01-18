@@ -120,18 +120,15 @@
 
     <Page.BottomAppBar>
         <CommandBar Grid.Row="2">
+
+            <AppBarButton x:Name="AddItemButton" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
             <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="Select Items">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton x:Name="AddItemButton" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
-            <AppBarButton x:Name="AddThreadBtn" Label="Add Thread" Icon="AddFriend" />
-            <AppBarButton x:Name="AddGroupThreadButton" Label="Add Groupchat" Icon="AddFriend" />
 
-            <!--<AppBarButton x:Name="DeleteItemBtn" Label="Delete Item" Icon="Delete" />
-                <AppBarButton x:Name="CancelSelectionBtn" Label="Cancel" Icon="Cancel"/>-->
-        </CommandBar>
+         </CommandBar>
     </Page.BottomAppBar>
 
 
@@ -161,6 +158,18 @@
                         <Setter Target="MasterColumn.Width" Value="*" />
                         <Setter Target="DetailColumn.Width" Value="0" />
                         <Setter Target="ThreadListView.SelectionMode" Value="None" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="ThreadListSelectionStates">
+                <VisualState x:Name="ThreadListSingleSelectionState">
+                    <VisualState.Setters>
+                        <Setter Target="ThreadListView.SelectionMode" Value="None" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ThreadListMultiSelectionState">
+                    <VisualState.Setters>
+                        <Setter Target="ThreadListView.SelectionMode" Value="Multiple"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -80,7 +80,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel x:Name="DirectoryTitle" 
@@ -100,7 +99,8 @@
             Grid.Row="1"
             ItemsSource="{Binding Source={StaticResource directoryCvs}}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
             HorizontalContentAlignment="Stretch"
-                  SelectedItem="{Binding SelectedContact, Mode=TwoWay}">
+                  SelectedItem="{Binding SelectedContact, Mode=TwoWay}"
+                           SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -132,27 +132,31 @@
             </settings:ListView.Placeholder>
         </settings:ListView>
 
+        
+    </Grid>
+    
+    <Page.BottomAppBar>
         <CommandBar x:Name="DirectoryCommandBar"
-            Grid.Row="2"
             Template="{StaticResource CommandBarNoMore}">
             <CommandBar.Content>
-                <AppBarButton x:Name="refreshButton" 
-                Label="Refresh"
+                <AppBarButton x:Name="DirectoryRefreshButton" x:Uid="DirectoryRefreshButton"
+                              Label="Refresh"
                               IsCompact="True"
-                Command="{x:Bind ViewModel.RefreshCommand}"
-                Icon="Refresh"/>
+                              Command="{x:Bind ViewModel.RefreshCommand}"
+                              Icon="Refresh"/>
             </CommandBar.Content>
-            
-            
-            <AppBarToggleButton x:Name="multiSelectButton"
+
+
+            <AppBarToggleButton x:Name="DirectoryMultiToggleButton" x:Uid="DirectoryMultiToggleButton"
                                 Label="Select"
+                                IsChecked="{x:Bind ViewModel.MultiSelect}"
                                 Command="{x:Bind ViewModel.MultiSelectCommand}"
                                 Icon="Bullets"/>
-            <AppBarButton x:Name="addButton" 
-                Label="Add"
-                Command="{x:Bind ViewModel.AddCommand}"
-                Icon="Send"/>
+            <AppBarButton x:Name="DirectoryAddButton" x:Uid="DirectoryAddButton"
+                          Label="Add"
+                          Command="{x:Bind ViewModel.AddCommand}"
+                          Icon="Send"/>
         </CommandBar>
 
-    </Grid>
+    </Page.BottomAppBar>
 </local:SignalPage>

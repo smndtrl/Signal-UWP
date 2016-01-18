@@ -16,9 +16,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 using TextSecure.database;
 using TextSecure.recipient;
 using TextSecure.util;
+using Windows.UI.Xaml.Navigation;
+using Signal.Util;
 
 namespace Signal.ViewModels
 {
@@ -50,8 +53,8 @@ namespace Signal.ViewModels
             }
         }
 
-        ObservableCollection<TextSecureDirectory.Directory> _Contacts;
-        public ObservableCollection<TextSecureDirectory.Directory> Contacts
+        DirectoryCollection _Contacts;
+        public DirectoryCollection Contacts
         {
             get { return _Contacts ?? (Contacts = new DirectoryCollection(_dataService)); }
             set
@@ -60,30 +63,6 @@ namespace Signal.ViewModels
                 RaisePropertyChanged("Contacts");
             }
         }
-
-        /*GroupedDirectoryCollection _GroupedContacts;
-        public GroupedDirectoryCollection GroupedContacts
-        {
-            get { return _GroupedContacts ?? (_GroupedContacts = new GroupedDirectoryCollection(_dataService)); }
-            set
-            {
-                _GroupedContacts = value;
-                RaisePropertyChanged("GroupedContacts");
-            }
-        }*/
-
-        /* public ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>> GroupedContacts
-         {
-             get {
-                 var contacts = _dataService.getDictionary();
-                 var grouped = from contact in contacts group contact by contact.Registered;
-                 foreach (var group in grouped)
-                     Debug.WriteLine($"We have {grouped.Count()} groups, {group.Key} with {group.Count()} members.");
-                 return new ObservableCollection<IGrouping<long, TextSecureDirectory.Directory>>(grouped);
-             }
-
-         }*/
-
 
         TextSecureDirectory.Directory _selectedContact;
         public TextSecureDirectory.Directory SelectedContact
@@ -98,25 +77,6 @@ namespace Signal.ViewModels
             }
         }
 
-        // broadcast
-        /*public const string SelectedRecipientsPropertyName = "SelectedRecipients";
-        private Recipients _selectedRecipients = null;
-        public Recipients SelectedRecipients
-        {
-            get { return _selectedRecipients; }
-            set
-            {
-                if (_selectedRecipients == value)
-                {
-                    return;
-                }
-
-                var oldValue = _selectedRecipients;
-                _selectedRecipients = value;
-                RaisePropertyChanged(SelectedRecipientsPropertyName, oldValue, _selectedRecipients, true);
-            }
-        }*/
-
         // commands
         private RelayCommand<TextSecureDirectory.Directory> _addCommand;
         public RelayCommand<TextSecureDirectory.Directory> AddCommand
@@ -130,14 +90,53 @@ namespace Signal.ViewModels
             }
         }
 
-        private RelayCommand _multiSelectCommand;
-        public RelayCommand MultiSelectCommand
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Single;
+
+        public ListViewSelectionMode SelectionMode
+        {
+            get { return _selectionMode; }
+            set { Set(ref _selectionMode, value); RaisePropertyChanged("SelectionMode"); }
+        }
+
+        private bool _multiSelect =  false;
+        public bool? MultiSelect
+        {
+            get { return _multiSelect; }
+            set
+            {
+                if (!value.HasValue) return;
+
+                Set(ref _multiSelect, value.Value);
+                if (value.Value)
+                {
+                    Log.Debug("Setting multi");
+                    SelectionMode = ListViewSelectionMode.Multiple;
+                }
+                else
+                {
+                    SelectionMode = ListViewSelectionMode.Single;
+                }
+            }
+        }
+
+        private RelayCommand<object> _multiSelectCommand;
+        public RelayCommand<object> MultiSelectCommand
         {
             get
             {
-                return _multiSelectCommand ?? (_multiSelectCommand = new RelayCommand(
-                   () => { return; },
-                   () => true
+                return _multiSelectCommand ?? (_multiSelectCommand = new RelayCommand<object>(
+                    (t) =>
+                    {
+                        if(MultiSelect.HasValue && MultiSelect.Value)
+                        {
+                            MultiSelect = false;
+                        } else
+                        {
+                            MultiSelect = true;
+                        }
+
+                    },
+                   (t) => true
                    ));
             }
         }
@@ -156,32 +155,24 @@ namespace Signal.ViewModels
 
         private async Task refreshCommandInternal()
         {
-            DirectoryHelper.refreshDirectory();
+            await DirectoryHelper.refreshDirectory();
+            Contacts.Requery();
+
         }
 
         private async void addCommandInternal()
         {
-
-            //Recipients recipients = RecipientFactory.getRecipientsFromString(SelectedContact.Number, true);
-
             Recipients recipients = DatabaseFactory.getRecipientDatabase().GetOrCreateRecipients(SelectedContact); //RecipientFactory.getRecipientsFromContact(SelectedContact);
-
             var threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients, 0);
 
-            Messenger.Default.Send(new AddThreadMessage() { ThreadId = threadId });
-
             _navigationService.NavigateTo(ViewModelLocator.MESSAGES_PAGE_KEY, DatabaseFactory.getThreadDatabase().Get(threadId));
-
-            //_navigationService.NavigateTo("MasterDetail");
-            // _navigationService.GoBack();
         }
 
-        public void Activate(object parameter)
+        public void NavigateTo(NavigationEventArgs parameter)
         {
-            //throw new NotImplementedException();
         }
 
-        public void Deactivate(object parameter)
+        public void NavigateFrom(NavigationEventArgs parameter)
         {
             _navigationService.RemoveBackEntry();
         }
