@@ -194,7 +194,7 @@
                     Background="{StaticResource SignalDimmedBrush}"
                     >
             <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
-            <TextBlock x:Name="ThreadTitleText"  x:Uid="ThreadMasterHeaderThread" <!--:Uid="DirectoryTitle"-->
+            <TextBlock x:Name="ThreadTitleText"  x:Uid="ThreadMasterHeaderThread"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Foreground="White" VerticalAlignment="Center"
                       >
@@ -225,9 +225,9 @@
             <settings:ListView.Placeholder>
                 <DataTemplate>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock x:Name="ThreadListViewEmptyTextBlock" x:Uid="ThreadListViewEmptyTextBlock" Text="Welcome" HorizontalAlignment="Center"
+                        <TextBlock x:Name="ThreadListViewEmptyTextBlock" x:Uid="ThreadListViewEmptyTextBlock" Text="" HorizontalAlignment="Center"
                        Style="{ThemeResource HeaderTextBlockStyle}"/>
-                        <TextBlock x:Name="ThreadListViewEmpty2TextBlock" x:Uid="ThreadListViewEmpty2TextBlock" Text="Start a new conversation."
+                        <TextBlock x:Name="ThreadListViewEmpty2TextBlock" x:Uid="ThreadListViewEmpty2TextBlock" Text=""
                        Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>

@@ -163,7 +163,7 @@
     <value>LOS GEHTS</value>
   </data>
   <data name="WelcomePivotHeaderTextBlock.Text" xml:space="preserve">
-    <value>Wilkommen bei Signal</value>
+    <value>Willkommen bei Signal</value>
   </data>
   <data name="DirectoryAddButton.Label" xml:space="preserve">
     <value>Hinzufügen</value>
@@ -176,5 +176,17 @@
   </data>
   <data name="DirectoryTitle.Text" xml:space="preserve">
     <value>Kontakte</value>
+  </data>
+  <data name="DirectoryListViewEmpty2TextBlock.Text" xml:space="preserve">
+    <value>Lade deine Freunde ein.</value>
+  </data>
+  <data name="DirectoryListViewEmptyTextBlock.Text" xml:space="preserve">
+    <value>Keine Signal Kontakte</value>
+  </data>
+  <data name="ThreadListViewEmpty2TextBlock.Text" xml:space="preserve">
+    <value>Starten sie ein neues Gespräch</value>
+  </data>
+  <data name="ThreadListViewEmptyTextBlock.Text" xml:space="preserve">
+    <value>Willkommen</value>
   </data>
 </root>

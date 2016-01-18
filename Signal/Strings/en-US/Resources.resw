@@ -177,4 +177,16 @@
   <data name="DirectoryTitle.Text" xml:space="preserve">
     <value>DIRECTORY</value>
   </data>
+  <data name="DirectoryListViewEmpty2TextBlock.Text" xml:space="preserve">
+    <value>Invite a friend to Signal.</value>
+  </data>
+  <data name="DirectoryListViewEmptyTextBlock.Text" xml:space="preserve">
+    <value>No Signal User</value>
+  </data>
+  <data name="ThreadListViewEmpty2TextBlock.Text" xml:space="preserve">
+    <value>Start a new conversation</value>
+  </data>
+  <data name="ThreadListViewEmptyTextBlock.Text" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
 </root>

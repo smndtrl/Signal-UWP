@@ -122,9 +122,9 @@
             <settings:ListView.Placeholder>
                 <DataTemplate>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="No Signal user" HorizontalAlignment="Center"
+                        <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="" HorizontalAlignment="Center"
                        Style="{ThemeResource HeaderTextBlockStyle}"/>
-                        <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text="Invite a friend to Signal."
+                        <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text=""
                        Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
