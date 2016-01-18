@@ -59,13 +59,13 @@
                         <TextBlock x:Name="WelcomePivotHeaderTextBlock" x:Uid="WelcomePivotHeaderTextBlock"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text="Welcome to Signal"/>
+                               Text=""/>
 
 
                         <TextBlock x:Name="WelcomePivotCaptionTextBlock" x:Uid="WelcomePivotCaptionTextBlock"
                                HorizontalAlignment="Center" 
                                Style="{StaticResource BlueCaptionTextBlockStyle}"
-                               Text="for Windows"/>
+                               Text=""/>
 
                         <Button x:Name="WelcomePivotGetStartedButton" x:Uid="WelcomePivotGetStartedButton"
                             Margin="32"  
@@ -73,7 +73,7 @@
                             VerticalAlignment="Center" 
                             d:LayoutOverrides="Width"
                             Command="{x:Bind ViewModel.GetStartedCommand}"
-                            Content="GET STARTED"
+                            Content=""
                             Style="{StaticResource BlueButton}"
                             ManipulationMode="All" />
                     </StackPanel>
@@ -91,13 +91,13 @@
                     <TextBlock x:Name="RegisterPivotHeaderTextBlock" x:Uid="RegisterPivotHeaderTextBlock"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text="Register"/>
+                               Text=""/>
 
                     <TextBlock x:Name="RegisterPivotCaptionTextBlock" x:Uid="RegisterPivotCaptionTextBlock"
                                Grid.Row="1"
                                HorizontalAlignment="Center" 
                                Style="{StaticResource BlueCaptionTextBlockStyle}"
-                               Text="with your phone number" />
+                               Text="" />
 
                     <AutoSuggestBox x:Name="RegisterPivotCountrySuggestBox" x:Uid="RegisterPivotCountrySuggestBox"
                                         Grid.Row="2"
@@ -171,9 +171,9 @@
 
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="RegisterPivotRegisterButtonTextBlock" x:Uid="RegisterPivotRegisterButtonTextBlock"
-                                       Text="REGISTER"/>
+                                       Text=""/>
                             <TextBlock x:Name="RegisterPivotRegisteringButtonTextBlock" x:Uid="RegisterPivotRegisteringButtonTextBlock"
-                                       Text="REGISTERING"
+                                       Text=""
                                        Visibility="Collapsed"/>
                             <ProgressRing x:Name="RegisterPivotRegisteringButtonProgressRing" x:Uid="RegisterPivotRegisteringButtonProgressRing"
                                           Foreground="Black"
@@ -187,7 +187,7 @@
                         <TextBlock x:Name="VerifyPivotHeaderTextBlock" x:Uid="VerifyPivotHeaderTextBlock"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text="Verify"/>
+                               Text=""/>
 
                         <TextBlock x:Name="VerifyPivotCaptionTextBlock" x:Uid="VerifyPivotCaptionTextBlock"
                                HorizontalAlignment="Center" 
@@ -208,7 +208,7 @@
                             VerticalAlignment="Center"
                             d:LayoutOverrides="Width"
                             Style="{StaticResource BlueButton}"
-                            Content="VERIFY"/>
+                            Content=""/>
                     </StackPanel>
                 </FlipViewItem>
             </FlipView>

@@ -91,7 +91,6 @@
             <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Foreground="White" VerticalAlignment="Center">
-                DIRECTORY
             </TextBlock>
         </StackPanel>
 
@@ -140,7 +139,7 @@
             Template="{StaticResource CommandBarNoMore}">
             <CommandBar.Content>
                 <AppBarButton x:Name="DirectoryRefreshButton" x:Uid="DirectoryRefreshButton"
-                              Label="Refresh"
+                              Label=""
                               IsCompact="True"
                               Command="{x:Bind ViewModel.RefreshCommand}"
                               Icon="Refresh"/>
@@ -148,12 +147,12 @@
 
 
             <AppBarToggleButton x:Name="DirectoryMultiToggleButton" x:Uid="DirectoryMultiToggleButton"
-                                Label="Select"
+                                Label=""
                                 IsChecked="{x:Bind ViewModel.MultiSelect}"
                                 Command="{x:Bind ViewModel.MultiSelectCommand}"
                                 Icon="Bullets"/>
             <AppBarButton x:Name="DirectoryAddButton" x:Uid="DirectoryAddButton"
-                          Label="Add"
+                          Label=""
                           Command="{x:Bind ViewModel.AddCommand}"
                           Icon="Send"/>
         </CommandBar>

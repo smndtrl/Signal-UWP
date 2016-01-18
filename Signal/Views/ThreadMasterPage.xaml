@@ -121,8 +121,8 @@
     <Page.BottomAppBar>
         <CommandBar Grid.Row="2">
 
-            <AppBarButton x:Name="AddItemButton" Label="Add Item" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
-            <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="Select Items">
+            <AppBarButton x:Name="AddItemButton" x:Uid="ThreadMasterAppBarAddItem" Label="" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
+            <AppBarButton x:Name="SelectItmesBtn" x:Uid="ThreadMasterAppBarSelectItems" FontFamily="OverflowCheckGlyph" Label="">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
                 </AppBarButton.Icon>
@@ -194,10 +194,10 @@
                     Background="{StaticResource SignalDimmedBrush}"
                     >
             <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
-            <TextBlock x:Name="ThreadTitleText" x:Uid="DirectoryTitle"
+            <TextBlock x:Name="ThreadTitleText"  x:Uid="ThreadMasterHeaderThread" <!--:Uid="DirectoryTitle"-->
                        Style="{ThemeResource BaseTextBlockStyle}"
-                       Foreground="White" VerticalAlignment="Center">
-                THREADS
+                       Foreground="White" VerticalAlignment="Center"
+                      >
             </TextBlock>
         </StackPanel>
 
