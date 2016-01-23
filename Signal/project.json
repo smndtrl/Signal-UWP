@@ -3,6 +3,7 @@
     "Bezysoftware.Navigation.BackButton": "1.1.0",
     "EntityFramework.Commands": "7.0.0-beta6",
     "EntityFramework.Sqlite": "7.0.0-beta6",
+    "libtextsecure-uwp": "1.0.4",
     "Microsoft.ApplicationInsights": "1.0.0",
     "Microsoft.ApplicationInsights.PersistenceChannel": "1.0.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
