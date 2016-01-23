@@ -246,12 +246,16 @@
 
 
 
-    <!--<Page.BottomAppBar>
-        <CommandBar Grid.Row="3" Template="{StaticResource CommandBarNoMore}">
-            <AppBarButton Icon="Attach" />
-            <AppBarButton Icon="Send" Command="{x:Bind ViewModel.SendCommand}"/>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Phone" Command="{x:Bind ViewModel.PhoneCommand}"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="MessageResetSessionAppBarButton" x:Uid="MessageResetSessionAppBarButton"
+                              Label="Reset secure session"
+                              Command="{x:Bind ViewModel.ResetSessionCommand}"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
-    </Page.BottomAppBar>-->
+    </Page.BottomAppBar>
     
     <Page.TopAppBar>
         <CommandBar Template="{StaticResource CommandBarNoMore}">

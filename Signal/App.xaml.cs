@@ -40,15 +40,9 @@ namespace Signal
     /// </summary>
     sealed partial class App : Application
     {
-        public static new App Current
-        {
-            get { return Application.Current as App; }
-        }
+        public static new App Current => Application.Current as App;
 
-        public static string CurrentVersion
-        {
-            get { return $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}"; }
-        }
+        public static string CurrentVersion => $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}";
 
         private static Frame _frame;
          

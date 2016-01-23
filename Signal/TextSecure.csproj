@@ -183,7 +183,7 @@
     <Compile Include="Tasks\RegistrationTask.cs" />
     <Compile Include="Tasks\Library\TaskActivity.cs" />
     <Compile Include="Tasks\Library\TaskContext.cs" />
-    <Compile Include="Tasks\ReceiveTask.cs" />
+    <Compile Include="Tasks\PushReceivedTask.cs" />
     <Compile Include="Tasks\SendTask.cs" />
     <Compile Include="Tasks\PushContentReceiveTask.cs" />
     <Compile Include="Tasks\PushDecryptTask.cs" />

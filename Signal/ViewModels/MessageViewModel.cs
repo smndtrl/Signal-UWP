@@ -221,6 +221,35 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _phoneCommand;
+        public RelayCommand PhoneCommand
+        {
+            get
+            {
+                return _phoneCommand ?? (_phoneCommand = new RelayCommand(
+                    () => { return; },
+                    () => false)
+                    );
+            }
+        }
+
+        private RelayCommand _resetSessionCommand;
+        public RelayCommand ResetSessionCommand
+        {
+            get
+            {
+                return _resetSessionCommand ?? (_resetSessionCommand = new RelayCommand(
+                    async () =>
+                    {
+                        var endSessionMessage = new OutgoingEndSessionMessage(new OutgoingTextMessage(this.SelectedThread.Recipients, "TERMINATE"));
+
+                        await MessageSender.send(endSessionMessage, this.SelectedThread.ThreadId);
+                    },
+                    () => true)
+                    );
+            }
+        }
+
         public void NavigateTo(NavigationEventArgs args)
         {
 

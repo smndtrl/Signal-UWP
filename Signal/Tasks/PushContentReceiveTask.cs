@@ -15,7 +15,7 @@ using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class PushContentReceiveTask : ReceiveTask
+    class PushContentReceiveTask : PushReceivedTask
     {
         private string data;
 
