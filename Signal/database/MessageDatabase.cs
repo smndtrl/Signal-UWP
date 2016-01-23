@@ -28,6 +28,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using libaxolotl;
+using Signal.database.models;
 using TextSecure.messages;
 using TextSecure.recipient;
 using TextSecure.util;
@@ -89,7 +91,7 @@ namespace Signal.Database
         private async Task updateTypeBitmask(long messageId, long maskOff, long maskOn)
         {
             Debug.WriteLine($"MessageDatabase: Updating ID: {messageId} to base type: {maskOn}");
-            
+
 
             var message = conn.Get<Message>(messageId);
 
@@ -277,7 +279,7 @@ namespace Signal.Database
         public void incrementDeliveryReceiptCount(String address, long timestamp)
         {
             var date = TimeUtil.GetDateTime(timestamp);
-            var query = conn.Table<Message>().Where(m => 
+            var query = conn.Table<Message>().Where(m =>
                 m.DateSent == date
             );
 
@@ -823,5 +825,53 @@ public void close()
 }
   }
 }*/
+
+        public void SetMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+            List<DisplayRecord.IdentityKeyMismatch> items = new List<DisplayRecord.IdentityKeyMismatch>()
+            {
+                new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey)
+            };
+
+            /*IdentityKeyMismatchList document = new IdentityKeyMismatchList(items);
+
+            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+            database.beginTransaction();
+
+            try {
+              setDocument(database, messageId, MISMATCHED_IDENTITIES, document);
+
+            database.setTransactionSuccessful();
+            } catch (IOException ioe) {
+              Log.w(TAG, ioe);
+            } finally {
+              database.endTransaction();
+            }*/
+        }
+
+        public void AddMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+            /*try
+            {
+                addToDocument(messageId, MISMATCHED_IDENTITIES,
+                              new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey),
+                              IdentityKeyMismatchList.class);
+    } catch (IOException e) {
+      Log.w(TAG, e);
+    }*/
+        }
+
+        public void RemoveMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+            /*try
+            {
+                removeFromDocument(messageId, MISMATCHED_IDENTITIES,
+                                   new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey),
+                                   IdentityKeyMismatchList.class);
+    } catch (IOException e) {
+      Log.w(TAG, e);
+    }
+        }*/
+        }
     }
 }

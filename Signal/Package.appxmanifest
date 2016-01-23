@@ -24,22 +24,22 @@
         </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.SmsReceiverTask">
+          <BackgroundTasks>
+            <Task Type="general" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
         <uap:Extension Category="windows.protocol" EntryPoint="Views.ProvisioningProtocolView">
           <uap:Protocol Name="tsdevice">
             <uap:Logo>Assets\StoreLogo.png</uap:Logo>
             <uap:DisplayName>TextSecure</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.PushReceiverTask">
-          <BackgroundTasks>
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SignalTasks.SmsReceiverTask">
-          <BackgroundTasks>
-            <Task Type="general" />
-          </BackgroundTasks>
-        </Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -60,6 +60,14 @@
         <Path>curve25519.dll</Path>
         <ActivatableClass ActivatableClassId="curve25519.Curve25519Native" ThreadingModel="both" />
       </InProcessServer>
+    </Extension>
+    <Extension Category="windows.certificates">
+      <Certificates>
+        <Certificate StoreName="CA" Content="Assets\signal-live.cer" />
+        <Certificate StoreName="CA" Content="Assets\signal-testing.cer" />
+        <TrustFlags ExclusiveTrust="true" />
+        <SelectionCriteria AutoSelect="true" />
+      </Certificates>
     </Extension>
   </Extensions>
 </Package>

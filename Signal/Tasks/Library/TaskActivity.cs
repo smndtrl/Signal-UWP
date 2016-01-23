@@ -174,6 +174,11 @@ namespace Signal.Tasks.Library
 
         public abstract void onAdded();
 
+        public void OnCanceled()
+        {
+            
+        }
+
     }
 
 

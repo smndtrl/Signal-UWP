@@ -6,13 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.database;
 using TextSecure.recipient;
+using libaxolotl;
 
 namespace Signal.database.models
 {
     public abstract class DisplayRecord
     {
 
-        public class IdentityKeyMismatch { }
+        public class IdentityKeyMismatch
+        {
+            private IdentityKey identityKey;
+            private long recipientId;
+
+            public IdentityKeyMismatch(long recipientId, IdentityKey identityKey)
+            {
+                this.recipientId = recipientId;
+                this.identityKey = identityKey;
+            }
+        }
         public class NetworkFailure { }
 
         protected readonly long type;

@@ -99,6 +99,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\CountryCodes.xml" />
+    <Content Include="Assets\signal-live.cer" />
+    <Content Include="Assets\signal-testing.cer" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -188,7 +190,7 @@
     <Compile Include="Tasks\PushContentReceiveTask.cs" />
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
-    <Compile Include="Tasks\TextSendTask.cs" />
+    <Compile Include="Tasks\PushTextSendTask.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
     <Compile Include="Util\GroupUtil.cs" />

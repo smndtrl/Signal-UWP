@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Google.ProtocolBuffers.Serialization;
 using TextSecure;
 using TextSecure.database;
 using Signal.Push;
@@ -21,6 +22,11 @@ namespace Signal.Tasks
         public override void onAdded()
         {
             throw new NotImplementedException("SendTask onAdded");
+        }
+
+        public new void OnCanceled()
+        {
+            throw new NotImplementedException("SendTask OnCanceled");
         }
 
         protected override string Execute()
