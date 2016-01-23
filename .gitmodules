@@ -1,0 +1,6 @@
+[submodule "libtextsecure-uwp"]
+	path = libtextsecure-uwp
+	url = https://github.com/smndtrl/libtextsecure-uwp.git
+[submodule "libaxolotl-uwp"]
+	path = libaxolotl-uwp
+	url = https://github.com/smndtrl/libaxolotl-uwp.git
