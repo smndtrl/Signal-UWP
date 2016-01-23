@@ -30,7 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using libaxolotl;
 using Signal.database.models;
-using TextSecure.messages;
+using Signal.Messages;
 using TextSecure.recipient;
 using TextSecure.util;
 
@@ -382,13 +382,13 @@ namespace Signal.Database
                 if (((IncomingGroupMessage)message).isUpdate()) type |= MessageTypes.GROUP_UPDATE_BIT;
                 else if (((IncomingGroupMessage)message).isQuit()) type |= MessageTypes.GROUP_QUIT_BIT;
             }*/
-            else if (message.isEndSession())
+            else if (message.IsEndSession)
             {
                 type |= MessageTypes.SECURE_MESSAGE_BIT;
                 type |= MessageTypes.END_SESSION_BIT;
             }
 
-            if (message.isPush()) type |= MessageTypes.PUSH_MESSAGE_BIT;
+            if (message.IsPush) type |= MessageTypes.PUSH_MESSAGE_BIT;
 
             Recipients recipients;
 
@@ -404,13 +404,13 @@ namespace Signal.Database
 
             Recipients groupRecipients;
 
-            if (message.getGroupId() == null)
+            if (message.GroupId== null)
             {
                 groupRecipients = null;
             }
             else
             {
-                groupRecipients = RecipientFactory.getRecipientsFromString(message.getGroupId(), true);
+                groupRecipients = RecipientFactory.getRecipientsFromString(message.GroupId, true);
             }
 
             bool unread = /*org.thoughtcrime.securesms.util.Util.isDefaultSmsProvider() ||*/
@@ -607,9 +607,9 @@ namespace Signal.Database
         public async Task<long> insertMessageOutbox(long threadId, OutgoingTextMessage message,
                                      long type, DateTime date)
         {
-            if (message.isKeyExchange()) type |= MessageTypes.KEY_EXCHANGE_BIT;
-            else if (message.isSecureMessage()) type |= MessageTypes.SECURE_MESSAGE_BIT;
-            else if (message.isEndSession()) type |= MessageTypes.END_SESSION_BIT;
+            if (message.IsKeyExchange) type |= MessageTypes.KEY_EXCHANGE_BIT;
+            else if (message.IsSecureMessage) type |= MessageTypes.SECURE_MESSAGE_BIT;
+            else if (message.IsEndSession) type |= MessageTypes.END_SESSION_BIT;
             //if (forceSms) type |= MessageTypes.MESSAGE_FORCE_SMS_BIT;
 
             /*ContentValues contentValues = new ContentValues(6);
@@ -624,9 +624,9 @@ namespace Signal.Database
             var insert = new Message()
             {
                 //address = PhoneNumberUtils.formatNumber(message.getRecipients().getPrimaryRecipient().getNumber()),
-                Address = message.getRecipients().getPrimaryRecipient().getNumber(),
+                Address = message.Recipients.getPrimaryRecipient().getNumber(),
                 ThreadId = threadId,
-                Body = message.getMessageBody(),
+                Body = message.MessageBody,
                 DateReceived = date,
                 DateSent = date,
                 Read = false,

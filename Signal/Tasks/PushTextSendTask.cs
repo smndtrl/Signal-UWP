@@ -75,11 +75,11 @@ namespace Signal.Tasks
             }
             catch (UntrustedIdentityException e)
             {
-                Log.Debug($"Untrusted Identity Key: {e.getIdentityKey()} {e.getE164Number()}");
-                var recipients = RecipientFactory.getRecipientsFromString(e.getE164Number(), false);
+                Log.Debug($"Untrusted Identity Key: {e.IdentityKey} {e.E164Number}");
+                var recipients = RecipientFactory.getRecipientsFromString(e.E164Number, false);
                 long recipientId = recipients.getPrimaryRecipient().getRecipientId();
 
-                database.AddMismatchedIdentity(record.getId(), recipientId, e.getIdentityKey());
+                database.AddMismatchedIdentity(record.getId(), recipientId, e.IdentityKey);
                 database.markAsSentFailed(record.getId());
                 database.markAsPush(record.getId());
             }
@@ -112,7 +112,7 @@ namespace Signal.Tasks
             } catch (Exception e)
             {
                 //Log.w(TAG, e);
-                //throw new RetryLaterException(e);
+               throw new Exception(e.Message);
             }
         }
     }

@@ -15,14 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TextSecure.recipient;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingMediaMessage
     {

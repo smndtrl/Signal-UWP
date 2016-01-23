@@ -15,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using libaxolotl.util;
 using libtextsecure;
-using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal;
@@ -25,19 +23,13 @@ using Signal.Models;
 using Signal.Tasks;
 using Strilanc.Value;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TextSecure.database;
-using TextSecure.messages;
 using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
 using Signal.Util;
-using GalaSoft.MvvmLight.Messaging;
-using Signal.ViewModel.Messages;
 using Signal.Database;
+using Signal.Messages;
 
 namespace TextSecure
 {
@@ -51,8 +43,8 @@ namespace TextSecure
             long type = MessageTypes.BASE_OUTBOX_TYPE;
             //EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
             MessageDatabase database = DatabaseFactory.getMessageDatabase();
-            Recipients recipients = message.getRecipients();
-            bool keyExchange = message.isKeyExchange();
+            Recipients recipients = message.Recipients;
+            bool keyExchange = message.IsKeyExchange;
 
             long allocatedThreadId;
 

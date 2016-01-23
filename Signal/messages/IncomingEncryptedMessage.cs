@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     class IncomingEncryptedMessage : IncomingTextMessage
     {
-        public IncomingEncryptedMessage(IncomingTextMessage parent, String newBody)
+        public IncomingEncryptedMessage(IncomingTextMessage parent, string newBody)
             : base(parent, newBody)
         {
         }
 
-        public new IncomingTextMessage withMessageBody(String body)
+        public new IncomingTextMessage WithMessageBody(string body)
         {
             return new IncomingEncryptedMessage(this, body);
         }
 
-        public new bool isSecureMessage()
+        public new bool IsSecureMessage()
         {
             return true;
         }

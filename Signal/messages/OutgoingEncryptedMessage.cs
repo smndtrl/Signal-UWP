@@ -16,35 +16,26 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TextSecure.recipient;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingEncryptedMessage : OutgoingTextMessage
     {
 
-        public OutgoingEncryptedMessage(Recipients recipients, String body)
+        public OutgoingEncryptedMessage(Recipients recipients, string body)
             : base(recipients, body)
         {
         }
 
-        private OutgoingEncryptedMessage(OutgoingEncryptedMessage message, String body)
+        private OutgoingEncryptedMessage(OutgoingEncryptedMessage message, string body)
             : base(message, body)
         {
         }
 
+        public override bool IsSecureMessage { get; } = true;
 
-        public override bool isSecureMessage()
-        {
-            return true;
-        }
-
-
-        public override OutgoingTextMessage withBody(String body)
+        public override OutgoingTextMessage withBody(string body)
         {
             return new OutgoingEncryptedMessage(this, body);
         }

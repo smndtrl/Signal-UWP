@@ -15,7 +15,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure;
 using TextSecure.database;
-using TextSecure.messages;
 using TextSecure.recipient;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +22,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using Signal.Messages;
 using Signal.Resources;
 using Signal.Views;
 

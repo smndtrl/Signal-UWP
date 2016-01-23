@@ -15,10 +15,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Signal.Messages;
 using TextSecure;
 using TextSecure.crypto.storage;
 using TextSecure.database;
-using TextSecure.messages;
 using TextSecure.util;
 
 namespace Signal.Tasks

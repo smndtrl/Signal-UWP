@@ -51,8 +51,8 @@ namespace TextSecure.crypto.storage
 
         public bool ContainsSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Where(v => v.Name == name && v.DeviceId == deviceId);
 
             return query.Count() != 0;
@@ -65,8 +65,8 @@ namespace TextSecure.crypto.storage
 
         public void DeleteSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Delete(t => t.Name == name && t.DeviceId == deviceId);
         }
 
@@ -80,8 +80,8 @@ namespace TextSecure.crypto.storage
 
         public SessionRecord LoadSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId == deviceId);
 
             if (query != null && query.Count() > 0)
@@ -99,7 +99,7 @@ namespace TextSecure.crypto.storage
         {
             DeleteSession(address); // TODO: sqlite-net combined private keys for insertOrReplace
 
-            var session = new Session() { DeviceId = address.getDeviceId(), Name = address.getName(), Record = record.serialize() };
+            var session = new Session() { DeviceId = address.DeviceId, Name = address.Name, Record = record.serialize() };
             conn.InsertOrReplace(session);
             return;
         }
