@@ -29,7 +29,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using libaxolotl;
-using Signal.database.models;
 using Signal.Messages;
 using TextSecure.recipient;
 using TextSecure.util;
@@ -88,21 +87,7 @@ namespace Signal.Database
             setNotifyConverationListListeners(cursor);*/
         }
 
-        private async Task updateTypeBitmask(long messageId, long maskOff, long maskOn)
-        {
-            Debug.WriteLine($"MessageDatabase: Updating ID: {messageId} to base type: {maskOn}");
-
-
-            var message = conn.Get<Message>(messageId);
-
-            message.Type = (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
-            conn.Update(message);
-
-            DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
-
-            notifyConversationListeners(message.ThreadId);
-            notifyConversationListListeners();
-        }
+        
 
         /*public async Task Test(long messageId)
         {
@@ -181,100 +166,7 @@ namespace Signal.Database
             return getMessagesCount(threadId);
         }
 
-        public void markAsEndSession(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.KEY_EXCHANGE_MASK, MessageTypes.END_SESSION_BIT);
-        }
-
-        public void markAsPreKeyBundle(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.KEY_EXCHANGE_MASK, MessageTypes.KEY_EXCHANGE_BIT | MessageTypes.KEY_EXCHANGE_BUNDLE_BIT);
-        }
-
-        public void markAsInvalidVersionKeyExchange(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.KEY_EXCHANGE_INVALID_VERSION_BIT);
-        }
-
-        public void markAsSecure(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.SECURE_MESSAGE_BIT);
-        }
-
-        public void markAsInsecure(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.SECURE_MESSAGE_BIT, 0);
-        }
-
-        public void markAsPush(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.PUSH_MESSAGE_BIT);
-        }
-
-        public void markAsForcedSms(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.MESSAGE_FORCE_SMS_BIT);
-        }
-
-        public void markAsDecryptFailed(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_FAILED_BIT);
-        }
-
-        public void markAsDecryptDuplicate(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_DUPLICATE_BIT);
-        }
-
-        public void markAsNoSession(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_NO_SESSION_BIT);
-        }
-
-        public void markAsDecrypting(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_BIT);
-        }
-
-        public void markAsLegacyVersion(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_LEGACY_BIT);
-        }
-
-        public void markAsOutbox(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_OUTBOX_TYPE);
-        }
-
-        public void markAsPendingInsecureSmsFallback(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_PENDING_INSECURE_SMS_FALLBACK);
-        }
-
-        public void markAsSending(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENDING_TYPE);
-        }
-
-        public void markAsSent(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENT_TYPE);
-        }
-
-        /*public async void markStatus(long messageId, int status)
-        {
-            Debug.WriteLine($"MessageDatabase Updating ID: {messageId} to status: {status}");
-            var message = conn.Get<Message>(messageId);
-
-            message.DeliveryStatus = status;
-
-            conn.Update(message);
-        }*/
-
-        public void markAsSentFailed(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENT_FAILED_TYPE);
-        }
+        
 
         public void incrementDeliveryReceiptCount(String address, long timestamp)
         {
@@ -443,7 +335,7 @@ namespace Signal.Database
                 Address = message.getSender(),
                 AddressDeviceId = message.getSenderDeviceId(),
                 DateReceived = TimeUtil.GetDateTimeMillis(), // force precision to millis not to ticks
-                DateSent = TimeUtil.GetDateTime(message.getSentTimestampMillis()),
+                DateSent = TimeUtil.GetDateTime(message.SentTimestampMillis),
                 Read = !unread,
                 Body = message.getMessageBody(),
                 Type = type,
@@ -828,9 +720,9 @@ public void close()
 
         public void SetMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
         {
-            List<DisplayRecord.IdentityKeyMismatch> items = new List<DisplayRecord.IdentityKeyMismatch>()
+            List<IdentityKeyMismatch> items = new List<IdentityKeyMismatch>()
             {
-                new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey)
+                new IdentityKeyMismatch(recipientId, identityKey)
             };
 
             /*IdentityKeyMismatchList document = new IdentityKeyMismatchList(items);

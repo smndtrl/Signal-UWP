@@ -21,6 +21,7 @@ using System.Text;
 using libaxolotl.util;
 using libtextsecure.messages;
 using libtextsecure.push;
+using Signal.Util;
 using Strilanc.Value;
 using TextSecure.util;
 
@@ -51,7 +52,7 @@ namespace Signal.Messages
         private string ServiceCenterAddress { get; }
         private bool ReplyPathPresent { get; }
         private string PseudoSubject { get; }
-        private long SentTimestampMillis { get; }
+        public ulong SentTimestampMillis { get; }
         public string GroupId { get; }
         private bool Push { get; }
 
@@ -69,7 +70,7 @@ namespace Signal.Messages
             this.push = false;
         }*/
 
-        public IncomingTextMessage(String sender, uint senderDeviceId, long sentTimestampMillis,
+        public IncomingTextMessage(String sender, uint senderDeviceId, ulong sentTimestampMillis,
                                    String encodedBody, May<TextSecureGroup> group)
         {
             this.Message = encodedBody;
@@ -115,7 +116,7 @@ namespace Signal.Messages
             this.ServiceCenterAddress = message.getServiceCenterAddress();
             this.ReplyPathPresent = message.isReplyPathPresent();
             this.PseudoSubject = message.getPseudoSubject();
-            this.SentTimestampMillis = message.getSentTimestampMillis();
+            this.SentTimestampMillis = message.SentTimestampMillis;
             this.GroupId = message.GroupId;
             this.Push = message.IsPush;
         }
@@ -136,7 +137,7 @@ namespace Signal.Messages
             this.ServiceCenterAddress = fragments[0].getServiceCenterAddress();
             this.ReplyPathPresent = fragments[0].isReplyPathPresent();
             this.PseudoSubject = fragments[0].getPseudoSubject();
-            this.SentTimestampMillis = fragments[0].getSentTimestampMillis();
+            this.SentTimestampMillis = fragments[0].SentTimestampMillis;
             this.GroupId = fragments[0].GroupId;
             this.Push = fragments[0].IsPush;
         }
@@ -150,15 +151,11 @@ namespace Signal.Messages
             this.ServiceCenterAddress = "Outgoing";
             this.ReplyPathPresent = true;
             this.PseudoSubject = "";
-            this.SentTimestampMillis = (long)KeyHelper.getTime();
+            this.SentTimestampMillis = (ulong)TimeUtil.GetUnixTimestampMillis();
             this.GroupId = groupId;
             this.Push = true;
         }
 
-        public long getSentTimestampMillis()
-        {
-            return SentTimestampMillis;
-        }
 
         public String getPseudoSubject()
         {

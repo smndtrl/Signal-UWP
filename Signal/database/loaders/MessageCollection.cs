@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Signal.database.loaders
 {
-    public class MessageCollection : IncrementalCollection<Message>
+    public class MessageCollection : IncrementalCollection<MessageRecord>
     {
         IDataService service;
         //IEnumerable<Contact> _storage;
@@ -75,7 +75,7 @@ namespace Signal.database.loaders
             return Count < max;
         }
 
-        protected override async Task<IEnumerable<Message>> LoadMoreItemsInternal(CancellationToken c, uint count)
+        protected override async Task<IEnumerable<MessageRecord>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
             /*if (max == int.MaxValue)
             {
@@ -84,7 +84,7 @@ namespace Signal.database.loaders
 
             //Debug.WriteLine($"Messages: Load {count} more, has already {Count}");
 
-            return (await service.getMessages(threadId)).ToList().Skip(Count).Take((int)count);
+            return (await service.getMessages(threadId)).ToList(); // Skip(Count).Take((int)count);
         }
 
 

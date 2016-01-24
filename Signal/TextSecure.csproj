@@ -119,6 +119,8 @@
     <Compile Include="crypto\storage\TextSecureSessionStore.cs" />
     <Compile Include="Database\ContactsDatabase.cs" />
     <Compile Include="Database\Database.cs" />
+    <Compile Include="Models\Record.cs" />
+    <Compile Include="Database\IdentityKeyMismatch.cs" />
     <Compile Include="Database\interfaces\IThreadDatabase.cs" />
     <Compile Include="Database\loaders\GroupedDirectoryCollection.cs" />
     <Compile Include="Database\PushDatabase.cs" />
@@ -136,9 +138,6 @@
     <Compile Include="Database\loaders\IncrementalCollection.cs" />
     <Compile Include="Database\MessageDatabase.cs" />
     <Compile Include="Database\MessageTypes.cs" />
-    <Compile Include="Database\models\DisplayRecord.cs" />
-    <Compile Include="Database\models\MessageRecord.cs" />
-    <Compile Include="Database\models\SmsMessageRecord.cs" />
     <Compile Include="Database\TextMessageDatabase.cs" />
     <Compile Include="Database\TextSecureDirectory.cs" />
     <Compile Include="Database\SQLite\ThreadDatabase.cs" />
@@ -146,6 +145,9 @@
     <Compile Include="MessageSender.cs" />
     <Compile Include="Messages\IncomingEncryptedMessage.cs" />
     <Compile Include="Messages\IncomingEndSessionMessage.cs" />
+    <Compile Include="Messages\IncomingGroupMessage.cs" />
+    <Compile Include="Messages\IncomingJoinedMessage.cs" />
+    <Compile Include="Messages\IncomingPreKeyBundleMessage.cs" />
     <Compile Include="Messages\IncomingTextMessage.cs" />
     <Compile Include="Messages\OutgoingEncryptedMessage.cs" />
     <Compile Include="Messages\OutgoingEndSessionMessage.cs" />
@@ -155,6 +157,8 @@
     <Compile Include="Messages\OutgoingTextMessage.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\MessageRecord.cs" />
+    <Compile Include="Models\TextMessageRecord.cs" />
     <Compile Include="Models\Thread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Push\TextSecureCommunicationFactory.cs" />
@@ -166,8 +170,10 @@
     <Compile Include="Resources\ContactRetriever.cs" />
     <Compile Include="Resources\ContactPictureConverter.cs" />
     <Compile Include="Resources\CountryCollection.cs" />
+    <Compile Include="Resources\ExtendedVisualStateManager.cs" />
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
+    <Compile Include="Resources\ExtendedGoToStateAction.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\ItemClickCommand.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />

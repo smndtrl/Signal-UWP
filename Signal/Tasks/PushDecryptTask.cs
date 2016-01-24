@@ -1,40 +1,41 @@
 ﻿using libaxolotl;
 using libaxolotl.state;
-using libtextsecure;
 using libtextsecure.crypto;
 using libtextsecure.messages;
 using libtextsecure.messages.multidevice;
 using libtextsecure.push;
-using libtextsecure.util;
-using Signal.database.models;
 using Signal.Database;
-using Signal.Tasks.Library;
 using Strilanc.Value;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using libaxolotl.protocol;
+using libaxolotl.util;
 using Signal.Messages;
+using Signal.Util;
 using TextSecure;
 using TextSecure.crypto.storage;
-using TextSecure.database;
+using TextSecure.recipient;
 using TextSecure.util;
 
 namespace Signal.Tasks
 {
     class PushDecryptTask : SendTask
     {
-        private long messageId;
+        private readonly long _pushMessageId;
+        private readonly long _smsMessageId;
 
-        public PushDecryptTask(long messageId, string sender)
-        {
-            this.messageId = messageId;
-        }
 
-        public override void onAdded()
+        public PushDecryptTask(long pushMessageId, string sender) : this(pushMessageId, -1, sender)
         {
         }
+
+        public PushDecryptTask(long pushMessageId, long smsMessageId, string sender)
+        {
+            this._pushMessageId = pushMessageId;
+            this._smsMessageId = smsMessageId;
+        }
+
+        public override void onAdded() { }
 
         protected override string Execute()
         {
@@ -44,17 +45,16 @@ namespace Signal.Tasks
         protected override async Task<string> ExecuteAsync()
         {
             PushDatabase database = DatabaseFactory.getPushDatabase();
-            TextSecureEnvelope envelope = database.GetEnvelope(messageId);
-            /*Optional<Long> optionalSmsMessageId = smsMessageId > 0 ? Optional.of(smsMessageId) :
-                                                                         Optional.< Long > absent();*/
+            TextSecureEnvelope envelope = database.GetEnvelope(_pushMessageId);
+            May<long> optionalSmsMessageId = _smsMessageId > 0 ? new May<long>(_smsMessageId) : May<long>.NoValue;
 
-            handleMessage(/*masterSecret,*/envelope/*, optionalSmsMessageId*/);
-            database.Delete(messageId);
+            handleMessage(envelope, optionalSmsMessageId);
+            database.Delete(_pushMessageId);
 
             return "";
         }
 
-        private void handleMessage(/*MasterSecretUnion masterSecret, */TextSecureEnvelope envelope/*, Optional<Long> smsMessageId*/)
+        private void handleMessage(TextSecureEnvelope envelope, May<long> smsMessageId)
         {
             try
             {
@@ -68,10 +68,10 @@ namespace Signal.Tasks
                 {
                     TextSecureDataMessage message = content.getDataMessage().ForceGetValue();
 
-                    if (message.isEndSession()) handleEndSessionMessage(/*masterSecret, */envelope, message/*, smsMessageId*/);
-                    //else if (message.isGroupUpdate()) handleGroupMessage(masterSecret, envelope, message, smsMessageId);
-                    //else if (message.getAttachments().isPresent()) handleMediaMessage(masterSecret, envelope, message, smsMessageId);
-                    else handleTextMessage(/*masterSecret, */envelope, message/*, smsMessageId*/);
+                    if (message.isEndSession()) handleEndSessionMessage(envelope, message, smsMessageId);
+                    else if (message.isGroupUpdate()) handleGroupMessage(envelope, message, smsMessageId);
+                    else if (message.getAttachments().HasValue) handleMediaMessage(envelope, message, smsMessageId);
+                    else handleTextMessage(envelope, message, smsMessageId);
                 }
                 /*else if (content.getSyncMessage().HasValue) TODO: SYNC enable
                 {
@@ -89,118 +89,210 @@ namespace Signal.Tasks
             }
             catch (InvalidVersionException e)
             {
-                //Log.w(TAG, e);
-                //handleInvalidVersionMessage(masterSecret, envelope, smsMessageId);
+                Log.Warn(e);
+                handleInvalidVersionMessage(envelope, smsMessageId);
             }
-            /* catch (InvalidMessageException | InvalidKeyIdException | InvalidKeyException | MmsException e) {
-                 Log.w(TAG, e);
-                 handleCorruptMessage(masterSecret, envelope, smsMessageId);
-             } catch (NoSessionException e)
-             {
-                 Log.w(TAG, e);
-                 handleNoSessionMessage(masterSecret, envelope, smsMessageId);
-             }
-             catch (LegacyMessageException e)
-             {
-                 Log.w(TAG, e);
-                 handleLegacyMessage(masterSecret, envelope, smsMessageId);
-             }
-             catch (DuplicateMessageException e)
-             {
-                 Log.w(TAG, e);
-                 handleDuplicateMessage(masterSecret, envelope, smsMessageId);
-             }
-             catch (UntrustedIdentityException e)
-             {
-                 Log.w(TAG, e);
-                 handleUntrustedIdentityMessage(masterSecret, envelope, smsMessageId);
-             }*/
+            catch (InvalidMessageException/* | InvalidKeyIdException | InvalidKeyException | MmsException*/ e)
+            {
+                Log.Warn(e);
+                handleCorruptMessage(envelope, smsMessageId);
+            }
+            catch (InvalidKeyIdException e)
+            {
+                Log.Warn(e);
+                handleCorruptMessage(envelope, smsMessageId);
+            }
+            catch (InvalidKeyException e)
+            {
+                Log.Warn(e);
+                handleCorruptMessage(envelope, smsMessageId);
+            }
+            catch (NoSessionException e)
+            {
+                Log.Warn(e);
+                handleNoSessionMessage(envelope, smsMessageId);
+            }
+            catch (LegacyMessageException e)
+            {
+                Log.Warn(e);
+                handleLegacyMessage(envelope, smsMessageId);
+            }
+            catch (DuplicateMessageException e)
+            {
+                Log.Warn(e);
+                handleDuplicateMessage(envelope, smsMessageId);
+            }
+            catch (libaxolotl.exceptions.UntrustedIdentityException e)
+            {
+                Log.Warn(e);
+                handleUntrustedIdentityMessage(envelope, smsMessageId);
+            }
         }
 
         private void handleEndSessionMessage(/*MasterSecretUnion     masterSecret,*/
                                              TextSecureEnvelope envelope,
-                                             TextSecureDataMessage message/*,
-                                             Optional<Long>        smsMessageId*/)
+                                             TextSecureDataMessage message,
+                                             May<long> smsMessageId)
         {
-            /*EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
-            IncomingTextMessage incomingTextMessage = new IncomingTextMessage(envelope.getSource(),
+            var smsDatabase = DatabaseFactory.getTextMessageDatabase();//getEncryptingSmsDatabase(context);
+            var incomingTextMessage = new IncomingTextMessage(envelope.getSource(),
                                                                                 envelope.getSourceDevice(),
-                                                                                (long)message.getTimestamp(),
+                                                                                message.getTimestamp(),
                                                                                 "", May<TextSecureGroup>.NoValue);
 
             long threadId;
 
-            if (!smsMessageId.isPresent())
+            if (!smsMessageId.HasValue)
             {
                 IncomingEndSessionMessage incomingEndSessionMessage = new IncomingEndSessionMessage(incomingTextMessage);
-                Pair<Long, Long> messageAndThreadId = smsDatabase.insertMessageInbox(masterSecret, incomingEndSessionMessage);
+                Pair<long, long> messageAndThreadId = smsDatabase.insertMessageInbox(incomingEndSessionMessage);
 
-                threadId = messageAndThreadId.second;
+                threadId = messageAndThreadId.second();
             }
             else
             {
-                smsDatabase.markAsEndSession(smsMessageId.get());
-                threadId = smsDatabase.getThreadIdForMessage(smsMessageId.get());
+                var messageId = smsMessageId.ForceGetValue();
+                smsDatabase.MarkAsEndSession(messageId);
+                threadId = smsDatabase.GetThreadIdForMessage(messageId);
             }
 
-            SessionStore sessionStore = new TextSecureSessionStore();
-            sessionStore.deleteAllSessions(envelope.getSource());*/
+            SessionStore sessionStore = new TextSecureAxolotlStore();
+            sessionStore.DeleteAllSessions(envelope.getSource());
 
             //SecurityEvent.broadcastSecurityUpdateEvent(context, threadId);
             //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), threadId);
         }
 
-        /*private void handleGroupMessage(@NonNull MasterSecretUnion masterSecret,
-                                        @NonNull TextSecureEnvelope envelope,
-                                        @NonNull TextSecureDataMessage message,
-                                        @NonNull Optional<Long> smsMessageId)
+        private void handleGroupMessage(TextSecureEnvelope envelope, TextSecureDataMessage message, May<long> smsMessageId)
         {
-            GroupMessageProcessor.process(context, masterSecret, envelope, message);
+            //GroupMessageProcessor.process(envelope, message, false); // TODO: GROUP enable
+
+            if (smsMessageId.HasValue)
+            {
+                DatabaseFactory.getTextMessageDatabase().DeleteThread(smsMessageId.ForceGetValue()); //getSmsDatabase(context).deleteMessage(smsMessageId.get());
+            }
+        }
+
+        #region Synchronize
+
+        private void handleSynchronizeSentMessage(TextSecureEnvelope envelope, SentTranscriptMessage message, May<long> smsMessageId) // throws MmsException
+        {
+            long threadId;
+
+            if (message.getMessage().isGroupUpdate())
+            {
+                throw new NotImplementedException("GROUP handleSynchronizeSentMessage");
+                //threadId = GroupMessageProcessor.process(context, masterSecret, envelope, message.getMessage(), true); // TODO: Group enable
+            }
+            else if (message.getMessage().getAttachments().HasValue)
+            {
+                threadId = handleSynchronizeSentMediaMessage(message, smsMessageId);
+            }
+            else {
+                threadId = handleSynchronizeSentTextMessage(message, smsMessageId);
+            }
+
+            if (threadId == 0L) return;
+
+            DatabaseFactory.getThreadDatabase().SetRead(threadId);
+            //MessageNotifier.updateNotification(getContext(), masterSecret.getMasterSecret().orNull());
+        }
+
+        private void handleSynchronizeRequestMessage(RequestMessage message)
+        {
+            throw new NotImplementedException("handleSynchronizeRequestMessage");
+            if (message.isContactsRequest())
+            {
+                /*ApplicationContext.getInstance(context)
+                                  .getJobManager()
+                                  .add(new MultiDeviceContactUpdateJob(getContext()));*/
+            }
+
+            if (message.isGroupsRequest())
+            {
+                /*ApplicationContext.getInstance(context)
+                                  .getJobManager()
+                                  .add(new MultiDeviceGroupUpdateJob(getContext()));*/
+            }
+        }
+
+        private long handleSynchronizeSentTextMessage(SentTranscriptMessage message,
+                                                May<long> smsMessageId)
+        {
+            var textMessageDatabase = DatabaseFactory.getTextMessageDatabase();//getEncryptingSmsDatabase(context);
+            Recipients recipients = getSyncMessageDestination(message);
+            String body = message.getMessage().getBody().HasValue ? message.getMessage().getBody().ForceGetValue() : "";
+            OutgoingTextMessage outgoingTextMessage = new OutgoingTextMessage(recipients, body);
+
+            long threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
+            long messageId = textMessageDatabase.InsertMessageOutbox(threadId, outgoingTextMessage, false, message.getTimestamp());
+
+            textMessageDatabase.MarkAsSent(messageId);
+            textMessageDatabase.MarkAsPush(messageId);
+            textMessageDatabase.MarkAsSecure(messageId);
+
+            if (smsMessageId.HasValue)
+            {
+                textMessageDatabase.Delete(smsMessageId.ForceGetValue());
+            }
+
+            return threadId;
+        }
+
+        private long handleSynchronizeSentMediaMessage(SentTranscriptMessage message,
+                                                  May<long> smsMessageId)
+        // throws MmsException
+        {
+            throw new NotImplementedException("handleSynchronizeSentMediaMessage");
+            /*MmsDatabase database = DatabaseFactory.getMmsDatabase();
+            Recipients recipients = getSyncMessageDestination(message);
+            OutgoingMediaMessage mediaMessage = new OutgoingMediaMessage(recipients, message.getMessage().getBody().orNull(),
+                                                                  PointerAttachment.forPointers(masterSecret, message.getMessage().getAttachments()),
+                                                                  message.getTimestamp(), ThreadDatabase.DistributionTypes.DEFAULT);
+
+            mediaMessage = new OutgoingSecureMediaMessage(mediaMessage);
+
+            long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipients);
+            long messageId = database.insertMessageOutbox(masterSecret, mediaMessage, threadId, false);
+
+            database.markAsSent(messageId);
+            database.markAsPush(messageId);
+
+            for (DatabaseAttachment attachment : DatabaseFactory.getAttachmentDatabase(context).getAttachmentsForMessage(messageId))
+            {
+                ApplicationContext.getInstance(context)
+                                  .getJobManager()
+                                  .add(new AttachmentDownloadJob(context, messageId, attachment.getAttachmentId()));
+            }
 
             if (smsMessageId.isPresent())
             {
                 DatabaseFactory.getSmsDatabase(context).deleteMessage(smsMessageId.get());
             }
+
+            return threadId;*/
         }
 
-        private void handleSynchronizeSentMessage(@NonNull MasterSecretUnion masterSecret,
-                                                  @NonNull SentTranscriptMessage message,
-                                                  @NonNull Optional<Long> smsMessageId)
-      throws MmsException
+        private Recipients getSyncMessageDestination(SentTranscriptMessage message)
         {
-    if (message.getMessage().getAttachments().isPresent()) {
-                handleSynchronizeSentMediaMessage(masterSecret, message, smsMessageId);
-            } else {
-                handleSynchronizeSentTextMessage(masterSecret, message, smsMessageId);
-            }
-        }
-
-        private void handleSynchronizeRequestMessage(@NonNull MasterSecretUnion masterSecret,
-                                                     @NonNull RequestMessage message)
-        {
-            if (message.isContactsRequest())
+            if (message.getMessage().getGroupInfo().HasValue)
             {
-                ApplicationContext.getInstance(context)
-                                  .getJobManager()
-                                  .add(new MultiDeviceContactUpdateJob(getContext()));
+                throw new NotImplementedException("GROUP getSyncMessageDestination");
+                //return RecipientFactory.getRecipientsFromString(GroupUtil.getEncodedId(message.getMessage().getGroupInfo().get().getGroupId()), false); // TODO: Group enable
             }
-
-            if (message.isGroupsRequest())
-            {
-                ApplicationContext.getInstance(context)
-                                  .getJobManager()
-                                  .add(new MultiDeviceGroupUpdateJob(getContext()));
+            else {
+                return RecipientFactory.getRecipientsFromString(message.getDestination().ForceGetValue(), false);
             }
         }
 
-        private void handleMediaMessage(@NonNull MasterSecretUnion masterSecret,
-                                        @NonNull TextSecureEnvelope envelope,
-                                        @NonNull TextSecureDataMessage message,
-                                        @NonNull Optional<Long> smsMessageId)
-      throws MmsException
+
+
+        private void handleMediaMessage(TextSecureEnvelope envelope, TextSecureDataMessage message, May<long> smsMessageId) // throws MmsException
         {
-            MmsDatabase database     = DatabaseFactory.getMmsDatabase(context);
-            String localNumber  = TextSecurePreferences.getLocalNumber(context);
+            throw new NotImplementedException("handleMediaMessage");
+            /*
+            var database = DatabaseFactory.getMediaMessageDatabase(); //getMmsDatabase(context);
+            String localNumber = TextSecurePreferences.getLocalNumber(context);
             IncomingMediaMessage mediaMessage = new IncomingMediaMessage(masterSecret, envelope.getSource(),
                                                                  localNumber, message.getTimestamp(),
                                                                  Optional.fromNullable(envelope.getRelay()),
@@ -208,52 +300,30 @@ namespace Signal.Tasks
                                                                  message.getGroupInfo(),
                                                                  message.getAttachments());
 
-            Pair<Long, Long> messageAndThreadId =  database.insertSecureDecryptedMessageInbox(masterSecret, mediaMessage, -1);
+            Pair<long, long> messageAndThreadId = database.insertSecureDecryptedMessageInbox(mediaMessage, -1);
+            List<DatabaseAttachment> attachments = DatabaseFactory.getAttachmentDatabase(context).getAttachmentsForMessage(messageAndThreadId.first);
 
-            ApplicationContext.getInstance(context)
-                      .getJobManager()
-                      .add(new AttachmentDownloadJob(context, messageAndThreadId.first));
-
-    if (smsMessageId.isPresent()) {
-                DatabaseFactory.getSmsDatabase(context).deleteMessage(smsMessageId.get());
+            for (DatabaseAttachment attachment : attachments)
+            {
+                ApplicationContext.getInstance(context)
+                                  .getJobManager()
+                                  .add(new AttachmentDownloadJob(context, messageAndThreadId.first,
+                                                                 attachment.getAttachmentId()));
             }
-
-            MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
-        }
-
-        private void handleSynchronizeSentMediaMessage(@NonNull MasterSecretUnion masterSecret,
-                                                       @NonNull SentTranscriptMessage message,
-                                                       @NonNull Optional<Long> smsMessageId)
-      throws MmsException
-        {
-            MmsDatabase database     = DatabaseFactory.getMmsDatabase(context);
-            Recipients recipients   = getSyncMessageDestination(message);
-            OutgoingMediaMessage mediaMessage = new OutgoingMediaMessage(context, masterSecret, recipients,
-                                                                  message.getMessage().getAttachments().get(),
-                                                                  message.getMessage().getBody().orNull());
-
-            mediaMessage = new OutgoingSecureMediaMessage(mediaMessage);
-
-            long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipients);
-            long messageId = database.insertMessageOutbox(masterSecret, mediaMessage, threadId, false, message.getTimestamp());
-
-            database.markAsSent(messageId, "push".getBytes(), 0);
-            database.markAsPush(messageId);
-
-            ApplicationContext.getInstance(context)
-                              .getJobManager()
-                              .add(new AttachmentDownloadJob(context, messageId));
 
             if (smsMessageId.isPresent())
             {
                 DatabaseFactory.getSmsDatabase(context).deleteMessage(smsMessageId.get());
             }
-            }
-            */
+
+            MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);*/
+        }
+
+
         private void handleTextMessage(/*@NonNull MasterSecretUnion masterSecret,*/
                                        TextSecureEnvelope envelope,
-                                       TextSecureDataMessage message/*,
-                                           @NonNull Optional<Long> smsMessageId*/)
+                                       TextSecureDataMessage message,
+                                       May<long> smsMessageId)
         {
             MessageDatabase database = DatabaseFactory.getMessageDatabase();
             String body = message.getBody().HasValue ? message.getBody().ForceGetValue() : "";
@@ -266,115 +336,80 @@ namespace Signal.Tasks
             }
             else
             {*/
-                IncomingTextMessage textMessage = new IncomingTextMessage(envelope.getSource(),
-                                                                          envelope.getSourceDevice(),
-                                                                          (long)message.getTimestamp(), body,
-                                                                          message.getGroupInfo());
+            IncomingTextMessage textMessage = new IncomingTextMessage(envelope.getSource(),
+                                                                      envelope.getSourceDevice(),
+                                                                      message.getTimestamp(), body,
+                                                                      message.getGroupInfo());
 
-                textMessage = new IncomingEncryptedMessage(textMessage, body);
-                /*messageAndThreadId = */database.insertMessageInbox(/*masterSecret, */textMessage);
+            textMessage = new IncomingEncryptedMessage(textMessage, body);
+            /*messageAndThreadId = */
+            database.insertMessageInbox(/*masterSecret, */textMessage);
             /*}
 
             MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);*/
         }
-        /*
-        private void handleSynchronizeSentTextMessage(@NonNull MasterSecretUnion masterSecret,
-                                                      @NonNull SentTranscriptMessage message,
-                                                      @NonNull Optional<Long> smsMessageId)
+        private void handleInvalidVersionMessage(TextSecureEnvelope envelope,
+                                            May<long> smsMessageId)
         {
-            EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
-            Recipients recipients = getSyncMessageDestination(message);
-            String body = message.getMessage().getBody().or("");
-            OutgoingTextMessage outgoingTextMessage = new OutgoingTextMessage(recipients, body);
+            var smsDatabase = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
 
-            long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipients);
-            long messageId = database.insertMessageOutbox(masterSecret, threadId, outgoingTextMessage, false, message.getTimestamp());
-
-            database.markAsSent(messageId);
-            database.markAsPush(messageId);
-            database.markAsSecure(messageId);
-
-            if (smsMessageId.isPresent())
+            if (!smsMessageId.HasValue)
             {
-                database.deleteMessage(smsMessageId.get());
+                Pair<long, long> messageAndThreadId = insertPlaceholder(envelope);
+                smsDatabase.MarkAsInvalidVersionKeyExchange(messageAndThreadId.first());
+                //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
+            }
+            else {
+                smsDatabase.MarkAsInvalidVersionKeyExchange(smsMessageId.ForceGetValue());
             }
         }
 
-        private void handleInvalidVersionMessage(@NonNull MasterSecretUnion masterSecret,
-                                                 @NonNull TextSecureEnvelope envelope,
-                                                 @NonNull Optional<Long> smsMessageId)
+        private void handleCorruptMessage(TextSecureEnvelope envelope,
+                                     May<long> smsMessageId)
         {
-            EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
+            var smsDatabase = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
 
-            if (!smsMessageId.isPresent())
+            if (!smsMessageId.HasValue)
             {
-                Pair<Long, Long> messageAndThreadId = insertPlaceholder(envelope);
-                smsDatabase.markAsInvalidVersionKeyExchange(messageAndThreadId.first);
-                MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
+                Pair<long, long> messageAndThreadId = insertPlaceholder(envelope);
+                smsDatabase.MarkAsDecryptFailed(messageAndThreadId.first());
+                //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
             }
-            else
+            else {
+                smsDatabase.MarkAsDecryptFailed(smsMessageId.ForceGetValue());
+            }
+        }
+        private void handleNoSessionMessage(TextSecureEnvelope envelope,
+                                      May<long> smsMessageId)
+        {
+            var smsDatabase = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
+
+            if (!smsMessageId.HasValue)
             {
-                smsDatabase.markAsInvalidVersionKeyExchange(smsMessageId.get());
+                Pair<long, long> messageAndThreadId = insertPlaceholder(envelope);
+                smsDatabase.MarkAsNoSession(messageAndThreadId.first());
+                //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
+            }
+            else {
+                smsDatabase.MarkAsNoSession(smsMessageId.ForceGetValue());
+            }
+        }
+        private void handleLegacyMessage(TextSecureEnvelope envelope, May<long> smsMessageId)
+        {
+            var smsDatabase = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
+
+            if (!smsMessageId.HasValue)
+            {
+                Pair<long, long> messageAndThreadId = insertPlaceholder(envelope);
+                smsDatabase.MarkAsLegacyVersion(messageAndThreadId.first());
+                //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
+            }
+            else {
+                smsDatabase.MarkAsLegacyVersion(smsMessageId.ForceGetValue());
             }
         }
 
-        private void handleCorruptMessage(@NonNull MasterSecretUnion masterSecret,
-                                          @NonNull TextSecureEnvelope envelope,
-                                          @NonNull Optional<Long> smsMessageId)
-        {
-            EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
-
-            if (!smsMessageId.isPresent())
-            {
-                Pair<Long, Long> messageAndThreadId = insertPlaceholder(envelope);
-                smsDatabase.markAsDecryptFailed(messageAndThreadId.first);
-                MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
-            }
-            else
-            {
-                smsDatabase.markAsDecryptFailed(smsMessageId.get());
-            }
-        }
-
-        private void handleNoSessionMessage(@NonNull MasterSecretUnion masterSecret,
-                                            @NonNull TextSecureEnvelope envelope,
-                                            @NonNull Optional<Long> smsMessageId)
-        {
-            EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
-
-            if (!smsMessageId.isPresent())
-            {
-                Pair<Long, Long> messageAndThreadId = insertPlaceholder(envelope);
-                smsDatabase.markAsNoSession(messageAndThreadId.first);
-                MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
-            }
-            else
-            {
-                smsDatabase.markAsNoSession(smsMessageId.get());
-            }
-        }
-
-        private void handleLegacyMessage(@NonNull MasterSecretUnion masterSecret,
-                                         @NonNull TextSecureEnvelope envelope,
-                                         @NonNull Optional<Long> smsMessageId)
-        {
-            EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
-
-            if (!smsMessageId.isPresent())
-            {
-                Pair<Long, Long> messageAndThreadId = insertPlaceholder(envelope);
-                smsDatabase.markAsLegacyVersion(messageAndThreadId.first);
-                MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
-            }
-            else
-            {
-                smsDatabase.markAsLegacyVersion(smsMessageId.get());
-            }
-        }
-
-        private void handleDuplicateMessage(@NonNull MasterSecretUnion masterSecret,
-                                            @NonNull TextSecureEnvelope envelope,
-                                            @NonNull Optional<Long> smsMessageId)
+        private void handleDuplicateMessage(TextSecureEnvelope envelope, May<long> smsMessageId)
         {
             // Let's start ignoring these now
             //    SmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
@@ -388,64 +423,59 @@ namespace Signal.Tasks
             //    }
         }
 
-        private void handleUntrustedIdentityMessage(@NonNull MasterSecretUnion masterSecret,
-                                                    @NonNull TextSecureEnvelope envelope,
-                                                    @NonNull Optional<Long> smsMessageId)
+
+        private void handleUntrustedIdentityMessage(TextSecureEnvelope envelope, May<long> smsMessageId)
         {
             try
             {
-                EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
-                Recipients recipients = RecipientFactory.getRecipientsFromString(context, envelope.getSource(), false);
+                var database = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
+                Recipients recipients = RecipientFactory.getRecipientsFromString(envelope.getSource(), false);
                 long recipientId = recipients.getPrimaryRecipient().getRecipientId();
                 PreKeyWhisperMessage whisperMessage = new PreKeyWhisperMessage(envelope.getLegacyMessage());
                 IdentityKey identityKey = whisperMessage.getIdentityKey();
                 String encoded = Base64.encodeBytes(envelope.getLegacyMessage());
                 IncomingTextMessage textMessage = new IncomingTextMessage(envelope.getSource(), envelope.getSourceDevice(),
                                                                                envelope.getTimestamp(), encoded,
-                                                                               Optional.< TextSecureGroup > absent());
+                                                                               May<TextSecureGroup>.NoValue);
 
-                if (!smsMessageId.isPresent())
+                if (!smsMessageId.HasValue)
                 {
                     IncomingPreKeyBundleMessage bundleMessage = new IncomingPreKeyBundleMessage(textMessage, encoded);
-                    Pair<Long, Long> messageAndThreadId = database.insertMessageInbox(masterSecret, bundleMessage);
+                    Pair<long, long> messageAndThreadId = database.insertMessageInbox(bundleMessage);
 
-                    database.setMismatchedIdentity(messageAndThreadId.first, recipientId, identityKey);
-                    MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
+                    database.SetMismatchedIdentity(messageAndThreadId.first(), recipientId, identityKey);
+                    //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
                 }
                 else
                 {
-                    database.updateMessageBody(masterSecret, smsMessageId.get(), encoded);
-                    database.markAsPreKeyBundle(smsMessageId.get());
-                    database.setMismatchedIdentity(smsMessageId.get(), recipientId, identityKey);
+                    var messageId = smsMessageId.ForceGetValue();
+                    database.UpdateMessageBody(messageId, encoded);
+                    database.MarkAsPreKeyBundle(messageId);
+                    database.SetMismatchedIdentity(messageId, recipientId, identityKey);
                 }
             }
-            catch (InvalidMessageException | InvalidVersionException e) {
-                throw new AssertionError(e);
+            catch (InvalidMessageException e)
+            {
+                throw new InvalidOperationException(e.Message);
             }
+            catch (InvalidVersionException e)
+            {
+                throw new InvalidOperationException(e.Message);
             }
+        }
 
-  private Pair<Long, Long> insertPlaceholder(@NonNull TextSecureEnvelope envelope)
+        #endregion
+
+        private Pair<long, long> insertPlaceholder(TextSecureEnvelope envelope)
         {
-            EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
+            var database = DatabaseFactory.getTextMessageDatabase(); //getEncryptingSmsDatabase(context);
             IncomingTextMessage textMessage = new IncomingTextMessage(envelope.getSource(), envelope.getSourceDevice(),
                                                                         envelope.getTimestamp(), "",
-                                                                        Optional.< TextSecureGroup > absent());
+                                                                        May<TextSecureGroup>.NoValue);
 
             textMessage = new IncomingEncryptedMessage(textMessage, "");
             return database.insertMessageInbox(textMessage);
         }
-
-        private Recipients getSyncMessageDestination(SentTranscriptMessage message)
-        {
-            if (message.getMessage().getGroupInfo().isPresent())
-            {
-                return RecipientFactory.getRecipientsFromString(context, GroupUtil.getEncodedId(message.getMessage().getGroupInfo().get().getGroupId()), false);
-            }
-            else
-            {
-                return RecipientFactory.getRecipientsFromString(context, message.getDestination().get(), false);
-            }
-        }*/
     }
 
 }

@@ -135,6 +135,17 @@ namespace Signal.Database {
          * UPDATE
          */
 
+        public void Update(long threadId)
+        {
+            notifyConversationListeners(threadId);
+        }
+
+        public void Update(long threadId, bool unarchive)
+        {
+            // TODO: FIX
+            Update(threadId);
+        }
+
         public void Update(long threadId, long count, string snippet, object attachment, DateTime date, long type)
         {
             var thread = Get(threadId);

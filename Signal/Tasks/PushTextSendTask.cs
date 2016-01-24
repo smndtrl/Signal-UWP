@@ -2,7 +2,6 @@
 using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
-using Signal.database.models;
 using Signal.Database;
 using Signal.Models;
 using Signal.Tasks.Library;
@@ -31,9 +30,9 @@ namespace Signal.Tasks
 
         public override void onAdded()
         {
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
-            database.markAsSending(messageId);
-            database.markAsPush(messageId);
+            var textDatabase = DatabaseFactory.getTextMessageDatabase();
+            textDatabase.MarkAsSending(messageId);
+            textDatabase.MarkAsPush(messageId);
 
             Debug.WriteLine("Pushsendtask onadded");
 
@@ -42,7 +41,7 @@ namespace Signal.Tasks
 
         public new void OnCanceled()
         {
-            DatabaseFactory.getTextMessageDatabase().markAsSentFailed(messageId);
+            DatabaseFactory.getTextMessageDatabase().MarkAsSentFailed(messageId);
 
             /*long threadId = DatabaseFactory.getSmsDatabase(context).getThreadIdForMessage(messageId); // TODO
             Recipients recipients = DatabaseFactory.getThreadDatabase(context).getRecipientsForThreadId(threadId);
@@ -60,7 +59,6 @@ namespace Signal.Tasks
 
         protected override async Task<string> ExecuteAsync()
         {
-            Debug.WriteLine("executeasync");
             TextMessageDatabase database = DatabaseFactory.getTextMessageDatabase();
             var record = await database.getMessageRecord(messageId);
             //var message = await database.Get(messageId);
@@ -68,9 +66,9 @@ namespace Signal.Tasks
             try
             {
                 deliver(record);
-                database.markAsPush(messageId);
-                database.markAsSecure(messageId);
-                database.markAsSent(messageId);
+                database.MarkAsPush(messageId);
+                database.MarkAsSecure(messageId);
+                database.MarkAsSent(messageId);
 
             }
             catch (UntrustedIdentityException e)
@@ -79,9 +77,9 @@ namespace Signal.Tasks
                 var recipients = RecipientFactory.getRecipientsFromString(e.E164Number, false);
                 long recipientId = recipients.getPrimaryRecipient().getRecipientId();
 
-                database.AddMismatchedIdentity(record.getId(), recipientId, e.IdentityKey);
-                database.markAsSentFailed(record.getId());
-                database.markAsPush(record.getId());
+                database.AddMismatchedIdentity(record.MessageId, recipientId, e.IdentityKey);
+                database.MarkAsSentFailed(record.MessageId);
+                database.MarkAsPush(record.MessageId);
             }
             catch (Exception e) {
                 Debug.WriteLine($"{GetType()} failure {e.Message}");
@@ -92,15 +90,15 @@ namespace Signal.Tasks
             //throw new NotImplementedException();
         }
 
-        private void deliver(SmsMessageRecord message)
+        private void deliver(TextMessageRecord message)
         {
             try
             {
-                TextSecureAddress address = getPushAddress(message.getIndividualRecipient().getNumber());
+                TextSecureAddress address = getPushAddress(message.IndividualRecipient.Number);
                 TextSecureDataMessage textSecureMessage = TextSecureDataMessage.newBuilder()
-                                                                                 .withTimestamp((ulong)TimeUtil.GetUnixTimestampMillis(message.getDateSent()))
-                                                                                 .withBody(message.getBody().getBody())
-                                                                                 .asEndSessionMessage(message.isEndSession())
+                                                                                 .withTimestamp((ulong)TimeUtil.GetUnixTimestampMillis(message.DateSent))
+                                                                                 .withBody(message.BodyI.getBody())
+                                                                                 .asEndSessionMessage(message.IsEndSession)
                                                                                  .build();
 
                 Debug.WriteLine("TextSendTask deliver");

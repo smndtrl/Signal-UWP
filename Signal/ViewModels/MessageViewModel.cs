@@ -124,8 +124,8 @@ namespace Signal.ViewModels
             }
         }
 
-        private ObservableCollection<Message> _messages;
-        public ObservableCollection<Message> Messages
+        private ObservableCollection<MessageRecord> _messages;
+        public ObservableCollection<MessageRecord> Messages
         {
             get { return _messages; }
             set { Set(ref _messages, value); RaisePropertyChanged("Messages"); }
