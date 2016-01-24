@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Signal.Database;
+using Signal.Util;
 using TextSecure.recipient;
 
 namespace Signal.Models
@@ -34,7 +36,68 @@ namespace Signal.Models
 
         public TextMessageRecord(Message message)
         {
-            
+            this.MessageId = message.MessageId;
+            this.BodyI = getBody(message);
+            Recipients recipients = getRecipientsFor(message.Address);
+            this.Recipients = recipients;
+            this.IndividualRecipient = recipients.PrimaryRecipient;
+            //this.AddressDevideId
+            this.DateSent = message.DateSent;
+            this.DateReceived = message.DateReceived;
+            //this.ReceiptCount = message.
+            this.Type = message.Type;
+            this.ThreadId = message.ThreadId;
+            this.MismatchedIdentities = getMismatches(message.MismatchedIdentities);
+        }
+
+        private Recipients getRecipientsFor(String address)
+        {
+            if (address != null)
+            {
+                Recipients recipients = RecipientFactory.getRecipientsFromString(address, true);
+
+                if (recipients == null || recipients.IsEmpty)
+                {
+                    return RecipientFactory.getRecipientsFor(Recipient.getUnknownRecipient(), true);
+                }
+
+                return recipients;
+            }
+            else {
+                Log.Warn("getRecipientsFor() address is null");
+                return RecipientFactory.getRecipientsFor(Recipient.getUnknownRecipient(), true);
+            }
+        }
+
+        private List<IdentityKeyMismatch> getMismatches(string document)
+        {
+            try
+            {
+                if (document != null && !document.Equals(string.Empty))
+                {
+                    //return JsonUtils.fromJson(document, IdentityKeyMismatchList.class).getList();
+                }
+            }
+            catch (IOException e)
+            {
+                Log.Warn(e);
+            }
+
+            return new List<IdentityKeyMismatch>();
+        }
+
+        protected Record.Body getBody(Message m)
+        {
+            long type = m.Type;
+            String body = m.Body;
+
+            if (MessageTypes.isSymmetricEncryption(type))
+            {
+                return new Record.Body(body, false);
+            }
+            else {
+                return new Record.Body(body, true);
+            }
         }
     }
 }

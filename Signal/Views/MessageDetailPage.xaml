@@ -141,37 +141,37 @@
 
 		<DataTemplate x:Key="MessageTemplate" x:DataType="model:MessageRecord">
 
-            <Grid x:Name="MessageGrid" Padding="10" HorizontalAlignment="Right" FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
-                <VisualStateManager.CustomVisualStateManager>
-                    <resources:ExtendedVisualStateManager />
-                </VisualStateManager.CustomVisualStateManager>
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup>
-                        <VisualState x:Name="Incoming">
-                            <VisualState.Setters>
-                                <Setter Target="TopRow.Visibility" Value="Visible"/>
-                                <Setter Target="BottomRow.Visibility" Value="Collapsed"/>
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Outgoing">
-                            <VisualState.Setters>
-                                <Setter Target="TopRow.Visibility" Value="Collapsed"/>
-                                <Setter Target="BottomRow.Visibility" Value="Visible"/>
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
+			<Grid x:Name="MessageGrid" Padding="10" HorizontalAlignment="Right" FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
+				<VisualStateManager.CustomVisualStateManager>
+					<resources:ExtendedVisualStateManager />
+				</VisualStateManager.CustomVisualStateManager>
+				<VisualStateManager.VisualStateGroups>
+					<VisualStateGroup x:Name="DirectionGroup">
+						<VisualState x:Name="Incoming">
+							<VisualState.Setters>
+								<Setter Target="TopRow.Visibility" Value="Visible"/>
+								<Setter Target="BottomRow.Visibility" Value="Collapsed"/>
+							</VisualState.Setters>
+						</VisualState>
+						<VisualState x:Name="Outgoing">
+							<VisualState.Setters>
+								<Setter Target="TopRow.Visibility" Value="Collapsed"/>
+								<Setter Target="BottomRow.Visibility" Value="Visible"/>
+							</VisualState.Setters>
+						</VisualState>
+					</VisualStateGroup>
+				</VisualStateManager.VisualStateGroups>
 
-                <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
-                        <resources:ExtendedGoToStateAction StateName="Incoming"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="True">
-                        <Core:GoToStateAction StateName="Outgoing"/>
-                    </Core:DataTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
+				<Interactivity:Interaction.Behaviors>
+					<Core:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
+						<resources:ExtendedGoToStateAction StateName="Incoming"/>
+					</Core:DataTriggerBehavior>
+					<Core:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="True">
+						<resources:ExtendedGoToStateAction StateName="Outgoing"/>
+					</Core:DataTriggerBehavior>
+				</Interactivity:Interaction.Behaviors>
 
-                <Grid.ColumnDefinitions>
+				<Grid.ColumnDefinitions>
 					<ColumnDefinition x:Name="ImageColumn" Width="Auto"/>
 					<ColumnDefinition x:Name="TextColumn"  Width="*"/>
 				</Grid.ColumnDefinitions>
@@ -282,7 +282,7 @@
 
 		<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <Grid.RowDefinitions>
+		<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
