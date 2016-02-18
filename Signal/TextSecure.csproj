@@ -11,8 +11,8 @@
     <AssemblyName>Signal</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -111,6 +111,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
+    <Compile Include="Controls\AlertView.cs" />
+    <Compile Include="Controls\DataTriggerBehavior.cs" />
+    <Compile Include="Controls\DeliveryStatusView.cs" />
+    <Compile Include="Controls\MessageBubble.cs" />
+    <Compile Include="Controls\TextView.cs" />
+    <Compile Include="Controls\ThumbnailView.cs" />
     <Compile Include="crypto\IdentityKeyUtil.cs" />
     <Compile Include="crypto\PreKeyUtil.cs" />
     <Compile Include="crypto\storage\TextSecureAxolotlStore.cs" />
@@ -170,6 +176,7 @@
     <Compile Include="Resources\ContactRetriever.cs" />
     <Compile Include="Resources\ContactPictureConverter.cs" />
     <Compile Include="Resources\CountryCollection.cs" />
+    <Compile Include="Resources\DebugConverter.cs" />
     <Compile Include="Resources\ExtendedVisualStateManager.cs" />
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
@@ -187,12 +194,13 @@
     <Compile Include="Tasks\Library\TaskWorker.cs" />
     <Compile Include="Tasks\MeintenanceTask.cs" />
     <Compile Include="Tasks\CleanPreKeysTask.cs" />
+    <Compile Include="Tasks\SendTask.cs" />
     <Compile Include="Tasks\RefreshPreKeysTask.cs" />
     <Compile Include="Tasks\RegistrationTask.cs" />
     <Compile Include="Tasks\Library\TaskActivity.cs" />
     <Compile Include="Tasks\Library\TaskContext.cs" />
     <Compile Include="Tasks\PushReceivedTask.cs" />
-    <Compile Include="Tasks\SendTask.cs" />
+    <Compile Include="Tasks\PushSendTask.cs" />
     <Compile Include="Tasks\PushContentReceiveTask.cs" />
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
@@ -295,6 +303,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ExtendedSplash.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -358,19 +370,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
-      <Name>BehaviorsXamlSDKManaged</Name>
+    <SDKReference Include="SQLite.UAP.2015, Version=3.10.2">
+      <Name>SQLite for Universal App Platform</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.10240.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.10586.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

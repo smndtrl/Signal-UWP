@@ -16,7 +16,7 @@ using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class WebsocketTask : SendTask
+    class WebsocketTask : UntypedTaskActivity
     {
 
         public WebsocketTask()

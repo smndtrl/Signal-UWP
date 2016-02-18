@@ -12,13 +12,18 @@ namespace Signal.Models
 {
     public class TextMessageRecord : MessageRecord
     {
+        public TextMessageRecord()
+        {
+            
+        }
+
         public TextMessageRecord(long messageId,
             long threadId,
             DateTime dateSent,
             DateTime dateReceived,
             long type,
             bool read,
-            Body body,
+            BodyRecord body,
             Recipients recipients,
             Recipient individualRecipient,
             long recipientDeviceId,
@@ -31,13 +36,13 @@ namespace Signal.Models
             this.DateReceived = dateReceived;
             this.Type = type;
             //this.Read = read;
-            this.BodyI = body;
+            this.Body = body;
         }
 
         public TextMessageRecord(Message message)
         {
             this.MessageId = message.MessageId;
-            this.BodyI = getBody(message);
+            this.Body = getBody(message);
             Recipients recipients = getRecipientsFor(message.Address);
             this.Recipients = recipients;
             this.IndividualRecipient = recipients.PrimaryRecipient;
@@ -86,17 +91,17 @@ namespace Signal.Models
             return new List<IdentityKeyMismatch>();
         }
 
-        protected Record.Body getBody(Message m)
+        protected BodyRecord getBody(Message m)
         {
             long type = m.Type;
             String body = m.Body;
 
             if (MessageTypes.isSymmetricEncryption(type))
             {
-                return new Record.Body(body, false);
+                return new BodyRecord(body, false);
             }
             else {
-                return new Record.Body(body, true);
+                return new BodyRecord(body, true);
             }
         }
     }

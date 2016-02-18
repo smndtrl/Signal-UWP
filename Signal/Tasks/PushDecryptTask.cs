@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using libaxolotl.protocol;
 using libaxolotl.util;
 using Signal.Messages;
+using Signal.Tasks.Library;
 using Signal.Util;
 using TextSecure;
 using TextSecure.crypto.storage;
@@ -19,7 +20,7 @@ using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class PushDecryptTask : SendTask
+    class PushDecryptTask : UntypedTaskActivity
     {
         private readonly long _pushMessageId;
         private readonly long _smsMessageId;
@@ -145,7 +146,7 @@ namespace Signal.Tasks
             if (!smsMessageId.HasValue)
             {
                 IncomingEndSessionMessage incomingEndSessionMessage = new IncomingEndSessionMessage(incomingTextMessage);
-                Pair<long, long> messageAndThreadId = smsDatabase.insertMessageInbox(incomingEndSessionMessage);
+                Pair<long, long> messageAndThreadId = smsDatabase.InsertMessageInbox(incomingEndSessionMessage);
 
                 threadId = messageAndThreadId.second();
             }
@@ -225,7 +226,7 @@ namespace Signal.Tasks
             OutgoingTextMessage outgoingTextMessage = new OutgoingTextMessage(recipients, body);
 
             long threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
-            long messageId = textMessageDatabase.InsertMessageOutbox(threadId, outgoingTextMessage, false, message.getTimestamp());
+            long messageId = textMessageDatabase.InsertMessageOutbox(threadId, outgoingTextMessage, TimeUtil.GetDateTime(message.getTimestamp()));
 
             textMessageDatabase.MarkAsSent(messageId);
             textMessageDatabase.MarkAsPush(messageId);
@@ -325,7 +326,7 @@ namespace Signal.Tasks
                                        TextSecureDataMessage message,
                                        May<long> smsMessageId)
         {
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
+            var textMessageDatabase = DatabaseFactory.getTextMessageDatabase();
             String body = message.getBody().HasValue ? message.getBody().ForceGetValue() : "";
 
             /*Pair<Long, Long> messageAndThreadId;
@@ -342,8 +343,7 @@ namespace Signal.Tasks
                                                                       message.getGroupInfo());
 
             textMessage = new IncomingEncryptedMessage(textMessage, body);
-            /*messageAndThreadId = */
-            database.insertMessageInbox(/*masterSecret, */textMessage);
+            var messageAndThreadId = textMessageDatabase.InsertMessageInbox(textMessage);
             /*}
 
             MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);*/
@@ -441,7 +441,7 @@ namespace Signal.Tasks
                 if (!smsMessageId.HasValue)
                 {
                     IncomingPreKeyBundleMessage bundleMessage = new IncomingPreKeyBundleMessage(textMessage, encoded);
-                    Pair<long, long> messageAndThreadId = database.insertMessageInbox(bundleMessage);
+                    Pair<long, long> messageAndThreadId = database.InsertMessageInbox(bundleMessage);
 
                     database.SetMismatchedIdentity(messageAndThreadId.first(), recipientId, identityKey);
                     //MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);
@@ -474,7 +474,7 @@ namespace Signal.Tasks
                                                                         May<TextSecureGroup>.NoValue);
 
             textMessage = new IncomingEncryptedMessage(textMessage, "");
-            return database.insertMessageInbox(textMessage);
+            return database.InsertMessageInbox(textMessage);
         }
     }
 

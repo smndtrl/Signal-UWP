@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="using:Settings.UI.Xaml.Controls"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     x:Class="Signal.Views.RegistrationView"
     mc:Ignorable="d">
 
@@ -19,9 +19,10 @@
     </Page.Resources>
 
     <Interactivity:Interaction.Behaviors>
-        <Core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
-            <Core:GoToStateAction StateName="RegistratingState" TargetObject="{Binding ElementName=registerButton}"/>
-        </Core:DataTriggerBehavior>
+        <!-- TODO: Behavior 
+        <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
+            <Interactions:GoToStateAction StateName="RegistratingState" TargetObject="{Binding ElementName=registerButton}"/>
+        </Interactions:DataTriggerBehavior>-->
     </Interactivity:Interaction.Behaviors>
 
 
@@ -138,9 +139,9 @@
                         </AutoSuggestBox.ItemTemplate>
 
                         <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior x:Name="QuerySubmittedEventTrigger" EventName="SuggestionChosen">
-                                <Core:InvokeCommandAction Command="{Binding CountrySelectedCommand}"/>
-                            </Core:EventTriggerBehavior>
+                            <Interactions:EventTriggerBehavior x:Name="QuerySubmittedEventTrigger" EventName="SuggestionChosen">
+                                <Interactions:InvokeCommandAction Command="{Binding CountrySelectedCommand}"/>
+                            </Interactions:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
 
                     </AutoSuggestBox>

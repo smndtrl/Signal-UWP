@@ -13,17 +13,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using libtextsecure.crypto;
+using Signal.Push;
+using Strilanc.Value;
+using TextSecure;
 using TextSecure.database;
 using TextSecure.recipient;
 using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class PushTextSendTask : SendTask
+    class PushTextSendTask : PushSendTask
     {
         private long messageId;
+        protected TextSecureMessageSender messageSender = new TextSecureMessageSender(TextSecureCommunicationFactory.PUSH_URL, new TextSecurePushTrustStore(), TextSecurePreferences.getLocalNumber(), TextSecurePreferences.getPushServerPassword(), new TextSecureAxolotlStore(),
+                                                                                  May<TextSecureMessageSender.EventListener>.NoValue, App.CurrentVersion);
 
-        public PushTextSendTask(long messageId, string destination)
+        public PushTextSendTask(long messageId, string destination) : base(destination)
         {
             this.messageId = messageId;
         }
@@ -33,10 +38,6 @@ namespace Signal.Tasks
             var textDatabase = DatabaseFactory.getTextMessageDatabase();
             textDatabase.MarkAsSending(messageId);
             textDatabase.MarkAsPush(messageId);
-
-            Debug.WriteLine("Pushsendtask onadded");
-
-            //throw new NotImplementedException();
         }
 
         public new void OnCanceled()
@@ -81,8 +82,9 @@ namespace Signal.Tasks
                 database.MarkAsSentFailed(record.MessageId);
                 database.MarkAsPush(record.MessageId);
             }
-            catch (Exception e) {
-                Debug.WriteLine($"{GetType()} failure {e.Message}");
+            catch (Exception e)
+            {
+                Log.Error($"Unexpected Exception {e.Source} {e.GetType()} : {e.Message}");
             }
 
 
@@ -97,7 +99,7 @@ namespace Signal.Tasks
                 TextSecureAddress address = getPushAddress(message.IndividualRecipient.Number);
                 TextSecureDataMessage textSecureMessage = TextSecureDataMessage.newBuilder()
                                                                                  .withTimestamp((ulong)TimeUtil.GetUnixTimestampMillis(message.DateSent))
-                                                                                 .withBody(message.BodyI.getBody())
+                                                                                 .withBody(message.Body.Body)
                                                                                  .asEndSessionMessage(message.IsEndSession)
                                                                                  .build();
 

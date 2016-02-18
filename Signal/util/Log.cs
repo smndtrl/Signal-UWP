@@ -14,6 +14,11 @@ namespace Signal.Util
             System.Diagnostics.Debug.WriteLine($"Warn: {msg}");
         }
 
+        public static void Error(string msg)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error: {msg}");
+        }
+
         public static void Warn(Exception e)
         {
             System.Diagnostics.Debug.WriteLine($"Warn: Exception -> {e.Message}");

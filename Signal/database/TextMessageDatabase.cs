@@ -355,6 +355,139 @@ namespace Signal.Database
             return messageId;
         }
 
+        public Pair<long, long> CopyMessageInbox(long messageId)
+        {
+            var message = Get(messageId);
+
+            var newMessage = new Message
+            {
+                Type = (message.Type & ~MessageTypes.BASE_TYPE_MASK) | MessageTypes.BASE_INBOX_TYPE,
+                Address = message.Address,
+                AddressDeviceId = message.AddressDeviceId,
+                DateReceived = TimeUtil.GetDateTimeMillis(),
+                DateSent = message.DateSent,
+                //Protocol = 31337,
+                Read = false,
+                Body = message.Body,
+                ThreadId = message.ThreadId
+            };
+
+            long newMessageId = conn.Insert(newMessage);
+
+            DatabaseFactory.getThreadDatabase().Update(message.ThreadId);
+            notifyConversationListeners(message.ThreadId);
+
+            //jobManager.add(new TrimThreadJob(context, record.getThreadId()));
+            //reader.close();
+
+            return new Pair<long, long>(newMessageId, message.ThreadId);
+        }
+
+        protected Pair<long, long> InsertMessageInbox(IncomingTextMessage message, long type)
+        { // TODO : https://github.com/WhisperSystems/Signal-Android/blob/e9b53cc164d7ae2d838cc211dbd88b7fd4f5669e/src/org/thoughtcrime/securesms/database/SmsDatabase.java
+            if (message.isPreKeyBundle())
+            {
+                type |= MessageTypes.KEY_EXCHANGE_BIT | MessageTypes.KEY_EXCHANGE_BUNDLE_BIT;
+            }
+            else if (message.isSecureMessage())
+            {
+                type |= MessageTypes.SECURE_MESSAGE_BIT;
+            }
+            /*else if (message.isGroup()) TODO: GROUP enable
+            {
+                type |= MessageTypes.SECURE_MESSAGE_BIT;
+                if (((IncomingGroupMessage)message).isUpdate()) type |= MessageTypes.GROUP_UPDATE_BIT;
+                else if (((IncomingGroupMessage)message).isQuit()) type |= MessageTypes.GROUP_QUIT_BIT;
+            }*/
+            else if (message.IsEndSession)
+            {
+                type |= MessageTypes.SECURE_MESSAGE_BIT;
+                type |= MessageTypes.END_SESSION_BIT;
+            }
+
+            if (message.IsPush) type |= MessageTypes.PUSH_MESSAGE_BIT;
+
+            Recipients recipients;
+
+            if (message.getSender() != null)
+            {
+                recipients = RecipientFactory.getRecipientsFromString(message.getSender(), true);
+            }
+            else
+            {
+                //Log.w(TAG, "Sender is null, returning unknown recipient");
+                recipients = new Recipients(Recipient.getUnknownRecipient());
+            }
+
+            Recipients groupRecipients;
+
+            if (message.GroupId == null)
+            {
+                groupRecipients = null;
+            }
+            else
+            {
+                groupRecipients = RecipientFactory.getRecipientsFromString(message.GroupId, true);
+            }
+
+            bool unread = /*org.thoughtcrime.securesms.util.Util.isDefaultSmsProvider() ||*/
+                                    message.isSecureMessage() || message.isPreKeyBundle();
+
+            long threadId;
+
+            if (groupRecipients == null) threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients); // TODO CHECK
+            else threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(groupRecipients);
+
+            /*ContentValues values = new ContentValues(6);
+            values.put(ADDRESS, message.getSender());
+            values.put(ADDRESS_DEVICE_ID, message.getSenderDeviceId());
+            values.put(DATE_RECEIVED, System.currentTimeMillis());
+            values.put(DATE_SENT, message.getSentTimestampMillis());
+            values.put(PROTOCOL, message.getProtocol());
+            values.put(READ, unread ? 0 : 1);
+
+            if (!TextUtils.isEmpty(message.getPseudoSubject()))
+                values.put(SUBJECT, message.getPseudoSubject());
+
+            values.put(REPLY_PATH_PRESENT, message.isReplyPathPresent());
+            values.put(SERVICE_CENTER, message.getServiceCenterAddress());
+            values.put(BODY, message.getMessageBody());
+            values.put(TYPE, type);
+            values.put(THREAD_ID, threadId);*/
+
+            var insert = new Message()
+            {
+                Address = message.getSender(),
+                AddressDeviceId = message.getSenderDeviceId(),
+                DateReceived = TimeUtil.GetDateTimeMillis(), // force precision to millis not to ticks
+                DateSent = TimeUtil.GetDateTime(message.SentTimestampMillis),
+                Read = !unread,
+                Body = message.getMessageBody(),
+                Type = type,
+                ThreadId = threadId
+            };
+
+            long rows = conn.Insert(insert);
+
+            long messageId = insert.MessageId;
+
+            if (unread)
+            {
+                DatabaseFactory.getThreadDatabase().SetUnread(threadId);
+            }
+
+            DatabaseFactory.getThreadDatabase().Refresh(threadId);
+            notifyConversationListeners(threadId);
+            //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
+
+            return new Pair<long, long>(messageId, threadId);
+        }
+
+        public Pair<long, long> InsertMessageInbox(IncomingTextMessage message)
+        {
+            return InsertMessageInbox(message, MessageTypes.BASE_INBOX_TYPE);
+        }
+
         #endregion
 
         #region EncryptingSmsDatabase
@@ -374,8 +507,8 @@ namespace Signal.Database
         }*/
 
         public long InsertMessageOutbox(long threadId,
-                                        OutgoingTextMessage message, bool forceSms,
-                                        ulong timestamp)
+                                        OutgoingTextMessage message,
+                                        DateTime timestamp)
         {
             long type = MessageTypes.BASE_OUTBOX_TYPE;
 
@@ -389,7 +522,7 @@ namespace Signal.Database
                 type |= Types.ENCRYPTION_ASYMMETRIC_BIT;
             }*/
 
-            return InsertMessageOutbox(threadId, message, type, forceSms, timestamp);
+            return InsertMessageOutbox(threadId, message, type, timestamp);
         }
         /*
         public Pair<Long, Long> insertMessageInbox(@NonNull MasterSecretUnion masterSecret,

@@ -24,6 +24,7 @@ using Signal.Tasks;
 using Strilanc.Value;
 using System;
 using System.Threading.Tasks;
+using libaxolotl.util;
 using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
@@ -40,9 +41,8 @@ namespace TextSecure
                                  OutgoingTextMessage message,
                                  long threadId)
         {
-            long type = MessageTypes.BASE_OUTBOX_TYPE;
             //EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
+            TextMessageDatabase database = DatabaseFactory.getTextMessageDatabase();
             Recipients recipients = message.Recipients;
             bool keyExchange = message.IsKeyExchange;
 
@@ -50,17 +50,14 @@ namespace TextSecure
 
             if (threadId == -1)
             {
-                allocatedThreadId =  DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
+                allocatedThreadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
             }
             else
             {
                 allocatedThreadId = threadId;
             }
 
-            long messageId = await database.insertMessageOutbox(allocatedThreadId, message, type, TimeUtil.GetDateTimeMillis());
-
-            // notify user interface
-           // TODO: Remove Messenger.Default.Send(new AddMessageMessage() { ThreadId = allocatedThreadId, MessageId = messageId });
+            long messageId = database.InsertMessageOutbox(allocatedThreadId, message, TimeUtil.GetDateTimeMillis());
 
 
             await sendTextMessage(recipients, keyExchange, messageId);
@@ -150,34 +147,29 @@ namespace TextSecure
             }
         }
         */
-        private async static Task<bool> sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
+        private async static Task sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
         {
-            /*if (isSelfSend(recipients))
+            if (isSelfSend(recipients))
             {
                 sendTextSelf(messageId);
-            }*/
-            //else if (await isPushTextSend(recipients, keyExchange))
-            //{
-            await sendTextPush(recipients, messageId);
-            return true;
-            //}
-            //else
-            //{
-            // throw new NotImplementedException();
-            //sendSms(context, recipients, messageId);
-            // }
+            }
+            else
+            {
+                await sendTextPush(recipients, messageId);
+            }
+
         }
 
-        /*private static void sendTextSelf(long messageId)
+        private static void sendTextSelf(long messageId)
         {
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
+            var database = DatabaseFactory.getTextMessageDatabase();
 
-            database.markAsSent(messageId);
-            database.markAsPush(messageId);
+            database.MarkAsSent(messageId);
+            database.MarkAsPush(messageId);
 
-            Pair<long, long> messageAndThreadId = database.copyMessageInbox(messageId);
-            database.markAsPush(messageAndThreadId.first());
-        }*//*
+            Pair<long, long> messageAndThreadId = database.CopyMessageInbox(messageId);
+            database.MarkAsPush(messageAndThreadId.first());
+        }/*
 
         private static void sendMediaSelf(Context context, MasterSecret masterSecret, long messageId)
       throws MmsException

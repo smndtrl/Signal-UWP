@@ -229,139 +229,10 @@ namespace Signal.Database
 
             return new Pair<long, long>(messageId, threadId);
         }
-
-        public Pair<long, long> copyMessageInbox(long messageId)
-        {
-            Reader reader = readerFor(getMessage(messageId));
-            SmsMessageRecord record = reader.getNext();
-
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(TYPE, (record.getType() & ~MessageTypes.BASE_TYPE_MASK) | MessageTypes.BASE_INBOX_TYPE);
-            contentValues.put(ADDRESS, record.getIndividualRecipient().getNumber());
-            contentValues.put(ADDRESS_DEVICE_ID, record.getRecipientDeviceId());
-            contentValues.put(DATE_RECEIVED, System.currentTimeMillis());
-            contentValues.put(DATE_SENT, record.getDateSent());
-            contentValues.put(PROTOCOL, 31337);
-            contentValues.put(READ, 0);
-            contentValues.put(BODY, record.getBody().getBody());
-            contentValues.put(THREAD_ID, record.getThreadId());
-
-            SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            long newMessageId = db.insert(TABLE_NAME, null, contentValues);
-
-            DatabaseFactory.getThreadDatabase(context).update(record.getThreadId());
-            notifyConversationListeners(record.getThreadId());
-
-            jobManager.add(new TrimThreadJob(context, record.getThreadId()));
-            reader.close();
-
-            return new Pair<>(newMessageId, record.getThreadId());
-        }
         */
-        protected Pair<long, long> insertMessageInbox(IncomingTextMessage message, long type)
-        {
-            if (message.isPreKeyBundle())
-            {
-                type |= MessageTypes.KEY_EXCHANGE_BIT | MessageTypes.KEY_EXCHANGE_BUNDLE_BIT;
-            }
-            else if (message.isSecureMessage())
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-            }
-            /*else if (message.isGroup()) TODO: GROUP enable
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-                if (((IncomingGroupMessage)message).isUpdate()) type |= MessageTypes.GROUP_UPDATE_BIT;
-                else if (((IncomingGroupMessage)message).isQuit()) type |= MessageTypes.GROUP_QUIT_BIT;
-            }*/
-            else if (message.IsEndSession)
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-                type |= MessageTypes.END_SESSION_BIT;
-            }
-
-            if (message.IsPush) type |= MessageTypes.PUSH_MESSAGE_BIT;
-
-            Recipients recipients;
-
-            if (message.getSender() != null)
-            {
-                recipients = RecipientFactory.getRecipientsFromString(message.getSender(), true);
-            }
-            else
-            {
-                //Log.w(TAG, "Sender is null, returning unknown recipient");
-                recipients = new Recipients(Recipient.getUnknownRecipient());
-            }
-
-            Recipients groupRecipients;
-
-            if (message.GroupId== null)
-            {
-                groupRecipients = null;
-            }
-            else
-            {
-                groupRecipients = RecipientFactory.getRecipientsFromString(message.GroupId, true);
-            }
-
-            bool unread = /*org.thoughtcrime.securesms.util.Util.isDefaultSmsProvider() ||*/
-                                    message.isSecureMessage() || message.isPreKeyBundle();
-
-            long threadId;
-
-            if (groupRecipients == null) threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients); // TODO CHECK
-            else threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(groupRecipients);
-
-            /*ContentValues values = new ContentValues(6);
-            values.put(ADDRESS, message.getSender());
-            values.put(ADDRESS_DEVICE_ID, message.getSenderDeviceId());
-            values.put(DATE_RECEIVED, System.currentTimeMillis());
-            values.put(DATE_SENT, message.getSentTimestampMillis());
-            values.put(PROTOCOL, message.getProtocol());
-            values.put(READ, unread ? 0 : 1);
-
-            if (!TextUtils.isEmpty(message.getPseudoSubject()))
-                values.put(SUBJECT, message.getPseudoSubject());
-
-            values.put(REPLY_PATH_PRESENT, message.isReplyPathPresent());
-            values.put(SERVICE_CENTER, message.getServiceCenterAddress());
-            values.put(BODY, message.getMessageBody());
-            values.put(TYPE, type);
-            values.put(THREAD_ID, threadId);*/
-
-            var insert = new Message()
-            {
-                Address = message.getSender(),
-                AddressDeviceId = message.getSenderDeviceId(),
-                DateReceived = TimeUtil.GetDateTimeMillis(), // force precision to millis not to ticks
-                DateSent = TimeUtil.GetDateTime(message.SentTimestampMillis),
-                Read = !unread,
-                Body = message.getMessageBody(),
-                Type = type,
-                ThreadId = threadId
-            };
-
-            long rows = conn.Insert(insert);
-
-            long messageId = insert.MessageId;
-
-            if (unread)
-            {
-                DatabaseFactory.getThreadDatabase().SetUnread(threadId);
-            }
-
-            DatabaseFactory.getThreadDatabase().Refresh(threadId);
-            notifyConversationListeners(threadId);
-            //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
-
-            return new Pair<long, long>(messageId, threadId);
-        }
-
-        public Pair<long, long> insertMessageInbox(IncomingTextMessage message)
-        {
-            return insertMessageInbox(message, MessageTypes.BASE_INBOX_TYPE);
-        }
+        
+        
+        
         /*
         protected long insertMessageOutbox(long threadId, OutgoingTextMessage message,
                                            long type, boolean forceSms, long date)
@@ -496,7 +367,7 @@ namespace Signal.Database
         /*
          * Inbox/Outbox
          */
-        public async Task<long> insertMessageOutbox(long threadId, OutgoingTextMessage message,
+        public long InsertMessageOutbox(long threadId, OutgoingTextMessage message,
                                      long type, DateTime date)
         {
             if (message.IsKeyExchange) type |= MessageTypes.KEY_EXCHANGE_BIT;
@@ -519,18 +390,18 @@ namespace Signal.Database
                 Address = message.Recipients.getPrimaryRecipient().getNumber(),
                 ThreadId = threadId,
                 Body = message.MessageBody,
-                DateReceived = date,
+                DateReceived = TimeUtil.GetDateTimeMillis(),
                 DateSent = date,
-                Read = false,
+                Read = true,
                 Type = type
             };
 
-            //SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            //long messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);
+            // TODO: ReceiptCount https://github.com/WhisperSystems/Signal-Android/blob/e9b53cc164d7ae2d838cc211dbd88b7fd4f5669e/src/org/thoughtcrime/securesms/database/SmsDatabase.java
+
             long messageId = conn.Insert(insert);
-            // TODO: await DatabaseFactory.getThreadDatabase().update(threadId);
+
+            DatabaseFactory.getThreadDatabase().Update(threadId);
             notifyConversationListeners(threadId);
-            //jobManager.add(new TrimThreadJob(context, threadId));
 
             return insert.MessageId;
         }

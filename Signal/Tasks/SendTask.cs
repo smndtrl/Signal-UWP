@@ -28,14 +28,5 @@ namespace Signal.Tasks
             throw new NotImplementedException("SendTask Execure");
         }
 
-        protected TextSecureAddress getPushAddress(String number)
-        {
-            String e164number = Utils.canonicalizeNumber(number);
-            String relay = DatabaseFactory.getDirectoryDatabase().getRelay(e164number);
-            return new TextSecureAddress(e164number, relay == null ? May<string>.NoValue : new May<string>(relay));
-        }
-
-        protected TextSecureMessageSender messageSender = new TextSecureMessageSender(TextSecureCommunicationFactory.PUSH_URL, new TextSecurePushTrustStore(), TextSecurePreferences.getLocalNumber(), TextSecurePreferences.getPushServerPassword(), new TextSecureAxolotlStore(),
-                                                                                   May<TextSecureMessageSender.EventListener>.NoValue, App.CurrentVersion);
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Signal.Database;
+using SQLite.Net.Attributes;
 using TextSecure.recipient;
 
 namespace Signal.Models
@@ -21,13 +22,14 @@ namespace Signal.Models
         public DateTime DateSent { get; internal set; }
         public DateTime DateReceived { get; internal set; }
         public long ThreadId { get; internal set; }
-        public Body BodyI { get; internal set; }
+        public BodyRecord Body { get; internal set; }
+        public long ReceiptCount { get; internal set; }
 
         public Record ()
         {
         }
 
-        public Record(Body body, Recipients recipients, DateTime dateSent,
+        public Record(BodyRecord body, Recipients recipients, DateTime dateSent,
                              DateTime dateReceived, long threadId, long type)
         {
             this.ThreadId = threadId;
@@ -35,67 +37,60 @@ namespace Signal.Models
             this.DateSent = dateSent;
             this.DateReceived = dateReceived;
             this.Type = type;
-            this.BodyI = body;
+            this.Body = body;
         }
 
-        /*public Body getBody()
-        {
-            return body;
-        }*/
+        [Ignore]
+        public bool IsFailed => MessageTypes.isFailedMessageType(Type);
 
-        //public abstract string getDisplayBody();
+        [Ignore]
+        public bool IsPending => MessageTypes.isPendingMessageType(Type);
 
-        /*public Recipients getRecipients()
-        {
-            return recipients;
-        }
+        [Ignore]
+        public bool IsOutgoing => MessageTypes.isOutgoingMessageType(Type);
 
-        public DateTime getDateSent()
-        {
-            return dateSent;
-        }
+        [Ignore]
+        public bool IsKeyExchange => MessageTypes.isKeyExchangeType(Type);
 
-        public DateTime getDateReceived()
-        {
-            return dateReceived;
-        }
+        [Ignore]
+        public bool IsEndSession => MessageTypes.isEndSessionType(Type);
 
-        public long getThreadId()
-        {
-            return threadId;
-        }*/
+        [Ignore]
+        public bool IsGroupUpdate => MessageTypes.isGroupUpdate(Type);
 
-       /* public bool isKeyExchange()
-        {
-            return MessageTypes.isKeyExchangeType(Type);
-        }
+        [Ignore]
+        public bool IsGroupQuit => MessageTypes.isGroupQuit(Type);
 
-        public bool isEndSession()
-        {
-            return MessageTypes.isEndSessionType(Type);
-        }
+        [Ignore]
+        public bool IsGroupAction => IsGroupUpdate || IsGroupQuit;
 
-        public bool isGroupUpdate()
-        {
-            return MessageTypes.isGroupUpdate(Type);
-        }
+        [Ignore]
+        public bool IsCallLog => MessageTypes.isCallLog(Type);
 
-        public bool isGroupQuit()
-        {
-            return MessageTypes.isGroupQuit(Type);
-        }
+        [Ignore]
+        public bool IsJoined => MessageTypes.isJoinedType(Type);
 
-        public bool isGroupAction()
-        {
-            return isGroupUpdate() || isGroupQuit();
-        }*/
+        [Ignore]
+        public bool IsIncomingCall => MessageTypes.isIncomingCall(Type);
 
-        public class Body
+        [Ignore]
+        public bool IsOutgoingCall => MessageTypes.isOutgoingCall(Type);
+
+        [Ignore]
+        public bool IsMissedCall => MessageTypes.isMissedCall(Type);
+
+        [Ignore]
+        public bool IsDelivered => ReceiptCount > 0; // TODO
+
+        [Ignore, Obsolete]
+        public bool IsPendingInsecureSmsFallback => false; // TODO
+
+        public class BodyRecord
         {
-            private readonly String body;
+            private readonly string body;
             private readonly bool plaintext;
 
-            public Body(String body, bool plaintext)
+            public BodyRecord(string body, bool plaintext)
             {
                 this.body = body;
                 this.plaintext = plaintext;
@@ -106,10 +101,7 @@ namespace Signal.Models
                 return plaintext;
             }
 
-            public String getBody()
-            {
-                return body == null ? "" : body;
-            }
+            public string Body => body ?? "";
         }
     }
 }

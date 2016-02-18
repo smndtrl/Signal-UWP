@@ -53,12 +53,6 @@ namespace Signal
 
         public TaskWorker Worker { get; private set; }
 
-        /// <summary>
-        /// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
-        /// </summary>
-        public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
-        //public static Microsoft.WindowsAzure.MobileServiceClient client = new Microsoft.WindowsAzure.MobileSerivces.MobileServiceClient("http://textsecure.azure-mobile.net/")
-
 
         private PushNotificationChannel channel;
         public TextSecureAccountManager accountManager;
@@ -70,7 +64,6 @@ namespace Signal
         /// </summary>
         public App()
         {
-            TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
 
             this.InitializeComponent();
             this.Suspending += OnSuspending;
@@ -282,7 +275,7 @@ namespace Signal
             //await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
-            var websocketTask = new WebsocketTask();
+            /*var websocketTask = new WebsocketTask();
             Task.Factory.StartNew(() =>
             {
                 try
@@ -293,7 +286,7 @@ namespace Signal
                 }
                 catch (Exception ex) { Debug.WriteLine("Failed asd:" + ex.Message); }
 
-            });
+            });*/
             //Worker.AddTaskActivities(websocketTask);
 
 
