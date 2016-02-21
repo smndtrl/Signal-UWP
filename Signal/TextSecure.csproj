@@ -99,10 +99,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\CountryCodes.xml" />
-    <Content Include="Assets\signal-live.cer" />
-    <Content Include="Assets\signal-testing.cer" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
+    <Content Include="Assets\testing.p7b" />
+    <Content Include="Assets\testingbase.cer" />
+    <Content Include="Assets\testingder.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <PRIResource Include="Strings\en-US\Resources.resw" />
     <PRIResource Include="Strings\de\Resources.resw" />
   </ItemGroup>
@@ -112,6 +115,9 @@
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
     <Compile Include="Controls\AlertView.cs" />
+    <Compile Include="Controls\ConfirmIdentityDialog.xaml.cs">
+      <DependentUpon>ConfirmIdentityDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DataTriggerBehavior.cs" />
     <Compile Include="Controls\DeliveryStatusView.cs" />
     <Compile Include="Controls\MessageBubble.cs" />
@@ -240,15 +246,6 @@
     <Compile Include="Views\MessageDetailPage.xaml.cs">
       <DependentUpon>MessageDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Registration\ProtocolProvisioningView.xaml.cs">
-      <DependentUpon>ProtocolProvisioningView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Registration\ProvisioningView.xaml.cs">
-      <DependentUpon>ProvisioningView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
-      <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DirectoryView.xaml.cs">
       <DependentUpon>DirectoryView.xaml</DependentUpon>
     </Compile>
@@ -291,6 +288,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ConfirmIdentityDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -316,18 +317,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MessageDetailPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Registration\ProtocolProvisioningView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Registration\ProvisioningView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Registration\RegistrationTypeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

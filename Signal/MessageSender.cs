@@ -105,33 +105,32 @@ namespace TextSecure
 
             Recipients recipients = DatabaseFactory.getMmsAddressDatabase().getRecipientsForId(messageRecord.getId());
             sendGroupPush(recipients, messageRecord.getId(), filterRecipientId);
-        }
+        }*/
 
-        public static void resend(Context context, MasterSecret masterSecret, MessageRecord messageRecord)
+        public static void resend(MessageRecord messageRecord)
         {
             try
             {
-                long messageId = messageRecord.getId();
-                boolean forceSms = messageRecord.isForcedSms();
-                boolean keyExchange = messageRecord.isKeyExchange();
+                long messageId = messageRecord.MessageId;
+                bool keyExchange = messageRecord.IsKeyExchange;
 
-                if (messageRecord.isMms())
+               /* if (messageRecord.isMms()) // TODO: media
                 {
                     Recipients recipients = DatabaseFactory.getMmsAddressDatabase(context).getRecipientsForId(messageId);
-                    sendMediaMessage(context, masterSecret, recipients, forceSms, messageId);
+                    sendMediaMessage(recipients, forceSms, messageId);
                 }
                 else
-                {
-                    Recipients recipients = messageRecord.getRecipients();
-                    sendTextMessage(context, recipients, forceSms, keyExchange, messageId);
-                }
+                {*/
+                    Recipients recipients = messageRecord.Recipients;
+                    sendTextMessage(recipients, keyExchange, messageId);
+                //}
             }
-            catch (MmsException e)
+            catch (Exception e)
             {
-                Log.w(TAG, e);
+                Log.Warn(e.Message);
             }
         }
-
+        /*
         private static void sendMediaMessage(Context context, MasterSecret masterSecret,
                                              Recipients recipients, boolean forceSms, long messageId)
       throws MmsException

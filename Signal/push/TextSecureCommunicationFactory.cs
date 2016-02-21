@@ -28,11 +28,19 @@ namespace Signal.Push
 {
     public class TextSecureCommunicationFactory
     {
-#if DEBUG
-        public static readonly string PUSH_URL = "http://textsecure2.simondieterle.net";
+        /* // TODO: fix cert pinning
+#if RELEASE
+        public static readonly string PUSH_URL = "https://textsecure-service.whispersystems.org";
 #else
         public static readonly string PUSH_URL = "https://textsecure-service-staging.whispersystems.org";
-#endif
+#endif        */
+
+#if RELEASE // TODO: RELEASE
+        public static readonly string PUSH_URL = "http://textsecure.simondieterle.net";
+#else
+        public static readonly string PUSH_URL = "http://textsecure-staging.simondieterle.net";
+#endif        
+
         private static readonly string USER_AGENT = Signal.App.CurrentVersion;
 
         public static TextSecureAccountManager createManager()

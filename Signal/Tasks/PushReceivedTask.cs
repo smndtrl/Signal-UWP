@@ -39,10 +39,19 @@ namespace Signal.Tasks
                 contactTokenDetails.setNumber(envelope.getSource());
 
                 directory.setNumber(contactTokenDetails, true);
+
+                // TODO: evtl DirectoryRefresh
             }
 
             if (envelope.isReceipt()) handleReceipt(envelope);
-            else handleMessage(envelope, sendExplicitReceipt);
+            else if (envelope.isPreKeyWhisperMessage() || envelope.isWhisperMessage())
+            {
+                handleMessage(envelope, sendExplicitReceipt);
+            }
+            else
+            {
+                Log.Warn($"Received envelope of unknown type: {envelope.GetType()}");
+            }
         }
 
         private void handleMessage(TextSecureEnvelope envelope, bool sendExplicitReceipt)

@@ -36,9 +36,9 @@ namespace Signal.ViewModels
             nav.Configure(THREADS_PAGE_KEY, typeof(ThreadMasterPage));
             nav.Configure(MESSAGES_PAGE_KEY, typeof(MessageDetailPage));
 
-            nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
+            //nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
             nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
-            nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
+            //nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
 
             nav.Configure(DIRECTORY_PAGE_KEY, typeof(DirectoryView));
             nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));

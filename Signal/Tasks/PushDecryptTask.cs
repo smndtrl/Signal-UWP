@@ -93,7 +93,7 @@ namespace Signal.Tasks
                 Log.Warn(e);
                 handleInvalidVersionMessage(envelope, smsMessageId);
             }
-            catch (InvalidMessageException/* | InvalidKeyIdException | InvalidKeyException | MmsException*/ e)
+            catch (InvalidMessageException e)
             {
                 Log.Warn(e);
                 handleCorruptMessage(envelope, smsMessageId);
@@ -130,8 +130,7 @@ namespace Signal.Tasks
             }
         }
 
-        private void handleEndSessionMessage(/*MasterSecretUnion     masterSecret,*/
-                                             TextSecureEnvelope envelope,
+        private void handleEndSessionMessage(TextSecureEnvelope envelope,
                                              TextSecureDataMessage message,
                                              May<long> smsMessageId)
         {

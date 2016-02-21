@@ -18,7 +18,7 @@ namespace Signal.Models
         public long MessageId { get; internal set; }
 
         internal List<IdentityKeyMismatch> MismatchedIdentities;
-        internal List<NetworkFailure> NetworkFailures;
+        //internal List<NetworkFailure> NetworkFailures;
 
         [Ignore, Obsolete]
         public bool IsSecure => MessageTypes.isSecureType(Type); // TODO

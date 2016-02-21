@@ -54,6 +54,24 @@ namespace Signal.Controls
             if (m != null)
             {
                 VisualStateManager.GoToState(this, m.IsOutgoing ? "Outgoing" : "Incoming", true);
+
+
+                if (m.IsFailed)
+                {
+                    VisualStateManager.GoToState(this, "Failed", true);
+                }
+                else
+                {
+                    if (!m.IsOutgoing) VisualStateManager.GoToState(this, "None", true);
+                    else if (m.IsPending) VisualStateManager.GoToState(this, "Pending", true);
+                    else if (m.IsDelivered) VisualStateManager.GoToState(this, "Delivered", true);
+                    else VisualStateManager.GoToState(this, "Sent", true);
+                }
+
+                if (m.IsKeyExchange)
+                {
+                    VisualStateManager.GoToState(this, "KeyExchange", true);
+                }
             }
         }
 

@@ -13,9 +13,6 @@ namespace Signal.Models
     public abstract class Record : ObservableObject
     {
 
-        public class IdentityKeyMismatch { }
-        public class NetworkFailure { }
-
         protected long Type;
 
         public Recipients Recipients { get; internal set; }

@@ -27,6 +27,38 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="BodyType">
+                                <VisualState>
+                                    <VisualState.Setters>
+                                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="KeyExchange">
+                                    <VisualState.Setters>
+                                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
+                                        <Setter Target="BodyIconBlock.(UIElement.Visibility)" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="Status">
+                                <VisualState  x:Name="None">
+                                    <VisualState.Setters>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pending">
+                                    <VisualState.Setters>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Delivered">
+                                    <VisualState.Setters>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Sent">
+                                    <VisualState.Setters>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
 
@@ -67,8 +99,12 @@
 					Grid.Row="1"
 					Padding="8"  
 					Background="{ThemeResource MessageBubbleBackgroundThemeBrush}"
-					Grid.RowSpan="1" Grid.Column="2"
->
+					Grid.RowSpan="1" Grid.Column="2">
+
+                            <SymbolIcon x:Name="BodyIconBlock"
+                                        Symbol="Admin"
+                                        Visibility="Collapsed"/>
+                            
                             <TextBlock x:Name="BodyTextBlock"
                                        Text="{Binding Body.Body, Mode=OneWay}"
                                        TextWrapping="WrapWholeWords"

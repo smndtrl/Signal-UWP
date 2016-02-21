@@ -80,28 +80,32 @@
                     </StackPanel>
                 </FlipViewItem>
             <FlipViewItem x:Name="RegisterPivot"  ManipulationMode="All">
-                <Grid VerticalAlignment="Center">
+                <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <TextBlock x:Name="RegisterPivotHeaderTextBlock" x:Uid="RegisterPivotHeaderTextBlock"
+                               Grid.Row="1"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
                                Text="Register"/>
 
                     <TextBlock x:Name="RegisterPivotCaptionTextBlock" x:Uid="RegisterPivotCaptionTextBlock"
-                               Grid.Row="1"
+                               Grid.Row="2"
                                HorizontalAlignment="Center" 
                                Style="{StaticResource BlueCaptionTextBlockStyle}"
                                Text="with your phone number" />
 
                     <AutoSuggestBox x:Name="RegisterPivotCountrySuggestBox" x:Uid="RegisterPivotCountrySuggestBox"
-                                        Grid.Row="2"
+                                        Grid.Row="3"
                                         Margin="32,16,32,8"
                                     HorizontalAlignment="Stretch"
                                     PlaceholderText="Country"
@@ -149,17 +153,17 @@
 
 
                     <settings:PrefixTextBox x:Name="RegisterPivotNumberTextBox" x:Uid="RegisterPivotNumberTextBox"
-                                                Grid.Row="3"
+                                                Grid.Row="4"
                              Margin="32,0,32,0"
                                             Prefix="{x:Bind ViewModel.CountryCode, Mode=OneWay}"
-                             Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
+                             Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource BlueTextBox}"
                              BorderThickness="0,0,0,2"
                              PlaceholderText="555 1505"
                              InputScope="TelephoneNumber"/>
 
                     <Button x:Name="RegisterPivotRegisterButton" x:Uid="RegisterPivotRegisterButton"
-                                Grid.Row="4"
+                                Grid.Row="5"
                             d:LayoutOverrides="Width"
                             Margin="32,16,32,32"  
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -181,6 +185,25 @@
                                           Visibility="Collapsed"/>
                         </StackPanel>
                     </Button>
+
+                    <Button x:Name="RegisterPivotLinkButton" x:Uid="RegisterPivotLinkButton"
+                                Grid.Row="7"
+                            d:LayoutOverrides="Width"
+                            Margin="32,0,32,8"  
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.NavigateLinkCommand}"
+                            Style="{StaticResource BlueButton}"
+                            ManipulationMode="All"
+                            >
+
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="RegisterPivotLinkButtonTextBlock" x:Uid="RegisterPivotRegisterButtonTextBlock"
+                                       Text="LINK WITH ANOTHER DEVICE"/>
+                        </StackPanel>
+                    </Button>
+
                 </Grid>
             </FlipViewItem>
                 <FlipViewItem x:Name="VerifyPivot"  ManipulationMode="All">

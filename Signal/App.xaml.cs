@@ -240,6 +240,31 @@ namespace Signal
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+
+
+            // Add our custom certificate
+            try
+            {
+                // Read the contents of the Certificate file
+                System.Uri certificateFile = new System.Uri("ms-appx:///Assets/testingder.cer");
+                Windows.Storage.StorageFile file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(certificateFile);
+                Windows.Storage.Streams.IBuffer certBlob = await Windows.Storage.FileIO.ReadBufferAsync(file);
+
+                // Create an instance of the Certificate class using the retrieved certificate blob contents
+                Windows.Security.Cryptography.Certificates.Certificate rootCert = new Windows.Security.Cryptography.Certificates.Certificate(certBlob);
+
+                // Get access to the TrustedRootCertificationAuthorities for your own app (not the system one)
+                Windows.Security.Cryptography.Certificates.CertificateStore trustedStore = Windows.Security.Cryptography.Certificates.CertificateStores.TrustedRootCertificationAuthorities;
+
+                // Add the certificate to the TrustedRootCertificationAuthorities store for your app
+                trustedStore.Add(rootCert);
+            }
+            catch (Exception oEx)
+            {
+                // Catch that exception. We don't really have a choice here..
+                var msg = oEx.Message;
+            }
+
             DispatcherHelper.Initialize();
 
             //Note: for development purposes, if you want to quickly re-register the device to another number, just do this:
@@ -275,7 +300,7 @@ namespace Signal
             //await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
-            /*var websocketTask = new WebsocketTask();
+            var websocketTask = new WebsocketTask();
             Task.Factory.StartNew(() =>
             {
                 try
@@ -286,7 +311,7 @@ namespace Signal
                 }
                 catch (Exception ex) { Debug.WriteLine("Failed asd:" + ex.Message); }
 
-            });*/
+            });
             //Worker.AddTaskActivities(websocketTask);
 
 

@@ -134,7 +134,7 @@ namespace Signal.ViewModels
                 return string.Empty;
             }
         }
-        public string VerificationToken = "";
+        public string VerificationToken = string.Empty;
 
 
         private bool _isVerifying = false;
@@ -166,7 +166,7 @@ namespace Signal.ViewModels
 
                        _navigationService.NavigateTo(ViewModelLocator.THREADS_PAGE_KEY);
                    },
-                   () => !_isVerifying));
+                   () => !_isVerifying || VerificationToken.Length != 6));
             }
         }
 
@@ -305,14 +305,14 @@ namespace Signal.ViewModels
             }
         }
 
-        public RelayCommand _navigateProvisionCommand { get; private set; }
-        public RelayCommand NavigateProvisionCommand
+        private RelayCommand _navigateLinkCommand;
+        public RelayCommand NavigateLinkCommand
         {
             get
             {
-                return _navigateProvisionCommand ?? new RelayCommand(
+                return _navigateLinkCommand ?? new RelayCommand(
                     () => { _navigationService.NavigateTo(ViewModelLocator.PROVISIONING_PAGE_KEY); },
-                    () => { return true; }
+                    () => false
                     );
             }
         }

@@ -47,7 +47,9 @@
 				</Setter>-->
 		</Style>
 
-        <MenuFlyout x:Name="flyout1" x:Key="MessageMenuFlyout">
+        <MenuFlyout x:Name="MessageMenuFlyout" x:Key="MessageMenuFlyout">
+            <MenuFlyoutItem x:Name="UpdateIdentityFlyout"
+                            Text="Update Identity" Command="{x:Bind ViewModel.ConfirmIdentityCommand}" CommandParameter="{Binding}"/>
             <MenuFlyoutItem x:Name="DeleteMessageFlyout" 
 						Text="Delete TODO" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{Binding}"/>
             <MenuFlyoutItem x:Name="UpdateMessageFlyout" 
@@ -118,7 +120,15 @@
 			</Interactivity:Interaction.Behaviors>-->
                 <ListView.ItemTemplate>
                     <DataTemplate x:Name="RecordTemplate" x:DataType="model:MessageRecord">
-                    <controls:MessageBubble MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
+                    <StackPanel FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
+                        <Interactivity:Interaction.Behaviors>
+                            <Interactions:EventTriggerBehavior EventName="Holding">
+                                <resources:OpenMenuFlyoutAction/>
+                            </Interactions:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+
+                        <controls:MessageBubble MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
+                    </StackPanel>
                 </DataTemplate>
                 </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>

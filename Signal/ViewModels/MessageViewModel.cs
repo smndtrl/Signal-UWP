@@ -22,6 +22,8 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using Signal.Controls;
+using Signal.Database;
 using Signal.Messages;
 using Signal.Resources;
 using Signal.Views;
@@ -36,13 +38,13 @@ namespace Signal.ViewModels
 
         //private Dictionary<long, MessageCollection> Cache = new Dictionary<long, MessageCollection>();
 
-        
+
 
         public MessageViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
-        
+
         }
 
         private RelayCommand _loaded;
@@ -153,10 +155,10 @@ namespace Signal.ViewModels
                 return _sendCommand ?? (_sendCommand = new RelayCommand(
                     async () =>
                     {
-                       var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
-                       MessageText = string.Empty;
+                        var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
+                        MessageText = string.Empty;
 
-                       await MessageSender.send(message, SelectedThread.ThreadId);
+                        await MessageSender.send(message, SelectedThread.ThreadId);
                     },
                     () => !MessageText.Equals(string.Empty)));
             }
@@ -170,9 +172,9 @@ namespace Signal.ViewModels
                 return _attachCommand ?? (_attachCommand = new RelayCommand(
                     async () =>
                     {
- 
+
                     },
-                    () => false )); // TODO: attachment enable
+                    () => false)); // TODO: attachment enable
             }
         }
 
@@ -183,8 +185,6 @@ namespace Signal.ViewModels
         public RelayCommand<Message> DeleteCommand;
 
         private RelayCommand<Message> _updateCommand;
-
-        public event EventHandler AmbientColorChanged;
 
         public RelayCommand<Message> UpdateCommand
         {
@@ -201,6 +201,50 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand<object> _confirmIdentityCommand;
+
+        public RelayCommand<object> ConfirmIdentityCommand
+        {
+            get
+            {
+                return _confirmIdentityCommand ?? (_confirmIdentityCommand = new RelayCommand<object>(
+                   async obj =>
+                   {
+
+                       var record = obj as MessageRecord;
+
+                       var dialog = new ConfirmIdentityDialog(record);
+ 
+                       var result = await dialog.ShowAsync();
+
+                       IList<IdentityKeyMismatch> mismatches = record.MismatchedIdentities;
+
+                       if (mismatches.Count() != 1)
+                       {
+                           throw new Exception("Identity mismatch count: " + mismatches.Count());
+                       }
+
+                       var mismatch = mismatches[0];
+
+                       switch (result)
+                       {
+                           case ContentDialogResult.Primary:
+                               
+                               break;
+                           case ContentDialogResult.Secondary:
+                               break;
+                           case ContentDialogResult.None:
+                               break;
+                       }
+
+                       Debug.WriteLine($"Marked as sent:");
+                   },
+                   record => true));
+            }
+        }
+
+
+        public event EventHandler AmbientColorChanged;
         public SolidColorBrush AmbientColorBrush = new SolidColorBrush((Color)Application.Current.Resources["SignalBlue"]);
 
         private Color _ambientColor = (Color)Application.Current.Resources["SignalBlue"];
@@ -264,7 +308,7 @@ namespace Signal.ViewModels
             }
 
             SelectedThread = thread;
-           // _messages = null;
+            // _messages = null;
             Messages = new MessageCollection(_dataService, thread.ThreadId);
             Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 

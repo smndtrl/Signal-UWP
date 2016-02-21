@@ -595,6 +595,7 @@ public void close()
             {
                 new IdentityKeyMismatch(recipientId, identityKey)
             };
+            throw new NotImplementedException();
 
             /*IdentityKeyMismatchList document = new IdentityKeyMismatchList(items);
 
@@ -614,6 +615,7 @@ public void close()
 
         public void AddMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
         {
+            throw new NotImplementedException();
             /*try
             {
                 addToDocument(messageId, MISMATCHED_IDENTITIES,
@@ -626,6 +628,8 @@ public void close()
 
         public void RemoveMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
         {
+            throw new NotImplementedException();
+
             /*try
             {
                 removeFromDocument(messageId, MISMATCHED_IDENTITIES,
@@ -635,6 +639,20 @@ public void close()
       Log.w(TAG, e);
     }
         }*/
+        }
+
+        public IEnumerable<MessageRecord> getIdentityConflictMessagesForThread(long threadId)
+        {
+            /*String order = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " ASC";
+            String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " AND " + MmsSmsColumns.MISMATCHED_IDENTITIES + " IS NOT NULL";
+
+            Cursor cursor = queryTables(PROJECTION, selection, order, null);*/
+
+            var list = conn.Table<Message>().Where(m => m.MismatchedIdentities != null).OrderBy(m => m.DateReceived).ToList();
+
+            //setNotifyConverationListeners(threadId);
+
+            return list.Select(i => new TextMessageRecord(i));
         }
     }
 }
