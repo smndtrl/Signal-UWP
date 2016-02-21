@@ -91,7 +91,6 @@
             <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Foreground="White" VerticalAlignment="Center">
-                DIRECTORY
             </TextBlock>
         </StackPanel>
 
@@ -123,9 +122,9 @@
             <settings:ListView.Placeholder>
                 <DataTemplate>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="No Signal user" HorizontalAlignment="Center"
+                        <TextBlock x:Name="DirectoryListViewEmptyTextBlock" x:Uid="DirectoryListViewEmptyTextBlock" Text="" HorizontalAlignment="Center"
                        Style="{ThemeResource HeaderTextBlockStyle}"/>
-                        <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text="Invite a friend to Signal."
+                        <TextBlock x:Name="DirectoryListViewEmpty2TextBlock" x:Uid="DirectoryListViewEmpty2TextBlock" Text=""
                        Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
@@ -140,7 +139,7 @@
             Template="{StaticResource CommandBarNoMore}">
             <CommandBar.Content>
                 <AppBarButton x:Name="DirectoryRefreshButton" x:Uid="DirectoryRefreshButton"
-                              Label="Refresh"
+                              Label=""
                               IsCompact="True"
                               Command="{x:Bind ViewModel.RefreshCommand}"
                               Icon="Refresh"/>
@@ -148,12 +147,12 @@
 
 
             <AppBarToggleButton x:Name="DirectoryMultiToggleButton" x:Uid="DirectoryMultiToggleButton"
-                                Label="Select"
+                                Label=""
                                 IsChecked="{x:Bind ViewModel.MultiSelect}"
                                 Command="{x:Bind ViewModel.MultiSelectCommand}"
                                 Icon="Bullets"/>
             <AppBarButton x:Name="DirectoryAddButton" x:Uid="DirectoryAddButton"
-                          Label="Add"
+                          Label=""
                           Command="{x:Bind ViewModel.AddCommand}"
                           Icon="Send"/>
         </CommandBar>
