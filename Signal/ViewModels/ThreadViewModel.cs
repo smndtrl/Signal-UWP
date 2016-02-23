@@ -24,6 +24,31 @@ namespace Signal.ViewModels
 {
     public class ThreadViewModel : ViewModelBase
     {
+
+        DirectoryCollection _Contacts;
+        public DirectoryCollection Contacts
+        {
+            get { return _Contacts ?? (Contacts = new DirectoryCollection(_dataService)); }
+            set
+            {
+                _Contacts = value;
+                RaisePropertyChanged("Contacts");
+            }
+        }
+
+        TextSecureDirectory.Directory _selectedContact;
+        public TextSecureDirectory.Directory SelectedContact
+        {
+            get { return _selectedContact; }
+            set
+            {
+                _selectedContact = value;
+                Debug.WriteLine("SelectedContact");
+                AddCommand.RaiseCanExecuteChanged();
+                RaisePropertyChanged("SelectedContact");
+            }
+        }
+
         private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
 

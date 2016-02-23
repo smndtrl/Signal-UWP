@@ -12,9 +12,9 @@
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
     xmlns:settings="using:Settings.UI.Xaml.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
+    
     mc:Ignorable="d">
-
+    <!--back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"-->
     <Page.DataContext>
         <Binding Source="{Binding Directory, Source={StaticResource Locator}}"/>
     </Page.DataContext>
