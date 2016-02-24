@@ -102,7 +102,7 @@ namespace Signal.ViewModels
         public bool? MultiSelect
         {
             get { return _multiSelect; }
-            set
+            set 
             {
                 if (!value.HasValue) return;
 

@@ -113,7 +113,7 @@
 
         <CollectionViewSource x:Key="threadCvs" Source="{x:Bind ViewModel.Threads}"/>
 
-        <!--<CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}" />-->
+        <CollectionViewSource x:Key="directoryCvs" Source="{x:Bind ViewModel.Contacts}" />
 
         <DataTemplate x:Key="DirectoryItemNarrow" x:DataType="database:TextSecureDirectory+Directory">
             <Grid Padding="4">
@@ -219,7 +219,7 @@
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
         </Grid.ColumnDefinitions>
         
-        <Pivot Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="0">
+        <Pivot Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="0" Name="piv_CC" SelectionChanged="piv_CC_SelectionChanged">
             <PivotItem Header="Chats">
                 <settings:ListView x:Name="ThreadListView"
                            ItemsSource="{Binding Source={StaticResource threadCvs}}"
@@ -254,11 +254,11 @@
                 </settings:ListView>
             </PivotItem>
             <PivotItem Header="Contacts">
-                <settings:ListView x:Name="DirectoryListView">
-                    <!--ItemsSource="{Binding Source={StaticResource directoryCvs}}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
+                <settings:ListView x:Name="DirectoryListView"
+               ItemsSource="{Binding Source={StaticResource directoryCvs}}" ItemTemplate="{StaticResource DirectoryItemNarrow}"
                         HorizontalContentAlignment="Stretch"
                         SelectedItem="{Binding SelectedContact, Mode=TwoWay}"
-                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}">-->
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}">
                     <ListView.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.HeaderTemplate>
@@ -322,11 +322,11 @@
             </AppBarButton>
 
             <!--Contacts-->
-            <AppBarButton x:Name="RefreshBtn" x:Uid="ContactsRefreshAppBar" Icon="Refresh" Visibility="Collapsed"></AppBarButton>
+            <AppBarButton x:Name="RefreshBtn" x:Uid="ContactsRefreshAppBar" Icon="Refresh" Visibility="Collapsed" Label="Refresh"></AppBarButton>
 
             <!--Chats-->
             <CommandBar.SecondaryCommands>
-                <AppBarButton x:Name="ArchievedChatsBtn" x:Uid="ArchievedChatsAppBar" Icon="sa"></AppBarButton>
+                <AppBarButton x:Name="ArchievedChatsBtn" x:Uid="ArchievedChatsAppBar" Label="Archived Chats"></AppBarButton>
             </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>

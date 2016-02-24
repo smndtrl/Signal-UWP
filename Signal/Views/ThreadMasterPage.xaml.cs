@@ -42,5 +42,20 @@ namespace Signal.Views
             ViewModel.AdaptiveStates = AdaptiveStates;
         }
 
+        private void piv_CC_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((PivotItem)piv_CC.SelectedItem).Header.ToString().ToLower() == "chats")
+            {
+                ArchievedChatsBtn.Visibility = Visibility.Visible;
+                RefreshBtn.Visibility = Visibility.Collapsed;
+                SelectItmesBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ArchievedChatsBtn.Visibility = Visibility.Collapsed;
+                RefreshBtn.Visibility = Visibility.Visible;
+                SelectItmesBtn.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
