@@ -313,14 +313,21 @@
 
     <Page.BottomAppBar>
         <CommandBar Grid.Row="2">
-
+            <!--Chats-->
             <!--<AppBarButton x:Name="AddItemButton" x:Uid="ThreadMasterAppBarAddItem" Label="" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>-->
-            <AppBarButton x:Name="SelectItmesBtn" x:Uid="ThreadMasterAppBarSelectItems" FontFamily="OverflowCheckGlyph" Label="">
+            <AppBarButton x:Name="SelectItmesBtn" x:Uid="ThreadMasterAppBarSelectItems" FontFamily="OverflowCheckGlyph" Label="" Visibility="Collapsed">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
                 </AppBarButton.Icon>
             </AppBarButton>
 
+            <!--Contacts-->
+            <AppBarButton x:Name="RefreshBtn" x:Uid="ContactsRefreshAppBar" Icon="Refresh" Visibility="Collapsed"></AppBarButton>
+
+            <!--Chats-->
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="ArchievedChatsBtn" x:Uid="ArchievedChatsAppBar" Icon="sa"></AppBarButton>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 </local:SignalPage>
