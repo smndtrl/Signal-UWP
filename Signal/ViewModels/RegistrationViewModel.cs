@@ -164,7 +164,7 @@ namespace Signal.ViewModels
                            return; // TODO:
                        }
 
-                       _navigationService.NavigateTo(ViewModelLocator.THREADS_PAGE_KEY);
+                       _navigationService.NavigateTo(ViewModelLocator.MAIN_PAGE_KEY);
                    },
                    () => !_isVerifying));
             }

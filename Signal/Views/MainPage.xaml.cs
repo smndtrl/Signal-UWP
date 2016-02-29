@@ -23,17 +23,17 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ThreadMasterPage : SignalPage
+    public sealed partial class MainPage : SignalPage
     {
-        public ThreadViewModel ViewModel
+        public MainPageViewModel ViewModel
         {
             get
             {
-                return (ThreadViewModel)DataContext;
+                return (MainPageViewModel)DataContext;
             }
         }
 
-        public ThreadMasterPage()
+        public MainPage()
         {
             this.InitializeComponent();
 
@@ -42,5 +42,25 @@ namespace Signal.Views
             ViewModel.AdaptiveStates = AdaptiveStates;
         }
 
+        private void piv_CC_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((PivotItem)piv_CC.SelectedItem).Header.ToString().ToLower() == "chats")
+            {
+                ArchievedChatsBtn.Visibility = Visibility.Visible;
+                RefreshBtn.Visibility = Visibility.Collapsed;
+                SelectItmesBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ArchievedChatsBtn.Visibility = Visibility.Collapsed;
+                RefreshBtn.Visibility = Visibility.Visible;
+                SelectItmesBtn.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
