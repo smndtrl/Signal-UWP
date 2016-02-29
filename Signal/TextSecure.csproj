@@ -101,8 +101,9 @@
     <Content Include="Resources\CountryCodes.xml" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
-    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\Resources.resw" />
     <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -207,9 +208,8 @@
     <Compile Include="ViewModels\SplashViewModel.cs" />
     <Compile Include="ViewModels\Messages.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="ViewModels\DirectoryViewModel.cs" />
     <Compile Include="ViewModels\ProvisionViewModel.cs" />
-    <Compile Include="ViewModels\ThreadViewModel.cs" />
+    <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\RegistrationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -233,15 +233,12 @@
     <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
       <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DirectoryView.xaml.cs">
-      <DependentUpon>DirectoryView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SettingsViewTest.xaml.cs">
       <DependentUpon>SettingsViewTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignalPage.cs" />
-    <Compile Include="Views\ThreadMasterPage.xaml.cs">
-      <DependentUpon>ThreadMasterPage.xaml</DependentUpon>
+    <Compile Include="Views\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegistrationView.xaml.cs">
       <DependentUpon>RegistrationView.xaml</DependentUpon>
@@ -311,15 +308,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DirectoryView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\SettingsViewTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ThreadMasterPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -352,7 +345,9 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\UserControlls\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -10,10 +10,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    x:Class="Signal.Views.ThreadMasterPage"
+    xmlns:database="using:Signal.Database"
+    x:Class="Signal.Views.MainPage"
     mc:Ignorable="d"
-    xmlns:back="using:Bezysoftware.Navigation.BackButton"
-    back:BackButtonManager.IsBackButtonEnabled="False">
+    xmlns:back="using:Bezysoftware.Navigation.BackButton">
+    <!--back:BackButtonManager.IsBackButtonEnabled="False">-->
 
     <Interactivity:Interaction.Behaviors>
         <Core:EventTriggerBehavior EventName="Loaded">
@@ -110,30 +111,48 @@
             </Grid>
         </DataTemplate>
 
-        <CollectionViewSource x:Key="threadCvs" Source="{x:Bind ViewModel.Threads}"/>
+        <CollectionViewSource x:Key="chatsCvs" Source="{x:Bind ViewModel.Chats}"/>
+
+        <CollectionViewSource x:Key="contatsCvs" Source="{x:Bind ViewModel.Contacts}" />
+
+        <DataTemplate x:Key="ContactItemNarrow" x:DataType="database:TextSecureDirectory+Directory">
+            <Grid Padding="4">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Width="64" Height="64" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <drawables:ContactPicture 
+                      Radius="24" Contact="{Binding Result}" DataContext="{x:Bind ContactId, Converter={StaticResource ContactRetriever}}"/>
+                </Border>
+
+                <TextBlock 
+                    Grid.Column="2" 
+                    Text="{x:Bind Name}" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Left"
+                    Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock 
+                    Grid.Row="1" Grid.Column="2" 
+                    Text="{x:Bind Number}"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource BodyTextBlockStyle}"/>
+            </Grid>
+        </DataTemplate>
 
     </Page.Resources>
 
     <Page.DataContext>
         <Binding Source="{Binding Thread, Source={StaticResource Locator}}"/>
     </Page.DataContext>
-
-    <Page.BottomAppBar>
-        <CommandBar Grid.Row="2">
-
-            <AppBarButton x:Name="AddItemButton" x:Uid="ThreadMasterAppBarAddItem" Label="" Icon="Add" Command="{x:Bind ViewModel.AddCommand}"/>
-            <AppBarButton x:Name="SelectItmesBtn" x:Uid="ThreadMasterAppBarSelectItems" FontFamily="OverflowCheckGlyph" Label="">
-                <AppBarButton.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-
-         </CommandBar>
-    </Page.BottomAppBar>
-
-
-    <Grid x:Name="ThreadGrid" 
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates" >
                 <!-- CurrentStateChanged -->
@@ -174,72 +193,75 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="MasterColumn" Width="320" />
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
         </Grid.ColumnDefinitions>
-
-
-        <StackPanel x:Name="ThreadTitle" 
-                    Padding="4"
-                    Orientation="Horizontal"
-                    Height="48"
-                    Background="{StaticResource SignalDimmedBrush}"
-                    >
-            <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
-            <TextBlock x:Name="ThreadTitleText"  x:Uid="ThreadMasterHeaderThread"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       Foreground="White" VerticalAlignment="Center"
-                      >
-            </TextBlock>
-        </StackPanel>
-
-        <settings:ListView x:Name="ThreadListView"
-                           Grid.Row="1"
-                           ItemsSource="{Binding Source={StaticResource threadCvs}}"
+        
+        <Pivot x:Uid="MainPagePivot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="0" Name="piv_CC" SelectionChanged="piv_CC_SelectionChanged">
+            <PivotItem Header="" x:Uid="MainPagePivotChats">
+                <settings:ListView x:Name="ThreadListView"
+                           ItemsSource="{Binding Source={StaticResource chatCvs}}"
                            SelectionMode="Single"
                            ItemTemplate="{StaticResource ThreadTemplate}"
                            IsItemClickEnabled="True"
-                           resources:ItemClickCommand.Command="{x:Bind ViewModel.ThreadClicked}"
-                           >
+                           resources:ItemClickCommand.Command="{x:Bind ViewModel.ChatClicked}">
+                    <settings:ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </settings:ListView.ItemContainerStyle>
 
-            <!--<Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="ItemClick">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.ThreadClicked}" />
-                </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>-->
+                    <settings:ListView.Placeholder>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock x:Name="ChatListViewEmptyTextBlock" x:Uid="ChatListViewEmptyTextBlock" Text="" HorizontalAlignment="Center" Style="{ThemeResource HeaderTextBlockStyle}"/>
+                                <TextBlock x:Name="ChatListViewEmpty2TextBlock" x:Uid="ChatListViewEmpty2TextBlock" Text="" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </settings:ListView.Placeholder>
+                </settings:ListView>
+            </PivotItem>
+            <PivotItem Header="" x:Uid="MainPagePivotContacts">
+                <settings:ListView x:Name="ContactListView"
+                            ItemsSource="{Binding Source={StaticResource contatsCvs}}" ItemTemplate="{StaticResource ContactItemNarrow}"
+                            HorizontalContentAlignment="Stretch"
+                            SelectionMode="Single"
+                            IsItemClickEnabled="True"
+                            resources:ItemClickCommand.Command="{x:Bind ViewModel.ContactClicked}">
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="test" FontSize="40" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
 
-            <settings:ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </settings:ListView.ItemContainerStyle>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
 
-            <settings:ListView.Placeholder>
-                <DataTemplate>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock x:Name="ThreadListViewEmptyTextBlock" x:Uid="ThreadListViewEmptyTextBlock" Text="" HorizontalAlignment="Center"
-                       Style="{ThemeResource HeaderTextBlockStyle}"/>
-                        <TextBlock x:Name="ThreadListViewEmpty2TextBlock" x:Uid="ThreadListViewEmpty2TextBlock" Text=""
-                       Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-            </settings:ListView.Placeholder>
-        </settings:ListView>
+                    <settings:ListView.Placeholder>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock x:Name="ContactistViewEmptyTextBlock" x:Uid="ContactListViewEmptyTextBlock" Text="" HorizontalAlignment="Center" Style="{ThemeResource HeaderTextBlockStyle}"/>
+                                <TextBlock x:Name="ContactListViewEmpty2TextBlock" x:Uid="ContactListViewEmpty2TextBlock" Text="" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </settings:ListView.Placeholder>
+                </settings:ListView>
 
-        
+            </PivotItem>
+        </Pivot>
 
         <Frame x:Name="detailFrame" Grid.Column="1"
-            Grid.RowSpan="2"
             BorderThickness="1,0,0,0"
-            Padding="24,0" Foreground="{x:Null}" Background="#FFE8ADAD">
+            Padding="24,0" Foreground="{x:Null}" Background="#FF3A4DC7">
             <Frame.ContentTransitions>
                 <TransitionCollection>
                     <PaneThemeTransition Edge="Bottom"></PaneThemeTransition>
@@ -248,4 +270,24 @@
         </Frame>
 
     </Grid>
+    
+
+    <Page.BottomAppBar>
+        <CommandBar Grid.Row="2">
+            <!--Chats-->
+            <AppBarButton x:Name="SelectItmesBtn" x:Uid="ChatsAppBarSelectItems" FontFamily="OverflowCheckGlyph" Label="" Visibility="Collapsed">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+
+            <!--Contacts-->
+            <AppBarButton x:Name="RefreshBtn" x:Uid="ContactsRefreshAppBar" Icon="Refresh" Visibility="Collapsed" Command="{x:Bind ViewModel.RefreshCommand}"></AppBarButton>
+
+            <!--Chats-->
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="ArchievedChatsBtn" x:Uid="ArchievedChatsAppBar"></AppBarButton>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
 </local:SignalPage>
