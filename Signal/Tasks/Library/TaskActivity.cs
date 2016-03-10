@@ -141,20 +141,11 @@ namespace Signal.Tasks.Library
         public override async Task<string> RunAsync(TaskContext context, string input)
         {
            
-            try
-            {
-                /*result =*/ await ExecuteAsync();
-            }
-            catch (Exception e)
-            {
-                //string details = Utils.SerializeCause(e, DataConverter);
-                throw new /*TaskFailure*/Exception(e.Message/*, details*/);
-            }
-
+            await ExecuteAsync();
+            
             return "ASD";
 
-            /*string serializedResult = DataConverter.Serialize(result);
-            return serializedResult;*/
+
         }
     }
 
@@ -173,6 +164,11 @@ namespace Signal.Tasks.Library
 
 
         public abstract void onAdded();
+
+        public void OnCanceled()
+        {
+            
+        }
 
     }
 

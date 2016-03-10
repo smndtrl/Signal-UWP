@@ -23,12 +23,17 @@ using System.Threading.Tasks;
 
 namespace Signal.Database
 {
-    abstract public class MessageTypes
+    public abstract class MessageTypes
     {
         public const long TOTAL_MASK = 0xFFFFFFFF;
 
         // Base Types
         public const long BASE_TYPE_MASK = 0x1F;
+
+        protected const long INCOMING_CALL_TYPE = 1;
+        protected const long OUTGOING_CALL_TYPE = 2;
+        protected const long MISSED_CALL_TYPE = 3;
+        protected const long JOINED_TYPE = 4;
 
         public const long BASE_INBOX_TYPE = 20;
         public const long BASE_OUTBOX_TYPE = 21;
@@ -131,6 +136,11 @@ namespace Signal.Database
             return (type & BASE_TYPE_MASK) == BASE_INBOX_TYPE;
         }
 
+        public static bool isJoinedType(long type)
+        {
+            return (type & BASE_TYPE_MASK) == JOINED_TYPE;
+        }
+
         public static bool isSecureType(long type)
         {
             return (type & SECURE_MESSAGE_BIT) != 0;
@@ -179,6 +189,26 @@ namespace Signal.Database
         public static bool isIdentityUpdate(long type)
         {
             return (type & KEY_EXCHANGE_IDENTITY_UPDATE_BIT) != 0;
+        }
+
+        public static bool isCallLog(long type)
+        {
+            return type == INCOMING_CALL_TYPE || type == OUTGOING_CALL_TYPE || type == MISSED_CALL_TYPE;
+        }
+
+        public static bool isIncomingCall(long type)
+        {
+            return type == INCOMING_CALL_TYPE;
+        }
+
+        public static bool isOutgoingCall(long type)
+        {
+            return type == OUTGOING_CALL_TYPE;
+        }
+
+        public static bool isMissedCall(long type)
+        {
+            return type == MISSED_CALL_TYPE;
         }
 
         public static bool isGroupUpdate(long type)

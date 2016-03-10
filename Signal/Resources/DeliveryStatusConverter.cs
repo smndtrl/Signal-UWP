@@ -13,7 +13,7 @@ namespace Signal.Resources
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var message = (Message)value;
+            var message = (MessageRecord)value;
 
             //Debug.WriteLine($"{message.Body}: Failed->{message.IsFailed}, Pending->{message.IsPending}, Delivered->{message.IsDelivered}");
 

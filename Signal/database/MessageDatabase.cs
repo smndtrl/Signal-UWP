@@ -22,13 +22,15 @@ using SQLite;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TextSecure.messages;
+using libaxolotl;
+using Signal.Messages;
 using TextSecure.recipient;
 using TextSecure.util;
 
@@ -86,21 +88,7 @@ namespace Signal.Database
             setNotifyConverationListListeners(cursor);*/
         }
 
-        private async Task updateTypeBitmask(long messageId, long maskOff, long maskOn)
-        {
-            Debug.WriteLine($"MessageDatabase: Updating ID: {messageId} to base type: {maskOn}");
-            
-
-            var message = conn.Get<Message>(messageId);
-
-            message.Type = (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
-            conn.Update(message);
-
-            DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
-
-            notifyConversationListeners(message.ThreadId);
-            notifyConversationListListeners();
-        }
+        
 
         /*public async Task Test(long messageId)
         {
@@ -179,105 +167,12 @@ namespace Signal.Database
             return getMessagesCount(threadId);
         }
 
-        public void markAsEndSession(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.KEY_EXCHANGE_MASK, MessageTypes.END_SESSION_BIT);
-        }
-
-        public void markAsPreKeyBundle(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.KEY_EXCHANGE_MASK, MessageTypes.KEY_EXCHANGE_BIT | MessageTypes.KEY_EXCHANGE_BUNDLE_BIT);
-        }
-
-        public void markAsInvalidVersionKeyExchange(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.KEY_EXCHANGE_INVALID_VERSION_BIT);
-        }
-
-        public void markAsSecure(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.SECURE_MESSAGE_BIT);
-        }
-
-        public void markAsInsecure(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.SECURE_MESSAGE_BIT, 0);
-        }
-
-        public void markAsPush(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.PUSH_MESSAGE_BIT);
-        }
-
-        public void markAsForcedSms(long id)
-        {
-            updateTypeBitmask(id, 0, MessageTypes.MESSAGE_FORCE_SMS_BIT);
-        }
-
-        public void markAsDecryptFailed(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_FAILED_BIT);
-        }
-
-        public void markAsDecryptDuplicate(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_DUPLICATE_BIT);
-        }
-
-        public void markAsNoSession(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_NO_SESSION_BIT);
-        }
-
-        public void markAsDecrypting(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_BIT);
-        }
-
-        public void markAsLegacyVersion(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.ENCRYPTION_MASK, MessageTypes.ENCRYPTION_REMOTE_LEGACY_BIT);
-        }
-
-        public void markAsOutbox(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_OUTBOX_TYPE);
-        }
-
-        public void markAsPendingInsecureSmsFallback(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_PENDING_INSECURE_SMS_FALLBACK);
-        }
-
-        public void markAsSending(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENDING_TYPE);
-        }
-
-        public void markAsSent(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENT_TYPE);
-        }
-
-        /*public async void markStatus(long messageId, int status)
-        {
-            Debug.WriteLine($"MessageDatabase Updating ID: {messageId} to status: {status}");
-            var message = conn.Get<Message>(messageId);
-
-            message.DeliveryStatus = status;
-
-            conn.Update(message);
-        }*/
-
-        public void markAsSentFailed(long id)
-        {
-            updateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENT_FAILED_TYPE);
-        }
+        
 
         public void incrementDeliveryReceiptCount(String address, long timestamp)
         {
             var date = TimeUtil.GetDateTime(timestamp);
-            var query = conn.Table<Message>().Where(m => 
+            var query = conn.Table<Message>().Where(m =>
                 m.DateSent == date
             );
 
@@ -335,139 +230,10 @@ namespace Signal.Database
 
             return new Pair<long, long>(messageId, threadId);
         }
-
-        public Pair<long, long> copyMessageInbox(long messageId)
-        {
-            Reader reader = readerFor(getMessage(messageId));
-            SmsMessageRecord record = reader.getNext();
-
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(TYPE, (record.getType() & ~MessageTypes.BASE_TYPE_MASK) | MessageTypes.BASE_INBOX_TYPE);
-            contentValues.put(ADDRESS, record.getIndividualRecipient().getNumber());
-            contentValues.put(ADDRESS_DEVICE_ID, record.getRecipientDeviceId());
-            contentValues.put(DATE_RECEIVED, System.currentTimeMillis());
-            contentValues.put(DATE_SENT, record.getDateSent());
-            contentValues.put(PROTOCOL, 31337);
-            contentValues.put(READ, 0);
-            contentValues.put(BODY, record.getBody().getBody());
-            contentValues.put(THREAD_ID, record.getThreadId());
-
-            SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            long newMessageId = db.insert(TABLE_NAME, null, contentValues);
-
-            DatabaseFactory.getThreadDatabase(context).update(record.getThreadId());
-            notifyConversationListeners(record.getThreadId());
-
-            jobManager.add(new TrimThreadJob(context, record.getThreadId()));
-            reader.close();
-
-            return new Pair<>(newMessageId, record.getThreadId());
-        }
         */
-        protected Pair<long, long> insertMessageInbox(IncomingTextMessage message, long type)
-        {
-            if (message.isPreKeyBundle())
-            {
-                type |= MessageTypes.KEY_EXCHANGE_BIT | MessageTypes.KEY_EXCHANGE_BUNDLE_BIT;
-            }
-            else if (message.isSecureMessage())
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-            }
-            /*else if (message.isGroup()) TODO: GROUP enable
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-                if (((IncomingGroupMessage)message).isUpdate()) type |= MessageTypes.GROUP_UPDATE_BIT;
-                else if (((IncomingGroupMessage)message).isQuit()) type |= MessageTypes.GROUP_QUIT_BIT;
-            }*/
-            else if (message.isEndSession())
-            {
-                type |= MessageTypes.SECURE_MESSAGE_BIT;
-                type |= MessageTypes.END_SESSION_BIT;
-            }
-
-            if (message.isPush()) type |= MessageTypes.PUSH_MESSAGE_BIT;
-
-            Recipients recipients;
-
-            if (message.getSender() != null)
-            {
-                recipients = RecipientFactory.getRecipientsFromString(message.getSender(), true);
-            }
-            else
-            {
-                //Log.w(TAG, "Sender is null, returning unknown recipient");
-                recipients = new Recipients(Recipient.getUnknownRecipient());
-            }
-
-            Recipients groupRecipients;
-
-            if (message.getGroupId() == null)
-            {
-                groupRecipients = null;
-            }
-            else
-            {
-                groupRecipients = RecipientFactory.getRecipientsFromString(message.getGroupId(), true);
-            }
-
-            bool unread = /*org.thoughtcrime.securesms.util.Util.isDefaultSmsProvider() ||*/
-                                    message.isSecureMessage() || message.isPreKeyBundle();
-
-            long threadId;
-
-            if (groupRecipients == null) threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients); // TODO CHECK
-            else threadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(groupRecipients);
-
-            /*ContentValues values = new ContentValues(6);
-            values.put(ADDRESS, message.getSender());
-            values.put(ADDRESS_DEVICE_ID, message.getSenderDeviceId());
-            values.put(DATE_RECEIVED, System.currentTimeMillis());
-            values.put(DATE_SENT, message.getSentTimestampMillis());
-            values.put(PROTOCOL, message.getProtocol());
-            values.put(READ, unread ? 0 : 1);
-
-            if (!TextUtils.isEmpty(message.getPseudoSubject()))
-                values.put(SUBJECT, message.getPseudoSubject());
-
-            values.put(REPLY_PATH_PRESENT, message.isReplyPathPresent());
-            values.put(SERVICE_CENTER, message.getServiceCenterAddress());
-            values.put(BODY, message.getMessageBody());
-            values.put(TYPE, type);
-            values.put(THREAD_ID, threadId);*/
-
-            var insert = new Message()
-            {
-                Address = message.getSender(),
-                AddressDeviceId = message.getSenderDeviceId(),
-                DateReceived = TimeUtil.GetDateTimeMillis(), // force precision to millis not to ticks
-                DateSent = TimeUtil.GetDateTime(message.getSentTimestampMillis()),
-                Read = !unread,
-                Body = message.getMessageBody(),
-                Type = type,
-                ThreadId = threadId
-            };
-
-            long rows = conn.Insert(insert);
-
-            long messageId = insert.MessageId;
-
-            if (unread)
-            {
-                DatabaseFactory.getThreadDatabase().SetUnread(threadId);
-            }
-
-            DatabaseFactory.getThreadDatabase().Refresh(threadId);
-            notifyConversationListeners(threadId);
-            //jobManager.add(new TrimThreadJob(context, threadId)); // TODO
-
-            return new Pair<long, long>(messageId, threadId);
-        }
-
-        public Pair<long, long> insertMessageInbox(IncomingTextMessage message)
-        {
-            return insertMessageInbox(message, MessageTypes.BASE_INBOX_TYPE);
-        }
+        
+        
+        
         /*
         protected long insertMessageOutbox(long threadId, OutgoingTextMessage message,
                                            long type, boolean forceSms, long date)
@@ -602,44 +368,44 @@ namespace Signal.Database
         /*
          * Inbox/Outbox
          */
-        public async Task<long> insertMessageOutbox(long threadId, OutgoingTextMessage message,
+        /*public long InsertMessageOutbox(long threadId, OutgoingTextMessage message,
                                      long type, DateTime date)
         {
-            if (message.isKeyExchange()) type |= MessageTypes.KEY_EXCHANGE_BIT;
-            else if (message.isSecureMessage()) type |= MessageTypes.SECURE_MESSAGE_BIT;
-            else if (message.isEndSession()) type |= MessageTypes.END_SESSION_BIT;
+            if (message.IsKeyExchange) type |= MessageTypes.KEY_EXCHANGE_BIT;
+            else if (message.IsSecureMessage) type |= MessageTypes.SECURE_MESSAGE_BIT;
+            else if (message.IsEndSession) type |= MessageTypes.END_SESSION_BIT;
             //if (forceSms) type |= MessageTypes.MESSAGE_FORCE_SMS_BIT;
 
-            /*ContentValues contentValues = new ContentValues(6);
+            ContentValues contentValues = new ContentValues(6);
             contentValues.put(ADDRESS, PhoneNumberUtils.formatNumber(message.getRecipients().getPrimaryRecipient().getNumber()));
             contentValues.put(THREAD_ID, threadId);
             contentValues.put(BODY, message.getMessageBody());
             contentValues.put(DATE_RECEIVED, date);
             contentValues.put(DATE_SENT, date);
             contentValues.put(READ, 1);
-            contentValues.put(TYPE, type);*/
+            contentValues.put(TYPE, type);
 
             var insert = new Message()
             {
                 //address = PhoneNumberUtils.formatNumber(message.getRecipients().getPrimaryRecipient().getNumber()),
-                Address = message.getRecipients().getPrimaryRecipient().getNumber(),
+                Address = message.Recipients.getPrimaryRecipient().getNumber(),
                 ThreadId = threadId,
-                Body = message.getMessageBody(),
-                DateReceived = date,
+                Body = message.MessageBody,
+                DateReceived = TimeUtil.GetDateTimeMillis(),
                 DateSent = date,
-                Read = false,
+                Read = true,
                 Type = type
             };
 
-            //SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            //long messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);
+            // TODO: ReceiptCount https://github.com/WhisperSystems/Signal-Android/blob/e9b53cc164d7ae2d838cc211dbd88b7fd4f5669e/src/org/thoughtcrime/securesms/database/SmsDatabase.java
+
             long messageId = conn.Insert(insert);
-            // TODO: await DatabaseFactory.getThreadDatabase().update(threadId);
+
+            DatabaseFactory.getThreadDatabase().Update(threadId);
             notifyConversationListeners(threadId);
-            //jobManager.add(new TrimThreadJob(context, threadId));
 
             return insert.MessageId;
-        }
+        }*/
 
 
 
@@ -823,5 +589,81 @@ public void close()
 }
   }
 }*/
+
+        public void SetMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+            List<IdentityKeyMismatch> items = new List<IdentityKeyMismatch>()
+            {
+                new IdentityKeyMismatch(recipientId, identityKey)
+            };
+
+            var message = conn.Get<Message>(messageId);
+
+            message.MismatchedIdentities = items;
+            conn.Update(message);
+        }
+
+        public void AddMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+            var mismatch = new IdentityKeyMismatch(recipientId, identityKey);
+
+
+            var message = conn.Get<Message>(messageId);
+
+            var temp = message.MismatchedIdentities;
+
+            temp.Add(mismatch);
+
+            message.MismatchedIdentities = temp;
+
+            conn.Update(message);
+        }
+
+        public void RemoveMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
+        {
+
+            var mismatch = new IdentityKeyMismatch(recipientId, identityKey);
+            
+
+            var message = conn.Get<Message>(messageId);
+
+            var temp = message.MismatchedIdentities;
+
+            foreach (var identity in temp)
+            {
+                if (identity.Equals(mismatch))
+                {
+                    temp.Remove(identity);
+                }
+
+            }
+            message.MismatchedIdentities = temp;
+
+            conn.Update(message);
+
+        }
+
+        public IEnumerable<MessageRecord> getIdentityConflictMessagesForThread(long threadId)
+        {
+            /*String order = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " ASC";
+            String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " AND " + MmsSmsColumns.MISMATCHED_IDENTITIES + " IS NOT NULL";
+
+            Cursor cursor = queryTables(PROJECTION, selection, order, null);*/
+
+            var query = conn.Table<Message>().Where(m => m.ThreadId.Equals(threadId) && m._mismatchedIdentities != null);//.OrderBy(m => m.DateReceived);
+
+            if (query != null)
+            {
+                //if (!query.Any()) return new List<MessageRecord>();
+                var list = query.ToList();
+                return list.Select(i => new TextMessageRecord(i));
+            }
+
+            return null;
+
+            //setNotifyConverationListeners(threadId);
+
+
+        }
     }
 }

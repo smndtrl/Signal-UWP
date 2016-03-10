@@ -1,0 +1,137 @@
+﻿<UserControl
+    x:Class="Signal.Controls.MessageView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Signal.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="80"
+    d:DesignWidth="256">
+
+    <Grid x:Name="MessageViewGrid" Padding="4" HorizontalAlignment="Right">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="Direction">
+                <VisualState x:Name="Outgoing">
+                    <VisualState.Setters>
+                        <Setter Target="triangleLeft.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="MessageViewGrid.(FrameworkElement.HorizontalAlignment)" Value="Right"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Incoming">
+                    <VisualState.Setters>
+                        <Setter Target="MessageViewGrid.(FrameworkElement.HorizontalAlignment)" Value="Left"/>
+                        <Setter Target="triangleRight.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="BodyType">
+                <VisualState>
+                    <VisualState.Setters>
+                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="KeyExchange">
+                    <VisualState.Setters>
+                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="BodyIconBlock.(UIElement.Visibility)" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="Status">
+                <VisualState  x:Name="None">
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pending">
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Delivered">
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Sent">
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="TopRow" Height="Auto"/>
+            <RowDefinition x:Name="BodyRow" Height="*"/>
+            <RowDefinition x:Name="InfoRow" Height="Auto"/>
+            <RowDefinition x:Name="BottomRow" Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--<Border x:Name="border"
+					Width="40" Height="40"
+					Grid.RowSpan="3" Grid.Column="0"
+					Background="Red">
+                            <Button x:Name="TestButton">
+                                testse
+                            </Button>
+                        </Border>-->
+
+        <!--<controls:AlertView x:Name="AlertView"
+                                           Grid.RowSpan="3" Grid.Column="1"
+                                           Width="40" Height="40"
+                                           Background="Blue"/>-->
+
+        <Path x:Name="triangleLeft"
+					Data="M 0,0 L 0,8 L 16,8 Z"
+					Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}"
+					Grid.Row="0" Grid.Column="2"
+					Margin="10,0,0,0"
+					HorizontalAlignment="Left"/>
+
+        <StackPanel MinWidth="64" MinHeight="32"
+                    HorizontalAlignment="Stretch"
+					Grid.Row="1" Grid.RowSpan="1" Grid.Column="2"
+					Padding="8"  
+					Background="{ThemeResource MessageBubbleBackgroundThemeBrush}"
+					>
+
+            <SymbolIcon x:Name="BodyIconBlock"
+                                        Symbol="Admin"
+                                        Visibility="Collapsed"/>
+
+            <TextBlock x:Name="BodyTextBlock"
+                                       Text="{x:Bind MessageRecord.Body.Body, Mode=OneWay}"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Right"
+                       Style="{StaticResource BodyTextBlockStyle}"/>
+        </StackPanel>
+
+        <StackPanel 
+            MinWidth="64"
+            Grid.Row="2" Grid.Column="2"
+            Padding="8,4,8,4"
+            HorizontalAlignment="Stretch"
+            Orientation="Horizontal"  Background="{ThemeResource MessageBubbleBackgroundThemeBrush}" Opacity="0.8">
+
+            <TextBlock x:Name="DeliveryDateTextBlock"
+                                           Text="{x:Bind MessageRecord.DateSent, Converter={StaticResource DateConverter}, Mode=OneWay}"
+                                           TextWrapping="WrapWholeWords"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+            <controls:StatusView x:Name="StatusView" Width="16" Height="16" />
+
+        </StackPanel>
+
+        <Path x:Name="triangleRight"
+					Data="M 0,0 L 16,0 L 16,8 Z"
+					Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}" Opacity="0.8"
+					Grid.Row="3" Grid.Column="2"
+					Margin="0,0,10,0"
+					HorizontalAlignment="Right"/>
+    </Grid>
+</UserControl>

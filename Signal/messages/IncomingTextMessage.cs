@@ -15,18 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using libaxolotl.util;
 using libtextsecure.messages;
 using libtextsecure.push;
+using Signal.Util;
 using Strilanc.Value;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TextSecure.util;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class IncomingTextMessage
     {
@@ -46,16 +45,16 @@ namespace TextSecure.messages
         }
     };*/
 
-        private readonly String message;
-        private readonly String sender;
-        private readonly uint senderDeviceId;
-        private readonly int protocol;
-        private readonly String serviceCenterAddress;
-        private readonly bool replyPathPresent;
-        private readonly String pseudoSubject;
-        private readonly long sentTimestampMillis;
-        private readonly String groupId;
-        private readonly bool push;
+        public string Message { get; }
+        private string Sender { get; }
+        private uint SenderDeviceId { get; }
+        private int Protocol { get; }
+        private string ServiceCenterAddress { get; }
+        private bool ReplyPathPresent { get; }
+        private string PseudoSubject { get; }
+        public ulong SentTimestampMillis { get; }
+        public string GroupId { get; }
+        private bool Push { get; }
 
         /*public IncomingTextMessage(SmsMessage message)
         {
@@ -71,55 +70,55 @@ namespace TextSecure.messages
             this.push = false;
         }*/
 
-        public IncomingTextMessage(String sender, uint senderDeviceId, long sentTimestampMillis,
+        public IncomingTextMessage(String sender, uint senderDeviceId, ulong sentTimestampMillis,
                                    String encodedBody, May<TextSecureGroup> group)
         {
-            this.message = encodedBody;
-            this.sender = sender;
-            this.senderDeviceId = senderDeviceId;
-            this.protocol = 31337;
-            this.serviceCenterAddress = "GCM";
-            this.replyPathPresent = true;
-            this.pseudoSubject = "";
-            this.sentTimestampMillis = sentTimestampMillis;
-            this.push = true;
+            this.Message = encodedBody;
+            this.Sender = sender;
+            this.SenderDeviceId = senderDeviceId;
+            this.Protocol = 31337;
+            this.ServiceCenterAddress = "GCM";
+            this.ReplyPathPresent = true;
+            this.PseudoSubject = "";
+            this.SentTimestampMillis = sentTimestampMillis;
+            this.Push = true;
 
             if (group.HasValue)
             {
-                this.groupId = GroupUtil.getEncodedId(group.ForceGetValue().getGroupId());
+                this.GroupId = GroupUtil.getEncodedId(group.ForceGetValue().getGroupId());
             }
             else
             {
-                this.groupId = null;
+                this.GroupId = null;
             }
         }
 
-       /* public IncomingTextMessage(Parcel in)
-        {
-            this.message = in.readString();
-            this.sender = in.readString();
-            this.senderDeviceId = in.readInt();
-            this.protocol = in.readInt();
-            this.serviceCenterAddress = in.readString();
-            this.replyPathPresent = (in.readInt() == 1);
-            this.pseudoSubject = in.readString();
-            this.sentTimestampMillis = in.readLong();
-            this.groupId = in.readString();
-            this.push = (in.readInt() == 1);
-        }*/
+        /* public IncomingTextMessage(Parcel in)
+         {
+             this.message = in.readString();
+             this.sender = in.readString();
+             this.senderDeviceId = in.readInt();
+             this.protocol = in.readInt();
+             this.serviceCenterAddress = in.readString();
+             this.replyPathPresent = (in.readInt() == 1);
+             this.pseudoSubject = in.readString();
+             this.sentTimestampMillis = in.readLong();
+             this.groupId = in.readString();
+             this.push = (in.readInt() == 1);
+         }*/
 
         public IncomingTextMessage(IncomingTextMessage message, String newBody)
         {
-            this.message = newBody;
-            this.sender = message.getSender();
-            this.senderDeviceId = message.getSenderDeviceId();
-            this.protocol = message.getProtocol();
-            this.serviceCenterAddress = message.getServiceCenterAddress();
-            this.replyPathPresent = message.isReplyPathPresent();
-            this.pseudoSubject = message.getPseudoSubject();
-            this.sentTimestampMillis = message.getSentTimestampMillis();
-            this.groupId = message.getGroupId();
-            this.push = message.isPush();
+            this.Message = newBody;
+            this.Sender = message.getSender();
+            this.SenderDeviceId = message.getSenderDeviceId();
+            this.Protocol = message.getProtocol();
+            this.ServiceCenterAddress = message.getServiceCenterAddress();
+            this.ReplyPathPresent = message.isReplyPathPresent();
+            this.PseudoSubject = message.getPseudoSubject();
+            this.SentTimestampMillis = message.SentTimestampMillis;
+            this.GroupId = message.GroupId;
+            this.Push = message.IsPush;
         }
 
         public IncomingTextMessage(List<IncomingTextMessage> fragments)
@@ -131,45 +130,41 @@ namespace TextSecure.messages
                 body.Append(message.getMessageBody());
             }
 
-            this.message = body.ToString();
-            this.sender = fragments[0].getSender();
-            this.senderDeviceId = fragments[0].getSenderDeviceId();
-            this.protocol = fragments[0].getProtocol();
-            this.serviceCenterAddress = fragments[0].getServiceCenterAddress();
-            this.replyPathPresent = fragments[0].isReplyPathPresent();
-            this.pseudoSubject = fragments[0].getPseudoSubject();
-            this.sentTimestampMillis = fragments[0].getSentTimestampMillis();
-            this.groupId = fragments[0].getGroupId();
-            this.push = fragments[0].isPush();
+            this.Message = body.ToString();
+            this.Sender = fragments[0].getSender();
+            this.SenderDeviceId = fragments[0].getSenderDeviceId();
+            this.Protocol = fragments[0].getProtocol();
+            this.ServiceCenterAddress = fragments[0].getServiceCenterAddress();
+            this.ReplyPathPresent = fragments[0].isReplyPathPresent();
+            this.PseudoSubject = fragments[0].getPseudoSubject();
+            this.SentTimestampMillis = fragments[0].SentTimestampMillis;
+            this.GroupId = fragments[0].GroupId;
+            this.Push = fragments[0].IsPush;
         }
 
         protected IncomingTextMessage(String sender, String groupId)
         {
-            this.message = "";
-            this.sender = sender;
-            this.senderDeviceId = TextSecureAddress.DEFAULT_DEVICE_ID;
-            this.protocol = 31338;
-            this.serviceCenterAddress = "Outgoing";
-            this.replyPathPresent = true;
-            this.pseudoSubject = "";
-            this.sentTimestampMillis = (long)KeyHelper.getTime();
-            this.groupId = groupId;
-            this.push = true;
+            this.Message = "";
+            this.Sender = sender;
+            this.SenderDeviceId = TextSecureAddress.DEFAULT_DEVICE_ID;
+            this.Protocol = 31338;
+            this.ServiceCenterAddress = "Outgoing";
+            this.ReplyPathPresent = true;
+            this.PseudoSubject = "";
+            this.SentTimestampMillis = (ulong)TimeUtil.GetUnixTimestampMillis();
+            this.GroupId = groupId;
+            this.Push = true;
         }
 
-        public long getSentTimestampMillis()
-        {
-            return sentTimestampMillis;
-        }
 
         public String getPseudoSubject()
         {
-            return pseudoSubject;
+            return PseudoSubject;
         }
 
         public String getMessageBody()
         {
-            return message;
+            return Message;
         }
 
         public IncomingTextMessage withMessageBody(String message)
@@ -179,27 +174,27 @@ namespace TextSecure.messages
 
         public String getSender()
         {
-            return sender;
+            return Sender;
         }
 
         public uint getSenderDeviceId()
         {
-            return senderDeviceId;
+            return SenderDeviceId;
         }
 
         public int getProtocol()
         {
-            return protocol;
+            return Protocol;
         }
 
         public String getServiceCenterAddress()
         {
-            return serviceCenterAddress;
+            return ServiceCenterAddress;
         }
 
         public bool isReplyPathPresent()
         {
-            return replyPathPresent;
+            return ReplyPathPresent;
         }
 
         public bool isSecureMessage()
@@ -212,45 +207,31 @@ namespace TextSecure.messages
             return false;
         }
 
-        public bool isEndSession()
-        {
-            return false;
-        }
+        public bool IsEndSession => false;
 
-        public bool isPush()
-        {
-            return push;
-        }
+        public bool IsPush => Push;
 
-        public String getGroupId()
-        {
-            return groupId;
-        }
-
-        public bool isGroup()
-        {
-            return false;
-        }
+        public bool IsGroup => false;
 
         //@Override
-  public int describeContents()
+        public int describeContents()
         {
             return 0;
         }
 
         //@Override
- /* public void writeToParcel(Parcel out, int flags)
-        {
-    out.writeString(message);
-    out.writeString(sender);
-    out.writeInt(senderDeviceId);
-    out.writeInt(protocol);
-    out.writeString(serviceCenterAddress);
-    out.writeInt(replyPathPresent ? 1 : 0);
-    out.writeString(pseudoSubject);
-    out.writeLong(sentTimestampMillis);
-    out.writeString(groupId);
-    out.writeInt(push ? 1 : 0);
-        }*/
+        /* public void writeToParcel(Parcel out, int flags)
+               {
+           out.writeString(message);
+           out.writeString(sender);
+           out.writeInt(senderDeviceId);
+           out.writeInt(protocol);
+           out.writeString(serviceCenterAddress);
+           out.writeInt(replyPathPresent ? 1 : 0);
+           out.writeString(pseudoSubject);
+           out.writeLong(sentTimestampMillis);
+           out.writeString(groupId);
+           out.writeInt(push ? 1 : 0);
+               }*/
     }
 }

@@ -15,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using libaxolotl.util;
 using libtextsecure;
-using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
 using Signal;
@@ -25,19 +23,14 @@ using Signal.Models;
 using Signal.Tasks;
 using Strilanc.Value;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TextSecure.database;
-using TextSecure.messages;
+using libaxolotl.util;
 using Signal.Push;
 using TextSecure.recipient;
 using TextSecure.util;
 using Signal.Util;
-using GalaSoft.MvvmLight.Messaging;
-using Signal.ViewModel.Messages;
 using Signal.Database;
+using Signal.Messages;
 
 namespace TextSecure
 {
@@ -48,27 +41,23 @@ namespace TextSecure
                                  OutgoingTextMessage message,
                                  long threadId)
         {
-            long type = MessageTypes.BASE_OUTBOX_TYPE;
             //EncryptingSmsDatabase database = DatabaseFactory.getEncryptingSmsDatabase(context);
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
-            Recipients recipients = message.getRecipients();
-            bool keyExchange = message.isKeyExchange();
+            TextMessageDatabase database = DatabaseFactory.getTextMessageDatabase();
+            Recipients recipients = message.Recipients;
+            bool keyExchange = message.IsKeyExchange;
 
             long allocatedThreadId;
 
             if (threadId == -1)
             {
-                allocatedThreadId =  DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
+                allocatedThreadId = DatabaseFactory.getThreadDatabase().GetThreadIdForRecipients(recipients);
             }
             else
             {
                 allocatedThreadId = threadId;
             }
 
-            long messageId = await database.insertMessageOutbox(allocatedThreadId, message, type, TimeUtil.GetDateTimeMillis());
-
-            // notify user interface
-           // TODO: Remove Messenger.Default.Send(new AddMessageMessage() { ThreadId = allocatedThreadId, MessageId = messageId });
+            long messageId = database.InsertMessageOutbox(allocatedThreadId, message, TimeUtil.GetDateTimeMillis());
 
 
             await sendTextMessage(recipients, keyExchange, messageId);
@@ -116,33 +105,32 @@ namespace TextSecure
 
             Recipients recipients = DatabaseFactory.getMmsAddressDatabase().getRecipientsForId(messageRecord.getId());
             sendGroupPush(recipients, messageRecord.getId(), filterRecipientId);
-        }
+        }*/
 
-        public static void resend(Context context, MasterSecret masterSecret, MessageRecord messageRecord)
+        public static void resend(MessageRecord messageRecord)
         {
             try
             {
-                long messageId = messageRecord.getId();
-                boolean forceSms = messageRecord.isForcedSms();
-                boolean keyExchange = messageRecord.isKeyExchange();
+                long messageId = messageRecord.MessageId;
+                bool keyExchange = messageRecord.IsKeyExchange;
 
-                if (messageRecord.isMms())
+               /* if (messageRecord.isMms()) // TODO: media
                 {
                     Recipients recipients = DatabaseFactory.getMmsAddressDatabase(context).getRecipientsForId(messageId);
-                    sendMediaMessage(context, masterSecret, recipients, forceSms, messageId);
+                    sendMediaMessage(recipients, forceSms, messageId);
                 }
                 else
-                {
-                    Recipients recipients = messageRecord.getRecipients();
-                    sendTextMessage(context, recipients, forceSms, keyExchange, messageId);
-                }
+                {*/
+                    Recipients recipients = messageRecord.Recipients;
+                    sendTextMessage(recipients, keyExchange, messageId);
+                //}
             }
-            catch (MmsException e)
+            catch (Exception e)
             {
-                Log.w(TAG, e);
+                Log.Warn(e.Message);
             }
         }
-
+        /*
         private static void sendMediaMessage(Context context, MasterSecret masterSecret,
                                              Recipients recipients, boolean forceSms, long messageId)
       throws MmsException
@@ -158,34 +146,29 @@ namespace TextSecure
             }
         }
         */
-        private async static Task<bool> sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
+        private async static Task sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
         {
-            /*if (isSelfSend(recipients))
+            if (isSelfSend(recipients))
             {
                 sendTextSelf(messageId);
-            }*/
-            //else if (await isPushTextSend(recipients, keyExchange))
-            //{
-            await sendTextPush(recipients, messageId);
-            return true;
-            //}
-            //else
-            //{
-            // throw new NotImplementedException();
-            //sendSms(context, recipients, messageId);
-            // }
+            }
+            else
+            {
+                await sendTextPush(recipients, messageId);
+            }
+
         }
 
-        /*private static void sendTextSelf(long messageId)
+        private static void sendTextSelf(long messageId)
         {
-            MessageDatabase database = DatabaseFactory.getMessageDatabase();
+            var database = DatabaseFactory.getTextMessageDatabase();
 
-            database.markAsSent(messageId);
-            database.markAsPush(messageId);
+            database.MarkAsSent(messageId);
+            database.MarkAsPush(messageId);
 
-            Pair<long, long> messageAndThreadId = database.copyMessageInbox(messageId);
-            database.markAsPush(messageAndThreadId.first());
-        }*//*
+            Pair<long, long> messageAndThreadId = database.CopyMessageInbox(messageId);
+            database.MarkAsPush(messageAndThreadId.first());
+        }/*
 
         private static void sendMediaSelf(Context context, MasterSecret masterSecret, long messageId)
       throws MmsException

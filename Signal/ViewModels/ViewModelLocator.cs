@@ -24,7 +24,9 @@ namespace Signal.ViewModels
         public static string SETTINGS_PAGE_KEY = "SettingsPageKey";
 
         public static string THREADS_PAGE_KEY = "ThreadsPageKey";
-        public static string MESSAGES_PAGE_KEY = "MessagesPageKey";
+        public static string MESSAGES_PAGE_KEY = "ThreadDetailPageKey";
+        public static string MESSAGEDETAIL_PAGE_KEY = "MessageDetailPageKey";
+
         public static string DIRECTORY_PAGE_KEY = "DirectoryPageKey";
 
 
@@ -34,11 +36,13 @@ namespace Signal.ViewModels
 
             var nav = new SignalNavigationService();
             nav.Configure(THREADS_PAGE_KEY, typeof(ThreadMasterPage));
-            nav.Configure(MESSAGES_PAGE_KEY, typeof(MessageDetailPage));
+            nav.Configure(MESSAGES_PAGE_KEY, typeof(ThreadDetailPage));
+            nav.Configure(MESSAGEDETAIL_PAGE_KEY, typeof(MessageDetailsPage));
 
-            nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
+
+            //nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
             nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
-            nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
+            //nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
 
             nav.Configure(DIRECTORY_PAGE_KEY, typeof(DirectoryView));
             nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));
@@ -60,6 +64,8 @@ namespace Signal.ViewModels
             SimpleIoc.Default.Register<ThreadViewModel>();
             //SimpleIoc.Default.Register<ContactViewModel>();
             SimpleIoc.Default.Register<MessageViewModel>();
+            SimpleIoc.Default.Register<MessageDetailViewModel>();
+
             SimpleIoc.Default.Register<DirectoryViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<ProvisionViewModel>();
@@ -75,6 +81,11 @@ namespace Signal.ViewModels
         public MessageViewModel Message
         {
             get { return ServiceLocator.Current.GetInstance<MessageViewModel>(); }
+        }
+
+        public MessageDetailViewModel MessageDetail
+        {
+            get { return ServiceLocator.Current.GetInstance<MessageDetailViewModel>(); }
         }
 
         public ThreadViewModel Thread

@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Entity;
-using Signal.Models;
+﻿using Signal.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,7 @@ using TextSecure.recipient;
 using Windows.Storage;
 
 namespace Signal.Database
-{
+{/*
     public class SignalContext : DbContext
     {
         public DbSet<Contact> Contacts { get; set; }
@@ -32,7 +31,7 @@ namespace Signal.Database
         }
         [DllImport("sqlite3", EntryPoint = "sqlite3_win32_set_directory", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         static extern int SetDirectory(uint directoryType, string directoryPath);
-    }
+    }*/
 }
 
     

@@ -2,7 +2,6 @@
 using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
-using Signal.database.models;
 using Signal.Tasks.Library;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class PushContentReceiveTask : ReceiveTask
+    class PushContentReceiveTask : PushReceivedTask
     {
         private string data;
 

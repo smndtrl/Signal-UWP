@@ -16,62 +16,35 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TextSecure.database;
 using TextSecure.recipient;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingTextMessage
     {
-
-        private readonly Recipients recipients;
-        private readonly String message;
-
-        public OutgoingTextMessage(Recipients recipients, String message)
+        public OutgoingTextMessage(Recipients recipients, string message)
         {
-            this.recipients = recipients;
-            this.message = message;
+            this.Recipients = recipients;
+            this.MessageBody = message;
         }
 
-        protected OutgoingTextMessage(OutgoingTextMessage message, String body)
+        protected OutgoingTextMessage(OutgoingTextMessage message, string body)
         {
-            this.recipients = message.getRecipients();
-            this.message = body;
+            this.Recipients = message.Recipients;
+            this.MessageBody = body;
         }
 
-        public String getMessageBody()
-        {
-            return message;
-        }
+        public string MessageBody { get; }
 
-        public Recipients getRecipients()
-        {
-            return recipients;
-        }
+        public Recipients Recipients { get; }
 
-        public virtual bool isKeyExchange()
-        {
-            return false;
-        }
+        public virtual bool IsKeyExchange => false;
 
-        public virtual bool isSecureMessage()
-        {
-            return false;
-        }
+        public virtual bool IsSecureMessage => false;
 
-        public virtual bool isEndSession()
-        {
-            return false;
-        }
+        public virtual bool IsEndSession => false;
 
-        public virtual bool isPreKeyBundle()
-        {
-            return false;
-        }
+        public virtual bool IsPreKeyBundle => false;
         /*
         public static OutgoingTextMessage from(MessageDatabase.Message record)
         {

@@ -2,7 +2,6 @@
 using libtextsecure.messages;
 using libtextsecure.push;
 using libtextsecure.util;
-using Signal.database.models;
 using Signal.Push;
 using Signal.Tasks.Library;
 using System;
@@ -17,7 +16,7 @@ using TextSecure.util;
 
 namespace Signal.Tasks
 {
-    class WebsocketTask : SendTask
+    class WebsocketTask : UntypedTaskActivity
     {
 
         public WebsocketTask()

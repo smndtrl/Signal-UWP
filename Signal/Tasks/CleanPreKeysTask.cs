@@ -31,12 +31,13 @@ namespace Signal.Tasks
 
         public override void onAdded()
         {
-            throw new NotImplementedException("CleanPreKeysTask onAdded");
+            //throw new NotImplementedException("CleanPreKeysTask onAdded");
         }
 
         protected override string Execute()
         {
-            throw new NotImplementedException("CleanPreKeysTask Execute");
+            return "";
+            //throw new NotImplementedException("CleanPreKeysTask Execute");
         }
         /*
 protected override async Task<string> Execute()

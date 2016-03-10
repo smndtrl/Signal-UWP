@@ -10,6 +10,7 @@
     >
 
     <Grid Background="White">
+        
         <settings:SettingsPage>
             <settings:SettingsCategory Icon="Highlight"  Title="Page1" Description="Test Desc"/>
             <settings:SettingsCategory Icon="Cut" Title="Page2" Description="Another Desc"/>

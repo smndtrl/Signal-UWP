@@ -64,7 +64,7 @@ namespace Signal.ViewModels
                 } else if (State != null && State.Name == "DefaultState")
                 {
                     Debug.WriteLine($"WideState -> Thread #{value.ThreadId}");
-                    DetailFrame.Navigate(typeof(MessageDetailPage), value);
+                    DetailFrame.Navigate(typeof(ThreadDetailPage), value);
                 }
 
 

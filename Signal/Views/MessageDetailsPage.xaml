@@ -1,0 +1,115 @@
+﻿<local:SignalPage
+    x:Class="Signal.Views.MessageDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Views"
+        xmlns:models="using:Signal.Models"
+
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:controls="using:Signal.Controls"
+    xmlns:resources="using:Signal.Resources"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <Binding Source="{Binding MessageDetail, Source={StaticResource Locator}}"/>
+    </Page.DataContext>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="MessageDetailsVerifyButton"
+                          Command="{x:Bind ViewModel.VerifyIdentityCommand}"
+                          Icon="Important"/>
+            <AppBarButton x:Name="MessageDetailsResendButton"
+                          Command="{x:Bind ViewModel.ResendCommand}"
+                          Icon="RepeatAll"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Page.TopAppBar>
+        <CommandBar Template="{StaticResource CommandBarNoMore}">
+            <CommandBar.Content>
+                <Grid Background="{StaticResource SignalDimmedBrush}" Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="MessageDetailsTitleText" x:Uid="MessageDetailsTitleText"
+					   Style="{ThemeResource BaseTextBlockStyle}"
+					   Foreground="White"
+					   Text="Message details" VerticalAlignment="Center"/>
+                </Grid>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.TopAppBar>
+
+    <Page.Resources>
+    </Page.Resources>
+
+    <Grid x:Name="MessageDetailsPageGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Sent"/>
+        <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.Message.DateSent, Converter={StaticResource DateConverter}, Mode=OneWay}"/>
+
+        <TextBlock Grid.Row="1" Text="Received"/>
+        <TextBlock Grid.Row="1"  Grid.Column="1" Text="{x:Bind ViewModel.Message.DateReceived, Converter={StaticResource DateConverter}, Mode=OneWay}"/>
+
+        <TextBlock Grid.Row="2" Text="Received"/>
+        <TextBlock Grid.Row="2"  Grid.Column="1" Text="{x:Bind ViewModel.Message.DateReceived, Converter={StaticResource DateConverter}, Mode=OneWay}"/>
+
+        <ListView x:Name="MessageDetailsRecipientsListView"
+                  Grid.Row="3"
+                  Grid.ColumnSpan="2"
+                  ItemsSource="{x:Bind ViewModel.Message.Recipients.RecipientList}"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                  SelectedItem="{Binding SelectedRecipient, Mode=TwoWay}"
+				  >
+            <ListView.ItemTemplate>
+                <DataTemplate x:Name="MessageDetailsListViewTemplate" x:DataType="models:Recipient">
+                    <Grid>
+
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <!--<interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Holding">
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>-->
+
+                        <TextBlock 
+                            Text="{Binding ShortString, Mode=OneWay}"/>
+
+
+
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</local:SignalPage>
+
+
+

@@ -7,6 +7,7 @@ using Signal.database.loaders;
 using Signal.Models;
 using Signal.ViewModel.Messages;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -15,7 +16,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure;
 using TextSecure.database;
-using TextSecure.messages;
 using TextSecure.recipient;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +23,9 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using Signal.Controls;
+using Signal.Database;
+using Signal.Messages;
 using Signal.Resources;
 using Signal.Views;
 
@@ -36,13 +39,13 @@ namespace Signal.ViewModels
 
         //private Dictionary<long, MessageCollection> Cache = new Dictionary<long, MessageCollection>();
 
-        
+
 
         public MessageViewModel(IDataService service, INavigationServiceSignal navService)
         {
             _dataService = service;
             _navigationService = navService;
-        
+
         }
 
         private RelayCommand _loaded;
@@ -124,8 +127,8 @@ namespace Signal.ViewModels
             }
         }
 
-        private ObservableCollection<Message> _messages;
-        public ObservableCollection<Message> Messages
+        private MessageCollection _messages;
+        public MessageCollection Messages
         {
             get { return _messages; }
             set { Set(ref _messages, value); RaisePropertyChanged("Messages"); }
@@ -153,10 +156,10 @@ namespace Signal.ViewModels
                 return _sendCommand ?? (_sendCommand = new RelayCommand(
                     async () =>
                     {
-                       var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
-                       MessageText = string.Empty;
+                        var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
+                        MessageText = string.Empty;
 
-                       await MessageSender.send(message, SelectedThread.ThreadId);
+                        await MessageSender.send(message, SelectedThread.ThreadId);
                     },
                     () => !MessageText.Equals(string.Empty)));
             }
@@ -170,9 +173,60 @@ namespace Signal.ViewModels
                 return _attachCommand ?? (_attachCommand = new RelayCommand(
                     async () =>
                     {
- 
+
                     },
-                    () => false )); // TODO: attachment enable
+                    () => false)); // TODO: attachment enable
+            }
+        }
+
+
+        private IEnumerable _selectedMessages = new List<object>();
+        public IEnumerable SelectedMessages
+        {
+            get { return _selectedMessages; }
+            set
+            {
+                if (value != _selectedMessages)
+                {
+                    Set(ref _selectedMessages, value);
+                    RaisePropertyChanged();
+                }
+                
+            }
+        }
+
+        private ListViewSelectionMode _listViewMultiSelect = ListViewSelectionMode.Single;
+        public ListViewSelectionMode ListViewMultiSelect
+        {
+            get { return _listViewMultiSelect; }
+            private set
+            {
+               Set(ref _listViewMultiSelect, value);
+                RaisePropertyChanged(); 
+            }
+        }
+
+        private RelayCommand _multiSelectCommand;
+        public RelayCommand MultiSelectCommand
+        {
+            get
+            {
+                return _multiSelectCommand ?? (_multiSelectCommand = new RelayCommand(
+                    () =>
+                    {
+                        switch (ListViewMultiSelect)
+                        {
+                            case ListViewSelectionMode.Multiple:
+                                ListViewMultiSelect = ListViewSelectionMode.Single;
+                                break;
+                            case ListViewSelectionMode.Single:
+                                ListViewMultiSelect = ListViewSelectionMode.Multiple;
+                                break;
+                            default:
+                                break;
+                        }
+                                            },
+                    () => true));
             }
         }
 
@@ -180,27 +234,79 @@ namespace Signal.ViewModels
          * Messages
          */
 
-        public RelayCommand<Message> DeleteCommand;
-
-        private RelayCommand<Message> _updateCommand;
-
-        public event EventHandler AmbientColorChanged;
-
-        public RelayCommand<Message> UpdateCommand
+        private RelayCommand _deletedCommand;
+        public RelayCommand DeleteCommand
         {
             get
             {
-                return _updateCommand ?? (_updateCommand = new RelayCommand<Message>(
-                   message =>
-                {
-                    //DatabaseFactory.getTextMessageDatabase().Test(message.MessageId);
+                return _deletedCommand ?? (_deletedCommand = new RelayCommand(
+                   () =>
+                   {
+                       foreach (var selected in SelectedMessages)
+                       {
+                           var record = selected as MessageRecord;
+                           if (record != null)
+                           {
+                               DatabaseFactory.getTextMessageDatabase().Delete(record.MessageId);
+                           }
 
-                    Debug.WriteLine($"Marked as sent:");
-                },
+                       }
+
+                   },
+                    () => true));
+            }
+        }
+
+        private RelayCommand<MessageRecord> _detailsCommand;
+
+        public RelayCommand<MessageRecord> DetailsCommand
+        {
+            get
+            {
+                return _detailsCommand ?? (_detailsCommand = new RelayCommand<MessageRecord>(
+                   message =>
+                   {
+                       _navigationService.NavigateTo(ViewModelLocator.MESSAGEDETAIL_PAGE_KEY, message);
+                   },
                     message => true));
             }
         }
 
+        private RelayCommand<object> _confirmIdentityCommand;
+
+        public RelayCommand<object> ConfirmIdentityCommand
+        {
+            get
+            {
+                return _confirmIdentityCommand ?? (_confirmIdentityCommand = new RelayCommand<object>(
+                   async obj =>
+                   {
+
+                       var record = obj as MessageRecord;
+
+                       if (record.MismatchedIdentities == null) return;
+
+                       var dialog = new ConfirmIdentityDialog(record);
+                       var result = await dialog.ShowAsync();
+
+                       switch (result)
+                       {
+                           case ContentDialogResult.Primary:
+                               break;
+                           case ContentDialogResult.Secondary:
+                               break;
+                           case ContentDialogResult.None:
+                               break;
+                       }
+
+                       Debug.WriteLine($"Marked as sent:");
+                   },
+                   record => true));
+            }
+        }
+
+
+        public event EventHandler AmbientColorChanged;
         public SolidColorBrush AmbientColorBrush = new SolidColorBrush((Color)Application.Current.Resources["SignalBlue"]);
 
         private Color _ambientColor = (Color)Application.Current.Resources["SignalBlue"];
@@ -221,6 +327,35 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _phoneCommand;
+        public RelayCommand PhoneCommand
+        {
+            get
+            {
+                return _phoneCommand ?? (_phoneCommand = new RelayCommand(
+                    () => { return; },
+                    () => false)
+                    );
+            }
+        }
+
+        private RelayCommand _resetSessionCommand;
+        public RelayCommand ResetSessionCommand
+        {
+            get
+            {
+                return _resetSessionCommand ?? (_resetSessionCommand = new RelayCommand(
+                    async () =>
+                    {
+                        var endSessionMessage = new OutgoingEndSessionMessage(new OutgoingTextMessage(this.SelectedThread.Recipients, "TERMINATE"));
+
+                        await MessageSender.send(endSessionMessage, this.SelectedThread.ThreadId);
+                    },
+                    () => true)
+                    );
+            }
+        }
+
         public void NavigateTo(NavigationEventArgs args)
         {
 
@@ -235,7 +370,7 @@ namespace Signal.ViewModels
             }
 
             SelectedThread = thread;
-           // _messages = null;
+            // _messages = null;
             Messages = new MessageCollection(_dataService, thread.ThreadId);
             Debug.WriteLine($"{GetType().Name}: Activate with Thread #{thread.ThreadId}");
 

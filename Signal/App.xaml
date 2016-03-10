@@ -6,7 +6,7 @@
     xmlns:viewmodels="using:Signal.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     x:Class="Signal.App"
-    RequestedTheme="Light">
+    RequestedTheme="Dark">
 
     <Application.Resources>
 
@@ -25,8 +25,8 @@
             </ResourceDictionary.MergedDictionaries>
 
 
-            
-            
+
+            <resource:DebugConverter x:Key="DebugConverter" />
             <resource:DateConverter x:Key="DateConverter" />
             <resource:RadioConverter x:Key="RadioConverter" />
             <resource:ContactRetriever x:Key="ContactRetriever" />

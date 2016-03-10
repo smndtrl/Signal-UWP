@@ -31,7 +31,7 @@ namespace TextSecure.recipient
 
         /*
             private final Set<RecipientsModifiedListener> listeners = Collections.newSetFromMap(new WeakHashMap<RecipientsModifiedListener, Boolean>());*/
-            private readonly List<Recipient> recipients;
+            public List<Recipient> RecipientList { get; private set; }
 
         private Uri ringtone = null;
         private long mutedUntil = 0;
@@ -50,7 +50,7 @@ namespace TextSecure.recipient
 
         public Recipients(List<Recipient> recipients, /*RecipientsPreferences?*/object preferences)
         {
-            this.recipients = recipients;
+            this.RecipientList = recipients;
 
         }
         /*
@@ -177,7 +177,7 @@ namespace TextSecure.recipient
         {
             get
             {
-                return this.recipients.Count == 0;
+                return this.RecipientList.Count == 0;
             }
         }
 
@@ -190,14 +190,14 @@ namespace TextSecure.recipient
         {
             get
             {
-                return this.recipients.Count == 1;
+                return this.RecipientList.Count == 1;
             }
         }
 
         public Recipient getPrimaryRecipient() // TODO: null
         {
             if (!IsEmpty)
-                return this.recipients[0];
+                return this.RecipientList[0];
             else
                 return null;
         }
@@ -207,7 +207,7 @@ namespace TextSecure.recipient
             get
             {
                 if (!IsEmpty)
-                    return this.recipients[0];
+                    return this.RecipientList[0];
                 else
                     return null;
             }
@@ -215,15 +215,15 @@ namespace TextSecure.recipient
 
         public List<Recipient> getRecipientsList()
         {
-            return this.recipients;
+            return this.RecipientList;
         }
         
         public long[] getIds()
         {
-            long[] ids = new long[recipients.Count];
-            for (int i = 0; i < recipients.Count; i++)
+            long[] ids = new long[RecipientList.Count];
+            for (int i = 0; i < RecipientList.Count; i++)
             {
-                ids[i] = recipients[i].getRecipientId();
+                ids[i] = RecipientList[i].getRecipientId();
             }
             return ids;
         }
@@ -280,11 +280,11 @@ namespace TextSecure.recipient
             {
                 String fromString = "";
 
-                for (int i = 0; i < recipients.Count; i++)
+                for (int i = 0; i < RecipientList.Count; i++)
                 {
-                    fromString += recipients[i].ShortString;
+                    fromString += RecipientList[i].ShortString;
 
-                    if (i != recipients.Count - 1)
+                    if (i != RecipientList.Count - 1)
                         fromString += ", ";
                 }
 

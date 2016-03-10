@@ -25,9 +25,9 @@ namespace Signal.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageDetailPage : SignalPage
+    public sealed partial class ThreadDetailPage : SignalPage
     {
-        private static DependencyProperty _threadProperty = DependencyProperty.Register("Thread", typeof(Thread), typeof(MessageDetailPage), new PropertyMetadata(null));
+        private static DependencyProperty _threadProperty = DependencyProperty.Register("Thread", typeof(Thread), typeof(ThreadDetailPage), new PropertyMetadata(null));
 
         public static DependencyProperty ThreadProperty { get { return _threadProperty; } }
 
@@ -45,7 +45,7 @@ namespace Signal.Views
             }
         }
 
-        public MessageDetailPage()
+        public ThreadDetailPage()
         {
             this.InitializeComponent();
         }
