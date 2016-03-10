@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using libaxolotl;
+using Signal.Util;
 
 namespace TextSecure.crypto.storage
 {
@@ -94,20 +96,49 @@ namespace TextSecure.crypto.storage
 
         public PreKeyRecord LoadPreKey(uint preKeyId)
         {
-            var preKey = conn.Get<PreKeyRecordI>(preKeyId);
-            return new PreKeyRecord(preKey.Record);
+            try
+            {
+                var preKey = conn.Get<PreKeyRecordI>(preKeyId);
+                return new PreKeyRecord(preKey.Record);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidKeyIdException(e);
+            }
+
         }
 
+        [DebuggerHidden] // please do not break
         public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
-            var signedPreKey = conn.Get<SignedPreKeyRecordI>(signedPreKeyId);
-            return new SignedPreKeyRecord(signedPreKey.Record);
+            try
+            {
+                var signedPreKey = conn.Get<SignedPreKeyRecordI>(signedPreKeyId);
+                return new SignedPreKeyRecord(signedPreKey.Record);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidKeyIdException(e);
+            }
+            
         }
 
         public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
-            var query = conn.Table<SignedPreKeyRecordI>().Where(v => true);
-            return query.ToList().Select(s => new SignedPreKeyRecord(s.Record)).ToList();
+            List<SignedPreKeyRecord> results = new List<SignedPreKeyRecord>();
+
+            try
+            {
+                var query = conn.Table<SignedPreKeyRecordI>().Where(v => true);
+                results = query.ToList().Select(s => new SignedPreKeyRecord(s.Record)).ToList();
+            }
+            catch (Exception e)
+            {
+                Log.Warn(e.Message);
+            }
+
+            return results;
+
         }
 
         public void RemovePreKey(uint preKeyId)

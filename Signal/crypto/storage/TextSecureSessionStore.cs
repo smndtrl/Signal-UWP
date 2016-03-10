@@ -84,7 +84,7 @@ namespace TextSecure.crypto.storage
             var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId == deviceId);
 
-            if (query != null && query.Count() > 0)
+            if (query != null && query.Any())
             {
                 return new SessionRecord(query.First().Record);
             }

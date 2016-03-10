@@ -128,6 +128,10 @@ namespace Signal.Tasks
                 Log.Warn(e);
                 handleUntrustedIdentityMessage(envelope, smsMessageId);
             }
+            catch (Exception e)
+            {
+                Log.Warn($"Unexpected Exception");
+            }
         }
 
         private void handleEndSessionMessage(TextSecureEnvelope envelope,
