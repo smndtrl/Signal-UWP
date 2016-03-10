@@ -8,6 +8,7 @@
 
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="Black" />
+            <SolidColorBrush x:Key="MessageBubbleBackgroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SystemColorButtonFaceColor">#ff2090ea</Color>

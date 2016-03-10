@@ -115,12 +115,18 @@
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
     <Compile Include="Controls\AlertView.cs" />
+    <Compile Include="Controls\AvatarView.cs" />
     <Compile Include="Controls\ConfirmIdentityDialog.xaml.cs">
       <DependentUpon>ConfirmIdentityDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DataTriggerBehavior.cs" />
-    <Compile Include="Controls\DeliveryStatusView.cs" />
-    <Compile Include="Controls\MessageBubble.cs" />
+    <Compile Include="Controls\ListBoxSelectedItemsBehavior.cs" />
+    <Compile Include="Controls\MessageView.xaml.cs">
+      <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatusView.xaml.cs">
+      <DependentUpon>StatusView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TextView.cs" />
     <Compile Include="Controls\ThumbnailView.cs" />
     <Compile Include="crypto\IdentityKeyUtil.cs" />
@@ -194,6 +200,7 @@
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
     <Compile Include="Resources\SignalNavigationService.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
+    <Compile Include="Tasks\CreateSignedPreKeyTask.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
     <Compile Include="Tasks\Library\TaskStorage.cs" />
@@ -216,6 +223,7 @@
     <Compile Include="Util\GroupUtil.cs" />
     <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\Hex.cs" />
+    <Compile Include="Util\JsonSerializers.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\LRUCache.cs" />
     <Compile Include="Util\MessageSender.cs" />
@@ -226,6 +234,7 @@
     <Compile Include="Util\Util.cs" />
     <Compile Include="ViewModels\IAmbientColor.cs" />
     <Compile Include="ViewModels\INavigableViewModel.cs" />
+    <Compile Include="ViewModels\MessageDetailViewModel.cs" />
     <Compile Include="ViewModels\SplashViewModel.cs" />
     <Compile Include="ViewModels\Messages.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
@@ -243,8 +252,11 @@
     </Compile>
     <Compile Include="Views\IInputAwarePage.cs" />
     <Compile Include="Views\ItemClickCommand.cs" />
-    <Compile Include="Views\MessageDetailPage.xaml.cs">
-      <DependentUpon>MessageDetailPage.xaml</DependentUpon>
+    <Compile Include="Views\MessageDetailsPage.xaml.cs">
+      <DependentUpon>MessageDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThreadDetailPage.xaml.cs">
+      <DependentUpon>ThreadDetailPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DirectoryView.xaml.cs">
       <DependentUpon>DirectoryView.xaml</DependentUpon>
@@ -292,6 +304,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\StatusView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -316,7 +336,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MessageDetailPage.xaml">
+    <Page Include="Views\MessageDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThreadDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

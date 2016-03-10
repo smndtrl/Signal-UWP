@@ -1,50 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Signal.Models;
+using Signal.Controls;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Signal.Controls
 {
-    public enum DeliveryStatus
-    {
-        Pending = 0,
-        Sent = 1,
-        Delivered = 2
-    }
+    
 
-    public sealed class DeliveryStatusView : Control
+    public sealed partial class StatusView : UserControl
     {
-        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(DeliveryStatus), typeof(DeliveryStatusView), new PropertyMetadata(DeliveryStatus.Pending, new PropertyChangedCallback(OnStateChanged)));
-
-        public DeliveryStatus State
+        public enum Status
         {
-            get { return (DeliveryStatus)GetValue(StateProperty); }
+            Pending = 0,
+            Sent = 1,
+            Delivered = 2,
+            Failed = 3
+        }
+
+        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(Status), typeof(StatusView), new PropertyMetadata(Status.Pending, new PropertyChangedCallback(OnStateChanged)));
+
+        public Status State
+        {
+            get { return (Status)GetValue(StateProperty); }
             set { SetValue(StateProperty, value); }
         }
 
         private static void OnStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as DeliveryStatusView;
+            var control = d as StatusView;
             if (control != null)
             {
-                control.UpdateState((DeliveryStatus)e.NewValue);
+                control.UpdateState((Status)e.NewValue);
             }
         }
 
-        
-
-        public DeliveryStatusView()
+        public StatusView()
         {
-            this.DefaultStyleKey = typeof(DeliveryStatusView);
+            this.InitializeComponent();
             DataContextChanged += OnDataContextChanged;
         }
 
@@ -54,27 +60,26 @@ namespace Signal.Controls
             var m = this.DataContext as MessageRecord;
             if (m != null)
             {
-                UpdateState(m.IsPending ? DeliveryStatus.Pending : (m.IsDelivered ? DeliveryStatus.Delivered : DeliveryStatus.Sent));
+                UpdateState(m.IsPending ? Status.Pending : (m.IsDelivered ? Status.Delivered : Status.Sent));
 
             }
         }
-        private void UpdateState(DeliveryStatus status)
+        private void UpdateState(Status status)
         {
             switch (status)
             {
-                case DeliveryStatus.Pending:
+                case Status.Pending:
                     VisualStateManager.GoToState(this, "Pending", true);
                     break;
-                case DeliveryStatus.Sent:
+                case Status.Sent:
                     VisualStateManager.GoToState(this, "Sent", true);
                     break;
-                case DeliveryStatus.Delivered:
+                case Status.Delivered:
                     VisualStateManager.GoToState(this, "Delivered", true);
                     break;
                 default:
                     break;
             }
         }
-
     }
 }

@@ -7,133 +7,6 @@
 	xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
 	xmlns:interactions="using:Microsoft.Xaml.Interactions.Core">
 
-    <Style TargetType="control:MessageBubble">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:MessageBubble">
-                    <Grid x:Name="MessageGrid" Padding="4" HorizontalAlignment="Right" Background="BlueViolet">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="Direction">
-                                <VisualState x:Name="Outgoing">
-                                    <VisualState.Setters>
-                                        <Setter Target="triangleLeft.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="border.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="MessageGrid.(FrameworkElement.HorizontalAlignment)" Value="Right"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Incoming">
-                                    <VisualState.Setters>
-                                        <Setter Target="triangleRight.(UIElement.Visibility)" Value="Collapsed"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="BodyType">
-                                <VisualState>
-                                    <VisualState.Setters>
-                                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Visible"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="KeyExchange">
-                                    <VisualState.Setters>
-                                        <Setter Target="BodyTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="BodyIconBlock.(UIElement.Visibility)" Value="Visible"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="Status">
-                                <VisualState  x:Name="None">
-                                    <VisualState.Setters>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Pending">
-                                    <VisualState.Setters>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Delivered">
-                                    <VisualState.Setters>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Sent">
-                                    <VisualState.Setters>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="TopRow" Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition x:Name="BottomRow" Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Border x:Name="border"
-					Width="40" Height="40"
-					Grid.RowSpan="3" Grid.Column="0"
-					Background="Red">
-                            <Button x:Name="TestButton">
-                                testse
-                            </Button>
-                        </Border>
-                        
-                        <control:AlertView x:Name="AlertView"
-                                           Grid.RowSpan="3" Grid.Column="1"
-                                           Width="40" Height="40"
-                                           Background="Blue"/>
-
-                        <Path x:Name="triangleLeft"
-					Data="M 0,0 L 0,8 L 16,8 Z"
-					Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}"
-					Grid.Row="0" Grid.Column="2"
-					Margin="10,0,0,0"
-					HorizontalAlignment="Left"/>
-
-                        <StackPanel
-					Grid.Row="1"
-					Padding="8"  
-					Background="{ThemeResource MessageBubbleBackgroundThemeBrush}"
-					Grid.RowSpan="1" Grid.Column="2">
-
-                            <SymbolIcon x:Name="BodyIconBlock"
-                                        Symbol="Admin"
-                                        Visibility="Collapsed"/>
-                            
-                            <TextBlock x:Name="BodyTextBlock"
-                                       Text="{Binding Body.Body, Mode=OneWay}"
-                                       TextWrapping="WrapWholeWords"
-                                       HorizontalAlignment="Right"/>
-
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock x:Name="DeliveryDateTextBlock"
-                                           Text="{Binding DateSent, Converter={StaticResource DateConverter}, Mode=OneWay}"
-                                           TextWrapping="WrapWholeWords"
-                                           Style="{StaticResource CaptionTextBlockStyle}"/>
-                                <control:DeliveryStatusView x:Name="DeliveryStatusView"
-                                                            Width="16" Height="16"
-                                                            />
-                                <!--<ContentPresenter x:Name="deliveryStatusPresenter" ContentTemplate="{StaticResource DeliveryStatus}"/>-->
-
-                            </StackPanel>
-                        </StackPanel>
-
-                        <Path x:Name="triangleRight"
-					Data="M 0,0 L 16,0 L 16,8 Z"
-					Fill="{ThemeResource MessageBubbleBackgroundThemeBrush}"
-					Grid.Row="2" Grid.Column="2"
-					Margin="0,0,10,0"
-					HorizontalAlignment="Right"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
 
     <Style TargetType="control:AlertView">
@@ -173,57 +46,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="control:DeliveryStatusView">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:DeliveryStatusView">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="DeliveryStatus">
-                                <VisualState x:Name="Pending">
-                                    <VisualState.Setters>
-                                        <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Visible"/>
-                                        <Setter Target="DeliveryStatusPendingProgessRing.IsActive" Value="True"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Sent">
-                                    <VisualState.Setters>
-                                        <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Visible"/>
-                                        <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Collapsed"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Delivered">
-                                    <VisualState.Setters>
-                                        <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Visible"/>
-                                        <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Collapsed"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <StackPanel x:Name="DeliveryStatusStackPanel">
-                            <Image x:Name="DeliveryStatusDeliveredImage" 
-                                           Visibility="Collapsed"
-                                           Width="16" Height="16" Source="ms-appx:///Assets/ic_done_all_white_18dp.png"/>
-                            <Image x:Name="DeliveryStatusSentImage" 
-                                           Visibility="Collapsed"
-                                           Width="16" Height="16" Source="ms-appx:///Assets/ic_done_white_18dp.png"/>
-                            <ProgressRing x:Name="DeliveryStatusPendingProgessRing" 
-                                                  Visibility="Collapsed"
-                                                  Width="12" Height="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style TargetType="control:ThumbnailView">
         <Setter Property="Template">
@@ -243,6 +65,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="control:TextView">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="control:AvatarView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="control:AvatarView">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"

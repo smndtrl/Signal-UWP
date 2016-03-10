@@ -152,35 +152,7 @@ namespace Signal.Database
 
         }
 
-        /*private LinkedList<IdentityKeyMismatch> getMismatches(String document)
-        {
-            try
-            {
-                if (document.Equals(""))
-                {
-                    return JsonUtil.fromJson<IdentityKeyMismatchList>(document).getList();
-                    //return JsonUtils.fromJson(document, IdentityKeyMismatchList.class).getList();
-                }
-            }
-            catch (IOException e)
-            {
-                //Log.w(TAG, e);
-            }
-
-            return new LinkedList<IdentityKeyMismatch>();
-        }*/
-
-        /*protected DisplayRecord.Body getBody(string body, long type)
-        {
-            if (MessageTypes.isSymmetricEncryption(type))
-            {
-                return new DisplayRecord.Body(body, false);
-            }
-            else
-            {
-                return new DisplayRecord.Body(body, true);
-            }
-        }*/
+  
 
         #region SmsDatabase
 
@@ -191,7 +163,7 @@ namespace Signal.Database
 
             var message = conn.Get<Message>(messageId);
 
-            message.Type = (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
+            message.Type = message.Type & (MessageTypes.TOTAL_MASK - maskOff) | maskOn;
             conn.Update(message);
 
             DatabaseFactory.getThreadDatabase().Refresh(message.ThreadId);
@@ -287,6 +259,8 @@ namespace Signal.Database
         public void MarkAsSending(long id)
         {
             UpdateTypeBitmask(id, MessageTypes.BASE_TYPE_MASK, MessageTypes.BASE_SENDING_TYPE);
+            var tmp = new TextMessageRecord(Get(id)); // TODO: debug
+
         }
 
         public void MarkAsSent(long id)
@@ -327,22 +301,24 @@ namespace Signal.Database
             return new Pair<long, long>(messageId, threadId);
         }
 
-        protected long InsertMessageOutbox(long threadId, OutgoingTextMessage message,
-                                     long type, bool forceSms, ulong date)
+        public long InsertMessageOutbox(long threadId, OutgoingTextMessage message, DateTime date)
         {
+            var type = MessageTypes.BASE_OUTBOX_TYPE;
+
             if (message.IsKeyExchange) type |= MessageTypes.KEY_EXCHANGE_BIT;
             else if (message.IsSecureMessage) type |= MessageTypes.SECURE_MESSAGE_BIT;
             else if (message.IsEndSession) type |= MessageTypes.END_SESSION_BIT;
-            if (forceSms) type |= MessageTypes.MESSAGE_FORCE_SMS_BIT;
 
             var insert = new Message();
-            insert.Address = message.Recipients.getPrimaryRecipient().getNumber(); // PhoneNumberUtils.formatNumber(message.Recipients.getPrimaryRecipient().getNumber()); // TODO: 
+            insert.Address = message.Recipients.PrimaryRecipient.Number; // PhoneNumberUtils.formatNumber(message.Recipients.getPrimaryRecipient().getNumber()); // TODO: 
             insert.ThreadId = threadId;
             insert.Body = message.MessageBody;
-            insert.DateReceived = TimeUtil.GetDateTime(date);
-            insert.DateSent = TimeUtil.GetDateTime(date);
+            insert.DateReceived = TimeUtil.GetDateTimeMillis();
+            insert.DateSent = date;
             insert.Read = true;
             insert.Type = type;
+
+            var tmp = new TextMessageRecord(insert); // TODO: debug
 
             conn.Insert(insert);
 
@@ -506,11 +482,11 @@ namespace Signal.Database
             return ciphertext;
         }*/
 
-        public long InsertMessageOutbox(long threadId,
+        /*public long InsertMessageOutbox(long threadId,
                                         OutgoingTextMessage message,
                                         DateTime timestamp)
         {
-            long type = MessageTypes.BASE_OUTBOX_TYPE;
+            
 
             /*if (masterSecret.getMasterSecret().isPresent())
             {
@@ -520,10 +496,10 @@ namespace Signal.Database
             else {
                 message = message.withBody(getAsymmetricEncryptedBody(masterSecret.getAsymmetricMasterSecret().get(), message.getMessageBody()));
                 type |= Types.ENCRYPTION_ASYMMETRIC_BIT;
-            }*/
+            }
 
             return InsertMessageOutbox(threadId, message, type, timestamp);
-        }
+        }*/
         /*
         public Pair<Long, Long> insertMessageInbox(@NonNull MasterSecretUnion masterSecret,
                                                    @NonNull IncomingTextMessage message)

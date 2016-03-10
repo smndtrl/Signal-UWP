@@ -12,13 +12,19 @@
      HorizontalAlignment="Stretch">
 
     <ContentDialog.PrimaryButtonText>
-        Primary
+        Accept
     </ContentDialog.PrimaryButtonText>
     <ContentDialog.SecondaryButtonText>
-        Secondary
+        Reject
     </ContentDialog.SecondaryButtonText>
     
     <Grid>
-        <TextBlock>asdfasd</TextBlock>
+        <TextBlock x:Name="ConfirmIdentityDialogBodyText"  x:Uid="ConfirmIdentityDialogBodyText"
+                   TextWrapping="Wrap"> 
+            The
+        identifying key material has changed. This could either mean that someone is trying to
+        intercept your communication, or that your contact simply re-installed Signal and now has a new
+        identity key.
+        </TextBlock>
     </Grid>
 </ContentDialog>

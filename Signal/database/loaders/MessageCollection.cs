@@ -70,6 +70,7 @@ namespace Signal.database.loaders
             );
         }
 
+
         protected override bool HasMoreItemsInternal()
         {
             return Count < max;

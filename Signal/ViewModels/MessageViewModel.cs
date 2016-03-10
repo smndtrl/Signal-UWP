@@ -7,6 +7,7 @@ using Signal.database.loaders;
 using Signal.Models;
 using Signal.ViewModel.Messages;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -126,8 +127,8 @@ namespace Signal.ViewModels
             }
         }
 
-        private ObservableCollection<MessageRecord> _messages;
-        public ObservableCollection<MessageRecord> Messages
+        private MessageCollection _messages;
+        public MessageCollection Messages
         {
             get { return _messages; }
             set { Set(ref _messages, value); RaisePropertyChanged("Messages"); }
@@ -178,25 +179,95 @@ namespace Signal.ViewModels
             }
         }
 
+
+        private IEnumerable _selectedMessages = new List<object>();
+        public IEnumerable SelectedMessages
+        {
+            get { return _selectedMessages; }
+            set
+            {
+                if (value != _selectedMessages)
+                {
+                    Set(ref _selectedMessages, value);
+                    RaisePropertyChanged();
+                }
+                
+            }
+        }
+
+        private ListViewSelectionMode _listViewMultiSelect = ListViewSelectionMode.Single;
+        public ListViewSelectionMode ListViewMultiSelect
+        {
+            get { return _listViewMultiSelect; }
+            private set
+            {
+               Set(ref _listViewMultiSelect, value);
+                RaisePropertyChanged(); 
+            }
+        }
+
+        private RelayCommand _multiSelectCommand;
+        public RelayCommand MultiSelectCommand
+        {
+            get
+            {
+                return _multiSelectCommand ?? (_multiSelectCommand = new RelayCommand(
+                    () =>
+                    {
+                        switch (ListViewMultiSelect)
+                        {
+                            case ListViewSelectionMode.Multiple:
+                                ListViewMultiSelect = ListViewSelectionMode.Single;
+                                break;
+                            case ListViewSelectionMode.Single:
+                                ListViewMultiSelect = ListViewSelectionMode.Multiple;
+                                break;
+                            default:
+                                break;
+                        }
+                                            },
+                    () => true));
+            }
+        }
+
         /*
          * Messages
          */
 
-        public RelayCommand<Message> DeleteCommand;
-
-        private RelayCommand<Message> _updateCommand;
-
-        public RelayCommand<Message> UpdateCommand
+        private RelayCommand _deletedCommand;
+        public RelayCommand DeleteCommand
         {
             get
             {
-                return _updateCommand ?? (_updateCommand = new RelayCommand<Message>(
-                   message =>
-                {
-                    //DatabaseFactory.getTextMessageDatabase().Test(message.MessageId);
+                return _deletedCommand ?? (_deletedCommand = new RelayCommand(
+                   () =>
+                   {
+                       foreach (var selected in SelectedMessages)
+                       {
+                           var record = selected as MessageRecord;
+                           if (record != null)
+                           {
+                               DatabaseFactory.getTextMessageDatabase().Delete(record.MessageId);
+                           }
 
-                    Debug.WriteLine($"Marked as sent:");
-                },
+                       }
+
+                   },
+                    () => true));
+            }
+        }
+
+        private RelayCommand<MessageRecord> _detailsCommand;
+
+        public RelayCommand<MessageRecord> DetailsCommand
+        {
+            get
+            {
+                return _detailsCommand ?? (_detailsCommand = new RelayCommand<MessageRecord>(
+                   message =>
+                   {
+                       _navigationService.NavigateTo(ViewModelLocator.MESSAGEDETAIL_PAGE_KEY, message);
+                   },
                     message => true));
             }
         }
@@ -213,23 +284,14 @@ namespace Signal.ViewModels
 
                        var record = obj as MessageRecord;
 
+                       if (record.MismatchedIdentities == null) return;
+
                        var dialog = new ConfirmIdentityDialog(record);
- 
                        var result = await dialog.ShowAsync();
-
-                       IList<IdentityKeyMismatch> mismatches = record.MismatchedIdentities;
-
-                       if (mismatches.Count() != 1)
-                       {
-                           throw new Exception("Identity mismatch count: " + mismatches.Count());
-                       }
-
-                       var mismatch = mismatches[0];
 
                        switch (result)
                        {
                            case ContentDialogResult.Primary:
-                               
                                break;
                            case ContentDialogResult.Secondary:
                                break;

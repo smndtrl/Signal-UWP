@@ -70,19 +70,19 @@ namespace TextSecure.crypto
             return records;
         }
 
-        private static Task<SignedPreKeyRecord> generateSignedPreKey(IdentityKeyPair identityKeyPair, uint signedPreKeyId)
+        private static SignedPreKeyRecord generateSignedPreKey(IdentityKeyPair identityKeyPair, uint signedPreKeyId)
         {
-            return Task.Run(() =>
-            {
-                ECKeyPair keyPair = Curve.generateKeyPair();
-                byte[] signature = Curve.calculateSignature(identityKeyPair.getPrivateKey(), keyPair.getPublicKey().serialize());
-                SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, KeyHelper.getTime(), keyPair, signature);
+            //return Task.Run(() =>
+            //{
+            ECKeyPair keyPair = Curve.generateKeyPair();
+            byte[] signature = Curve.calculateSignature(identityKeyPair.getPrivateKey(), keyPair.getPublicKey().serialize());
+            SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, KeyHelper.getTime(), keyPair, signature);
 
-                return record;
-            });
+            return record;
+            // });
         }
 
-        public static async Task<SignedPreKeyRecord> generateSignedPreKey(IdentityKeyPair identityKeyPair)
+        public static SignedPreKeyRecord generateSignedPreKey(IdentityKeyPair identityKeyPair)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace TextSecure.crypto
                 /*ECKeyPair keyPair = Curve.generateKeyPair();
                 byte[] signature = Curve.calculateSignature(identityKeyPair.getPrivateKey(), keyPair.getPublicKey().serialize());
                 SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, KeyHelper.getTime(), keyPair, signature);*/
-                SignedPreKeyRecord record = await generateSignedPreKey(identityKeyPair, signedPreKeyId);
+                SignedPreKeyRecord record = generateSignedPreKey(identityKeyPair, signedPreKeyId);
 
                 signedPreKeyStore.StoreSignedPreKey(signedPreKeyId, record);
                 setNextSignedPreKeyId((signedPreKeyId + 1) % Medium.MAX_VALUE);
@@ -136,95 +136,54 @@ namespace TextSecure.crypto
 
         private static void setNextPreKeyId(uint id)
         {
-            var preKey = new PreKeyIndex() { PreyKeyIndex = 1, Next = id };
-            conn.Update(preKey);
+            var preKeyIndex = new PreKeyIndex
+            {
+                PreyKeyIndex = 1,
+                Next = id
+            };
+
+
+            conn.InsertOrReplace(preKeyIndex);
         }
 
         private static void setNextSignedPreKeyId(uint id)
         {
-            var signedPreKey = new SignedPreKeyIndex { SignedPreyKeyIndex = 1, Next = id };
-            conn.Update(signedPreKey);
+            var signedPreKey = new SignedPreKeyIndex
+            {
+                SignedPreyKeyIndex = 1,
+                Next = id
+            };
+
+
+            conn.InsertOrReplace(signedPreKey);
         }
 
         private static uint getNextPreKeyId()
         {
-            var query = conn.Table<PreKeyIndex>().Where(v => v.PreyKeyIndex == 1);
-
-            if (query.Count() == 0)
+            try
+            {
+                var preKeyIndex = conn.Get<PreKeyIndex>(1);
+                return preKeyIndex.PreyKeyIndex;
+            }
+            catch (Exception e)
             {
                 return CryptographicBuffer.GenerateRandomNumber() % Medium.MAX_VALUE;
-            } else
-            {
-                var preKey = query.First();
-                return preKey.PreyKeyIndex;
             }
-            
         }
 
         private static uint getNextSignedPreKeyId()
         {
-            var query = conn.Table<SignedPreKeyIndex>().Where(v => v.SignedPreyKeyIndex == 1);
-            
+            try
+            {
+                var signedPreKeyIndex = conn.Get<SignedPreKeyIndex>(1);
+                return signedPreKeyIndex.SignedPreyKeyIndex;
 
-            if (query.Count() == 0)
+            }
+            catch (Exception e)
             {
                 return CryptographicBuffer.GenerateRandomNumber() % Medium.MAX_VALUE;
             }
-            else
-            {
-                var preKey = query.First();
-                return preKey.SignedPreyKeyIndex;
-            }
+
         }
-        /*
-        private static File getPreKeysDirectory(Context context)
-        {
-            return getKeysDirectory(context, TextSecurePreKeyStore.PREKEY_DIRECTORY);
-        }
-
-        private static File getSignedPreKeysDirectory(Context context)
-        {
-            return getKeysDirectory(context, TextSecurePreKeyStore.SIGNED_PREKEY_DIRECTORY);
-        }
-
-        private static File getKeysDirectory(Context context, String name)
-        {
-            File directory = new File(context.getFilesDir(), name);
-
-            if (!directory.exists())
-                directory.mkdirs();
-
-            return directory;
-        }
-
-        private static class PreKeyIndex
-        {
-            public static final String FILE_NAME = "index.dat";
-
-    @JsonProperty
-          private int nextPreKeyId;
-
-            public PreKeyIndex() { }
-
-            public PreKeyIndex(int nextPreKeyId)
-            {
-                this.nextPreKeyId = nextPreKeyId;
-            }
-        }
-
-        private static class SignedPreKeyIndex
-        {
-            public static final String FILE_NAME = "index.dat";
-
-    @JsonProperty
-          private int nextSignedPreKeyId;
-
-            public SignedPreKeyIndex() { }
-
-            public SignedPreKeyIndex(int nextSignedPreKeyId)
-            {
-                this.nextSignedPreKeyId = nextSignedPreKeyId;
-            }
-        }*/
     }
 }

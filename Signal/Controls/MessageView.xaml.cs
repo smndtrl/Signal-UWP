@@ -1,29 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Signal.Models;
 using Signal.Util;
-using Windows.Foundation;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Signal.Controls
 {
-    public sealed class MessageBubble : Control
+    public sealed partial class MessageView : UserControl
     {
-        public static readonly DependencyProperty MessageRecordProperty = DependencyProperty.Register("MessageRecord", typeof(MessageRecord), typeof(MessageBubble), new PropertyMetadata(new MessageRecord(), new PropertyChangedCallback(OnMessageRecordChanged)));
+        public static readonly DependencyProperty MessageRecordProperty = DependencyProperty.Register("MessageRecord", typeof(MessageRecord), typeof(MessageView), new PropertyMetadata(new MessageRecord(), new PropertyChangedCallback(OnMessageRecordChanged)));
 
         public MessageRecord MessageRecord
         {
             get { return (MessageRecord)GetValue(MessageRecordProperty); }
-            set {
+            set
+            {
                 Log.Debug($"set");
                 SetValue(MessageRecordProperty, value);
 
@@ -34,16 +38,15 @@ namespace Signal.Controls
         {
             Log.Debug($"OnMessageRecordChanged");
 
-            MessageBubble control = d as MessageBubble;
+            MessageView control = d as MessageView;
             control.MessageRecord = (Models.MessageRecord)e.NewValue;
             control.UpdateDirectionState();
 
         }
 
-        public MessageBubble()
+        public MessageView()
         {
-            this.DefaultStyleKey = typeof(MessageBubble);
-
+            this.InitializeComponent();
             DataContextChanged += OnDataContextChanged;
         }
 
@@ -53,6 +56,7 @@ namespace Signal.Controls
             var m = this.DataContext as MessageRecord;
             if (m != null)
             {
+                this.MessageRecord = m;
                 VisualStateManager.GoToState(this, m.IsOutgoing ? "Outgoing" : "Incoming", true);
 
 
@@ -76,13 +80,11 @@ namespace Signal.Controls
         }
 
 
-        private DeliveryStatusView _statusView;
+        private StatusView _statusView;
 
         protected override void OnApplyTemplate()
         {
-            Log.Debug($"OnApplyTemplate");
-
-            _statusView = GetTemplateChild("DeliveryStatusView") as DeliveryStatusView;;
+            _statusView = GetTemplateChild("StatusView") as StatusView;
 
             UpdateDirectionState();
         }
@@ -99,3 +101,4 @@ namespace Signal.Controls
 
     }
 }
+

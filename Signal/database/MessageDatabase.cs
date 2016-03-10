@@ -22,6 +22,7 @@ using SQLite;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -367,7 +368,7 @@ namespace Signal.Database
         /*
          * Inbox/Outbox
          */
-        public long InsertMessageOutbox(long threadId, OutgoingTextMessage message,
+        /*public long InsertMessageOutbox(long threadId, OutgoingTextMessage message,
                                      long type, DateTime date)
         {
             if (message.IsKeyExchange) type |= MessageTypes.KEY_EXCHANGE_BIT;
@@ -375,14 +376,14 @@ namespace Signal.Database
             else if (message.IsEndSession) type |= MessageTypes.END_SESSION_BIT;
             //if (forceSms) type |= MessageTypes.MESSAGE_FORCE_SMS_BIT;
 
-            /*ContentValues contentValues = new ContentValues(6);
+            ContentValues contentValues = new ContentValues(6);
             contentValues.put(ADDRESS, PhoneNumberUtils.formatNumber(message.getRecipients().getPrimaryRecipient().getNumber()));
             contentValues.put(THREAD_ID, threadId);
             contentValues.put(BODY, message.getMessageBody());
             contentValues.put(DATE_RECEIVED, date);
             contentValues.put(DATE_SENT, date);
             contentValues.put(READ, 1);
-            contentValues.put(TYPE, type);*/
+            contentValues.put(TYPE, type);
 
             var insert = new Message()
             {
@@ -404,7 +405,7 @@ namespace Signal.Database
             notifyConversationListeners(threadId);
 
             return insert.MessageId;
-        }
+        }*/
 
 
 
@@ -595,50 +596,51 @@ public void close()
             {
                 new IdentityKeyMismatch(recipientId, identityKey)
             };
-            throw new NotImplementedException();
 
-            /*IdentityKeyMismatchList document = new IdentityKeyMismatchList(items);
+            var message = conn.Get<Message>(messageId);
 
-            SQLiteDatabase database = databaseHelper.getWritableDatabase();
-            database.beginTransaction();
-
-            try {
-              setDocument(database, messageId, MISMATCHED_IDENTITIES, document);
-
-            database.setTransactionSuccessful();
-            } catch (IOException ioe) {
-              Log.w(TAG, ioe);
-            } finally {
-              database.endTransaction();
-            }*/
+            message.MismatchedIdentities = items;
+            conn.Update(message);
         }
 
         public void AddMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
         {
-            throw new NotImplementedException();
-            /*try
-            {
-                addToDocument(messageId, MISMATCHED_IDENTITIES,
-                              new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey),
-                              IdentityKeyMismatchList.class);
-    } catch (IOException e) {
-      Log.w(TAG, e);
-    }*/
+            var mismatch = new IdentityKeyMismatch(recipientId, identityKey);
+
+
+            var message = conn.Get<Message>(messageId);
+
+            var temp = message.MismatchedIdentities;
+
+            temp.Add(mismatch);
+
+            message.MismatchedIdentities = temp;
+
+            conn.Update(message);
         }
 
         public void RemoveMismatchedIdentity(long messageId, long recipientId, IdentityKey identityKey)
         {
-            throw new NotImplementedException();
 
-            /*try
+            var mismatch = new IdentityKeyMismatch(recipientId, identityKey);
+            
+
+            var message = conn.Get<Message>(messageId);
+
+            var temp = message.MismatchedIdentities;
+
+            foreach (var identity in temp)
             {
-                removeFromDocument(messageId, MISMATCHED_IDENTITIES,
-                                   new DisplayRecord.IdentityKeyMismatch(recipientId, identityKey),
-                                   IdentityKeyMismatchList.class);
-    } catch (IOException e) {
-      Log.w(TAG, e);
-    }
-        }*/
+                if (identity.Equals(mismatch))
+                {
+                    temp.Remove(identity);
+                }
+
+            }
+            message.MismatchedIdentities = temp;
+
+            conn.Update(message);
+
         }
 
         public IEnumerable<MessageRecord> getIdentityConflictMessagesForThread(long threadId)
@@ -648,11 +650,20 @@ public void close()
 
             Cursor cursor = queryTables(PROJECTION, selection, order, null);*/
 
-            var list = conn.Table<Message>().Where(m => m.MismatchedIdentities != null).OrderBy(m => m.DateReceived).ToList();
+            var query = conn.Table<Message>().Where(m => m.ThreadId.Equals(threadId) && m._mismatchedIdentities != null);//.OrderBy(m => m.DateReceived);
+
+            if (query != null)
+            {
+                //if (!query.Any()) return new List<MessageRecord>();
+                var list = query.ToList();
+                return list.Select(i => new TextMessageRecord(i));
+            }
+
+            return null;
 
             //setNotifyConverationListeners(threadId);
 
-            return list.Select(i => new TextMessageRecord(i));
+
         }
     }
 }

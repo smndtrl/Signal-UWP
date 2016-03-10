@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
+using Signal.Util;
 using TextSecure.database;
 using TextSecure.recipient;
 
@@ -28,7 +31,23 @@ namespace Signal.Models
         public string Address { get; set; }
         public long AddressDeviceId { get; set; }
         public long ReceiptCount { get; set; }
-        public string MismatchedIdentities { get; set; }
+
+        [Column("MismatchedIdentities")]
+        public string _mismatchedIdentities { get; set; }
+
+        [Ignore]
+        public List<IdentityKeyMismatch> MismatchedIdentities
+        {
+            get {
+                return _mismatchedIdentities != null ? JsonConvert.DeserializeObject<List<IdentityKeyMismatch>>(_mismatchedIdentities) : null;
+            }
+            set
+            {
+                _mismatchedIdentities = JsonConvert.SerializeObject(value);
+                Log.Debug($"Serialized IdentityKeyMismatch to {_mismatchedIdentities}");
+                return;
+            }
+        }
 
 
         public bool IsPush = true;

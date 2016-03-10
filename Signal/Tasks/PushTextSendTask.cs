@@ -112,7 +112,8 @@ namespace Signal.Tasks
             } catch (Exception e)
             {
                 //Log.w(TAG, e);
-               throw new Exception(e.Message);
+               //throw new Exception(e.Message);
+               OnCanceled();
             }
         }
     }

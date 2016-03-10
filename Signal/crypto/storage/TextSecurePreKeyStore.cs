@@ -21,6 +21,7 @@ using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,14 +35,12 @@ namespace TextSecure.crypto.storage
         [PrimaryKey, AutoIncrement]
         public uint PreKeyId { get; set; }
         public byte[] Record { get; set; }
-        public bool Next { get; set; } = false;
     }
 
     [Table("PreKeyIndex")]
     public class PreKeyIndex
     {
         [PrimaryKey]
-        public uint Zero { get; set; } = 0;
         public uint PreyKeyIndex { get; set; }
         public uint Next { get; set; }
     }
@@ -50,16 +49,14 @@ namespace TextSecure.crypto.storage
     public class SignedPreKeyRecordI
     {
         [PrimaryKey, AutoIncrement]
-        public uint SignedPreyKeyId { get; set; }
+        public uint SignedPreKeyId { get; set; }
         public byte[] Record { get; set; }
-        public bool Next { get; set; } = false;
     }
 
     [Table("SingedPreKeyIndex")]
     public class SignedPreKeyIndex
     {
         [PrimaryKey]
-        public uint Zero { get; set; } = 0;
         public uint SignedPreyKeyIndex { get; set; }
         public uint Next { get; set; }
     }
@@ -71,7 +68,7 @@ namespace TextSecure.crypto.storage
         private static readonly uint CURRENT_VERSION_MARKER = 1;
 
         SQLiteConnection conn;
-        
+
         public TextSecurePreKeyStore(SQLiteConnection conn)
         {
             this.conn = conn;
@@ -83,34 +80,34 @@ namespace TextSecure.crypto.storage
 
         public bool ContainsPreKey(uint preKeyId)
         {
-            var query = conn.Table<PreKeyRecordI>().Where(p => p.PreKeyId.Equals(preKeyId));
-            return query.Count() == 1;
+            var query = conn.Table<PreKeyRecordI>().Where(k => k.PreKeyId.Equals(preKeyId));
+
+            return query.Any();
         }
 
         public bool ContainsSignedPreKey(uint signedPreKeyId)
         {
-            var query = conn.Table<SignedPreKeyRecordI>().Where(s => s.SignedPreyKeyId.Equals(signedPreKeyId));
-            return query.Count() == 1;
+            var query = conn.Table<SignedPreKeyRecordI>().Where(k => k.SignedPreKeyId.Equals(signedPreKeyId));
+
+            return query.Any();
         }
 
         public PreKeyRecord LoadPreKey(uint preKeyId)
         {
-            var query = conn.Table<PreKeyRecordI>().Where(p => p.PreKeyId.Equals(preKeyId));
-            var preKey = query.First();
+            var preKey = conn.Get<PreKeyRecordI>(preKeyId);
             return new PreKeyRecord(preKey.Record);
         }
 
         public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
-            var query = conn.Table<SignedPreKeyRecordI>().Where(s => s.SignedPreyKeyId.Equals(signedPreKeyId));
-            var signedPreKey = query.First();
+            var signedPreKey = conn.Get<SignedPreKeyRecordI>(signedPreKeyId);
             return new SignedPreKeyRecord(signedPreKey.Record);
         }
 
         public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
-            var query = conn.Table<SignedPreKeyRecord>().Where(v => true);
-            return query.ToList();
+            var query = conn.Table<SignedPreKeyRecordI>().Where(v => true);
+            return query.ToList().Select(s => new SignedPreKeyRecord(s.Record)).ToList();
         }
 
         public void RemovePreKey(uint preKeyId)
@@ -130,7 +127,7 @@ namespace TextSecure.crypto.storage
 
         public void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
         {
-            conn.Insert(new SignedPreKeyRecordI() { SignedPreyKeyId = signedPreKeyId, Record = record.serialize() });
+            conn.Insert(new SignedPreKeyRecordI() { SignedPreKeyId = signedPreKeyId, Record = record.serialize() });
         }
     }
 }

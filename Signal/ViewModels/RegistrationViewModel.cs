@@ -344,7 +344,7 @@ namespace Signal.ViewModels
                 IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair();
                 List<PreKeyRecord> records = await PreKeyUtil.generatePreKeys();
                 PreKeyRecord lastResort = await PreKeyUtil.generateLastResortKey();
-                SignedPreKeyRecord signedPreKey = await PreKeyUtil.generateSignedPreKey(identityKey);
+                SignedPreKeyRecord signedPreKey = PreKeyUtil.generateSignedPreKey(identityKey);
 
                 await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
@@ -387,7 +387,7 @@ namespace Signal.ViewModels
         private void markAsVerified(String number, String password, String signalingKey)
         {
             TextSecurePreferences.setVerifying(false);
-            TextSecurePreferences.setPushRegistered(false);
+            TextSecurePreferences.setPushRegistered(true);
             TextSecurePreferences.setLocalNumber(number);
             TextSecurePreferences.setPushServerPassword(password);
             TextSecurePreferences.setSignalingKey(signalingKey);

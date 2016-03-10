@@ -23,7 +23,7 @@ namespace Signal.Controls
 
     public sealed class AlertView : Control
     {
-        public static readonly DependencyProperty AlertTypeProperty = DependencyProperty.Register("Type", typeof(AlertType), typeof(DeliveryStatusView), new PropertyMetadata(AlertType.Failed, new PropertyChangedCallback(OnStateChanged)));
+        public static readonly DependencyProperty AlertTypeProperty = DependencyProperty.Register("Type", typeof(AlertType), typeof(AlertView), new PropertyMetadata(AlertType.Failed, new PropertyChangedCallback(OnStateChanged)));
 
         public AlertType State
         {

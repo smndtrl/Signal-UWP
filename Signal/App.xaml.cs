@@ -30,6 +30,7 @@ using Strilanc.Value;
 using System.Reflection;
 using Signal.Views;
 using GalaSoft.MvvmLight.Threading;
+using Signal.Util;
 
 namespace Signal
 {
@@ -313,7 +314,7 @@ namespace Signal
 
             });
             //Worker.AddTaskActivities(websocketTask);
-
+            //App.Current.Worker.AddTaskActivities(new RefreshPreKeysTask());
 
 
 
@@ -336,13 +337,23 @@ namespace Signal
                 rootFrame = new Frame();
             }
 
+            rootFrame.Navigated += (s, se) =>
+            {
+                Log.Debug($"Navigated");
+                foreach (PageStackEntry journalEntry in rootFrame.BackStack)
+                {
+                    Log.Debug($"{journalEntry.SourcePageType.FullName}");
+                }
+            };
             rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
+            
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
 
             BackButtonManager.RegisterFrame(rootFrame, true, true, true);
 
         }
+
 
         private void OnFirstLaunched(LaunchActivatedEventArgs e)
         {

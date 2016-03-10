@@ -52,7 +52,7 @@ namespace Signal.Models
             //this.ReceiptCount = message.
             this.Type = message.Type;
             this.ThreadId = message.ThreadId;
-            this.MismatchedIdentities = getMismatches(message.MismatchedIdentities);
+            this.MismatchedIdentities = message.MismatchedIdentities;
         }
 
         private Recipients getRecipientsFor(String address)
@@ -74,22 +74,6 @@ namespace Signal.Models
             }
         }
 
-        private List<IdentityKeyMismatch> getMismatches(string document)
-        {
-            try
-            {
-                if (document != null && !document.Equals(string.Empty))
-                {
-                    //return JsonUtils.fromJson(document, IdentityKeyMismatchList.class).getList();
-                }
-            }
-            catch (IOException e)
-            {
-                Log.Warn(e);
-            }
-
-            return new List<IdentityKeyMismatch>();
-        }
 
         protected BodyRecord getBody(Message m)
         {
