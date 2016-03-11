@@ -201,7 +201,7 @@
         <Pivot x:Uid="MainPagePivot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="0" Name="piv_CC" SelectionChanged="piv_CC_SelectionChanged">
             <PivotItem Header="" x:Uid="MainPagePivotChats">
                 <settings:ListView x:Name="ThreadListView"
-                           ItemsSource="{Binding Source={StaticResource chatCvs}}"
+                           ItemsSource="{Binding Source={StaticResource chatsCvs}}"
                            SelectionMode="Single"
                            ItemTemplate="{StaticResource ThreadTemplate}"
                            IsItemClickEnabled="True"
