@@ -35,7 +35,7 @@ namespace TextSecure.crypto.storage
         private class Session
         {
             [AutoIncrement, PrimaryKey]
-            private long SessionId { get; set; }
+            public long SessionId { get; set; }
             public string Name { get; set; } // TODO:: K AxolotlAddress
             public long DeviceId { get; set; } // TODO:: K AxolotlAddress
             public byte[] Record { get; set; }

@@ -83,8 +83,7 @@
 							 d:LayoutOverrides="Width"
 					Padding="4"
 					Orientation="Vertical"
-					Height="48"
-					Background="{StaticResource SignalDimmedBrush}">
+					Height="48">
                     <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
                     <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
 					   Style="{ThemeResource BaseTextBlockStyle}"
@@ -97,7 +96,8 @@
             <AppBarButton x:Name="ThreadDetailDeleteAppBarButton" x:Uid="ThreadDetailDeleteAppBarButton"
                               Icon="Delete"
                               Label="DELETE"
-                              Command="{x:Bind ViewModel.DeleteCommand}"/>
+                              Command="{x:Bind ViewModel.DeleteCommand}"
+                          Visibility="{x:Bind ViewModel.AreItemsSelected, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </CommandBar>
     </Page.TopAppBar>
 
@@ -136,12 +136,16 @@
                                     <VisualState.Setters>
                                         <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="0"/>
                                         <Setter Target="Border.(UIElement.Grid.Column)" Value="2"/>
+                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="2"/>
+
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Incoming">
                                     <VisualState.Setters>
                                         <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="2"/>
                                         <Setter Target="Border.(UIElement.Grid.Column)" Value="0"/>
+                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="0"/>
+
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -166,6 +170,7 @@
                         </Interactivity:Interaction.Behaviors>
 
                         <Border x:Name="Border" Width="32" Height="32" Background="BlanchedAlmond"></Border>
+                        <controls:AlertView x:Name="AlertView" Grid.Column="0" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
                         <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
                     </Grid>
                 </DataTemplate>

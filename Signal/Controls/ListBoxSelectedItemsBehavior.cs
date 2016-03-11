@@ -30,12 +30,12 @@ namespace Signal.Controls
         }
 
         public static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.Register("SelectedItems", typeof(IEnumerable), typeof(ListBoxSelectedItemsBehavior),
+            DependencyProperty.Register("SelectedItems", typeof(IList), typeof(ListBoxSelectedItemsBehavior),
             new PropertyMetadata(null));
 
-        public IEnumerable SelectedItems
+        public IList SelectedItems
         {
-            get { return (IEnumerable)GetValue(SelectedItemsProperty); }
+            get { return (IList)GetValue(SelectedItemsProperty); }
             set { SetValue(SelectedItemsProperty, value); }
         }
     }
