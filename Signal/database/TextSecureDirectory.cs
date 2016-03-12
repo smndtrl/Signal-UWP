@@ -156,7 +156,7 @@ namespace Signal.Database
 
             var query = conn.Table<Directory>().Where(v => v.Number == e164number);
 
-            if (query != null)
+            if (query != null && query.Any())
             {
                 return query.First().Registered == 1;
             }

@@ -394,6 +394,7 @@ namespace Signal
 
         private void OnMessageRecevied(TextSecureMessagePipe sender, TextSecureEnvelope envelope)
         {
+            Log.Debug("Push message recieved");
             var task = new PushContentReceiveTask();
             task.handle(envelope, false);
             //throw new NotImplementedException("OnMessageReceived");

@@ -146,7 +146,7 @@ namespace TextSecure
             }
         }
         */
-        private async static Task sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
+        private static async Task sendTextMessage(Recipients recipients, bool keyExchange, long messageId)
         {
             if (isSelfSend(recipients))
             {

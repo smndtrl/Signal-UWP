@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using libtextsecure.crypto;
 using Signal.Push;
 using Strilanc.Value;
 using TextSecure;
@@ -66,13 +65,13 @@ namespace Signal.Tasks
 
             try
             {
-                deliver(record);
+                await deliver(record);
                 database.MarkAsPush(messageId);
                 database.MarkAsSecure(messageId);
                 database.MarkAsSent(messageId);
 
             }
-            catch (UntrustedIdentityException e)
+            catch (libtextsecure.crypto.UntrustedIdentityException e)
             {
                 Log.Debug($"Untrusted Identity Key: {e.IdentityKey} {e.E164Number}");
                 var recipients = RecipientFactory.getRecipientsFromString(e.E164Number, false);
@@ -92,7 +91,7 @@ namespace Signal.Tasks
             //throw new NotImplementedException();
         }
 
-        private void deliver(TextMessageRecord message)
+        private async Task deliver(TextMessageRecord message)
         {
             try
             {
@@ -104,16 +103,11 @@ namespace Signal.Tasks
                                                                                  .build();
 
                 Debug.WriteLine("TextSendTask deliver");
-                messageSender.sendMessage(address, textSecureMessage);
+                await messageSender.sendMessage(address, textSecureMessage);
             }
             catch (InvalidNumberException e/*| UnregisteredUserException e*/) {
                 //Log.w(TAG, e);
                 //throw new InsecureFallbackApprovalException(e);
-            } catch (Exception e)
-            {
-                //Log.w(TAG, e);
-               //throw new Exception(e.Message);
-               OnCanceled();
             }
         }
     }

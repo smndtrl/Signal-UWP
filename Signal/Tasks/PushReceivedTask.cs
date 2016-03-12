@@ -22,12 +22,13 @@ namespace Signal.Tasks
     {
         public override void onAdded()
         {
-            throw new NotImplementedException("ReceiveTask onAdded");
+            //throw new NotImplementedException("ReceiveTask onAdded");
         }
 
         protected override string Execute()
         {
-            throw new NotImplementedException("ReceiveTask Execute");
+            return "ASD";
+            //throw new NotImplementedException("ReceiveTask Execute");
         }
 
         public void handle(TextSecureEnvelope envelope, bool sendExplicitReceipt)
@@ -61,9 +62,9 @@ namespace Signal.Tasks
 
             if (sendExplicitReceipt)
             {
-             /*   worker.AddTaskActivities(new DeliveryReceiptTask(envelope.getSource(),
+                worker.AddTaskActivities(new DeliveryReceiptTask(envelope.getSource(),
                                                       envelope.getTimestamp(),
-                                                      envelope.getRelay()));*/
+                                                      envelope.getRelay()));
             }
 
             worker.AddTaskActivities(new PushDecryptTask(messageId, envelope.getSource()));

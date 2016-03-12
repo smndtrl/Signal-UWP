@@ -34,7 +34,7 @@ namespace TextSecure.crypto.storage
     [Table("PreKeys")]
     public class PreKeyRecordI
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public uint PreKeyId { get; set; }
         public byte[] Record { get; set; }
     }
@@ -50,7 +50,7 @@ namespace TextSecure.crypto.storage
     [Table("SignedPreKeys")]
     public class SignedPreKeyRecordI
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public uint SignedPreKeyId { get; set; }
         public byte[] Record { get; set; }
     }
@@ -94,6 +94,7 @@ namespace TextSecure.crypto.storage
             return query.Any();
         }
 
+        [DebuggerHidden]
         public PreKeyRecord LoadPreKey(uint preKeyId)
         {
             try
@@ -108,6 +109,12 @@ namespace TextSecure.crypto.storage
 
         }
 
+        /// <summary>
+        /// Loads a SignedPreKey
+        /// </summary>
+        /// <param name="signedPreKeyId">Used to lookup a SignedPreKey.</param>
+        /// <exception cref="InvalidKeyIdException"></exception>
+        /// <returns>Returns a SignedPreKeyRecord if found.</returns>
         [DebuggerHidden] // please do not break
         public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
@@ -123,6 +130,10 @@ namespace TextSecure.crypto.storage
             
         }
 
+        /// <summary>
+        /// Loads a List of SignedPreKeyRecords
+        /// </summary>
+        /// <returns></returns>
         public List<SignedPreKeyRecord> LoadSignedPreKeys()
         {
             List<SignedPreKeyRecord> results = new List<SignedPreKeyRecord>();
@@ -143,22 +154,26 @@ namespace TextSecure.crypto.storage
 
         public void RemovePreKey(uint preKeyId)
         {
-            var query = conn.Delete(preKeyId);
+            var query = conn.Delete<PreKeyRecordI>(preKeyId);
         }
 
+        /// <summary>
+        /// Removes a SignedPreKeyRecord
+        /// </summary>
+        /// <param name="signedPreKeyId">Used to identify a SignedPreKeyRecord.</param>
         public void RemoveSignedPreKey(uint signedPreKeyId)
         {
-            var query = conn.Delete(signedPreKeyId);
+            var query = conn.Delete<SignedPreKeyRecordI>(signedPreKeyId);
         }
 
         public void StorePreKey(uint preKeyId, PreKeyRecord record)
         {
-            conn.Insert(new PreKeyRecordI() { PreKeyId = preKeyId, Record = record.serialize() });
+            conn.InsertOrReplace(new PreKeyRecordI() { PreKeyId = preKeyId, Record = record.serialize() });
         }
 
         public void StoreSignedPreKey(uint signedPreKeyId, SignedPreKeyRecord record)
         {
-            conn.Insert(new SignedPreKeyRecordI() { SignedPreKeyId = signedPreKeyId, Record = record.serialize() });
+            conn.InsertOrReplace(new SignedPreKeyRecordI() { SignedPreKeyId = signedPreKeyId, Record = record.serialize() });
         }
     }
 }

@@ -26,17 +26,11 @@ namespace Signal.Controls
         public MessageRecord MessageRecord
         {
             get { return (MessageRecord)GetValue(MessageRecordProperty); }
-            set
-            {
-                Log.Debug($"set");
-                SetValue(MessageRecordProperty, value);
-
-            }
+            set { SetValue(MessageRecordProperty, value); }
         }
 
         private static void OnMessageRecordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Log.Debug($"OnMessageRecordChanged");
 
             MessageView control = d as MessageView;
             control.MessageRecord = (Models.MessageRecord)e.NewValue;

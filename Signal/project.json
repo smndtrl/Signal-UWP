@@ -5,7 +5,7 @@
     "libphonenumber_uwp": "1.0.0",
     "Microsoft.CodeAnalysis.CSharp": "1.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
-    "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.0.3",
+    "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
     "MvvmLight": "5.2.0",
     "Nito.AsyncEx": "3.0.1",
     "SQLite.Net-PCL": "3.1.1",

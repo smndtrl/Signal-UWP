@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TextSecure.crypto.storage;
 using Windows.Security.Cryptography;
+using Signal.Util;
 
 namespace TextSecure.crypto
 {
@@ -76,7 +77,7 @@ namespace TextSecure.crypto
             //{
             ECKeyPair keyPair = Curve.generateKeyPair();
             byte[] signature = Curve.calculateSignature(identityKeyPair.getPrivateKey(), keyPair.getPublicKey().serialize());
-            SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, KeyHelper.getTime(), keyPair, signature);
+            SignedPreKeyRecord record = new SignedPreKeyRecord(signedPreKeyId, (ulong)TimeUtil.GetUnixTimestampMillis() , keyPair, signature);
 
             return record;
             // });
@@ -158,12 +159,13 @@ namespace TextSecure.crypto
             conn.InsertOrReplace(signedPreKey);
         }
 
+        [DebuggerHidden]
         private static uint getNextPreKeyId()
         {
             try
             {
                 var preKeyIndex = conn.Get<PreKeyIndex>(1);
-                return preKeyIndex.PreyKeyIndex;
+                return preKeyIndex.Next;
             }
             catch (Exception e)
             {
@@ -171,12 +173,13 @@ namespace TextSecure.crypto
             }
         }
 
+        [DebuggerHidden]
         private static uint getNextSignedPreKeyId()
         {
             try
             {
                 var signedPreKeyIndex = conn.Get<SignedPreKeyIndex>(1);
-                return signedPreKeyIndex.SignedPreyKeyIndex;
+                return signedPreKeyIndex.Next;
 
             }
             catch (Exception e)

@@ -60,7 +60,14 @@ namespace Signal.Controls
             var m = this.DataContext as MessageRecord;
             if (m != null)
             {
-                UpdateState(m.IsPending ? Status.Pending : (m.IsDelivered ? Status.Delivered : Status.Sent));
+                if (m.IsFailed)
+                {
+                    UpdateState(Status.Failed);
+                }
+                else
+                {
+                    UpdateState(m.IsPending ? Status.Pending : (m.IsDelivered ? Status.Delivered : Status.Sent));
+                }
 
             }
         }
@@ -68,6 +75,9 @@ namespace Signal.Controls
         {
             switch (status)
             {
+                case Status.Failed:
+                    VisualStateManager.GoToState(this, "Failed", true);
+                    break;
                 case Status.Pending:
                     VisualStateManager.GoToState(this, "Pending", true);
                     break;

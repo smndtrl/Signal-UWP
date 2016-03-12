@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,8 +26,18 @@ using TextSecure;
 
 namespace Signal.Controls
 {
-    public sealed partial class ConfirmIdentityDialog : ContentDialog
+    public sealed partial class ConfirmIdentityDialog : ContentDialog, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void RaisePropertyChanged(string propertyName)
+        {
+            // take a copy to prevent thread issues
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         private MessageRecord _messageRecord;
         private IdentityKeyMismatch mismatch;
@@ -46,6 +57,13 @@ namespace Signal.Controls
             if (record.MismatchedIdentities != null) mismatch = record.MismatchedIdentities[0];
         }
 
+        /*private string _title = "Identity Changed";
+
+        public new string Title
+        {
+            get { return _title; }
+            set { _title = value; RaisePropertyChanged("Title"); }
+        }*/
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -157,7 +175,6 @@ namespace Signal.Controls
         }
 
         private RelayCommand _cancelCommand;
-
         public RelayCommand CancelCommand
         {
             get

@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using libaxolotl;
 using SQLite;
 using System.IO;
+using libtextsecure.push;
 using SQLite.Net.Attributes;
 using SQLite.Net;
 
@@ -35,8 +36,10 @@ namespace TextSecure.crypto.storage
         private class Session
         {
             [AutoIncrement, PrimaryKey]
-            private long SessionId { get; set; }
+            private long SessionId { get; set; } = 0;
+            [Unique]
             public string Name { get; set; } // TODO:: K AxolotlAddress
+            [Unique]
             public long DeviceId { get; set; } // TODO:: K AxolotlAddress
             public byte[] Record { get; set; }
         }
@@ -72,7 +75,7 @@ namespace TextSecure.crypto.storage
 
         public List<uint> GetSubDeviceSessions(string name)
         {
-            var query = conn.Table<Session>().Where(t => t.Name == name);
+            var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId != TextSecureAddress.DEFAULT_DEVICE_ID);
             var list = query.ToList();
             var output = list.Select(t => (uint)t.DeviceId).ToList();
             return output;

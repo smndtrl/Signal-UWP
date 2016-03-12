@@ -610,7 +610,7 @@ public void close()
 
             var message = conn.Get<Message>(messageId);
 
-            var temp = message.MismatchedIdentities;
+            var temp = message.MismatchedIdentities ?? new List<IdentityKeyMismatch>();
 
             temp.Add(mismatch);
 

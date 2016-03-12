@@ -27,6 +27,7 @@ using Signal.Controls;
 using Signal.Database;
 using Signal.Messages;
 using Signal.Resources;
+using Signal.Util;
 using Signal.Views;
 
 namespace Signal.ViewModels
@@ -156,6 +157,8 @@ namespace Signal.ViewModels
                 return _sendCommand ?? (_sendCommand = new RelayCommand(
                     async () =>
                     {
+                        Log.Debug($"SendCommand Executed");
+
                         var message = new OutgoingEncryptedMessage(SelectedThread.Recipients, MessageText); // TODO:
                         MessageText = string.Empty;
 
@@ -327,6 +330,7 @@ namespace Signal.ViewModels
             }
         }
 
+        #region Bottom CommandBar
         private RelayCommand _phoneCommand;
         public RelayCommand PhoneCommand
         {
@@ -338,7 +342,9 @@ namespace Signal.ViewModels
                     );
             }
         }
+        #endregion
 
+        #region Bottom CommanBar Secondary
         private RelayCommand _resetSessionCommand;
         public RelayCommand ResetSessionCommand
         {
@@ -355,6 +361,7 @@ namespace Signal.ViewModels
                     );
             }
         }
+        #endregion
 
         public void NavigateTo(NavigationEventArgs args)
         {

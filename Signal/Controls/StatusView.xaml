@@ -16,8 +16,9 @@
                     <VisualState.Setters>
                         <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="DeliveryStatusPendingViewBox.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="DeliveryStatusPendingProgessRing.IsActive" Value="True"/>
+                        <Setter Target="DeliveryStatusFailedViewBox.(UIElement.Visibility)" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Sent">
@@ -25,13 +26,23 @@
                         <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusFailedViewBox.(UIElement.Visibility)" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Delivered">
                     <VisualState.Setters>
                         <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="DeliveryStatusPendingProgessRing.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusPendingViewBox.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusFailedViewBox.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Failed">
+                    <VisualState.Setters>
+                        <Setter Target="DeliveryStatusDeliveredImage.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusSentImage.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusPendingViewBox.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="DeliveryStatusFailedViewBox.(UIElement.Visibility)" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -46,13 +57,15 @@
                    Visibility="Collapsed"
                    Width="16" Height="16"
                    Source="ms-appx:///Assets/ic_done_white_18dp.png"/>
+        <Viewbox x:Name="DeliveryStatusPendingViewBox" Visibility="Collapsed" Width="16" Height="16">
+
             <ProgressRing x:Name="DeliveryStatusPendingProgessRing"
-                          Visibility="Collapsed"
                           Width="16" Height="16"
                           Foreground="White"
                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Viewbox Width="16" Height="16">
-            <SymbolIcon x:Name="DeliveryStatusFailedIcon" Visibility="Collapsed"
+            </Viewbox>
+            <Viewbox x:Name="DeliveryStatusFailedViewBox" Visibility="Collapsed" Width="16" Height="16">
+            <SymbolIcon x:Name="DeliveryStatusFailedIcon" 
                         Foreground="White" Symbol="Important"/>
         </Viewbox>
         
