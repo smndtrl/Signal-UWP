@@ -17,7 +17,7 @@ namespace Signal.Models
             
         }
 
-        public TextMessageRecord(long messageId,
+        /*public TextMessageRecord(long messageId,
             long threadId,
             DateTime dateSent,
             DateTime dateReceived,
@@ -37,7 +37,7 @@ namespace Signal.Models
             this.Type = type;
             //this.Read = read;
             this.Body = body;
-        }
+        }*/
 
         public TextMessageRecord(Message message)
         {
@@ -46,10 +46,9 @@ namespace Signal.Models
             Recipients recipients = getRecipientsFor(message.Address);
             this.Recipients = recipients;
             this.IndividualRecipient = recipients.PrimaryRecipient;
-            //this.AddressDevideId
             this.DateSent = message.DateSent;
             this.DateReceived = message.DateReceived;
-            //this.ReceiptCount = message.
+            this.ReceiptCount = message.ReceiptCount;
             this.Type = message.Type;
             this.ThreadId = message.ThreadId;
             this.MismatchedIdentities = message.MismatchedIdentities;

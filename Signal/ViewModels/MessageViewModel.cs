@@ -168,6 +168,20 @@ namespace Signal.ViewModels
             }
         }
 
+        private RelayCommand _refreshCommand;
+        public RelayCommand RefreshCommand
+        {
+            get
+            {
+                return _refreshCommand ?? (_refreshCommand = new RelayCommand(
+                    () =>
+                    {
+                        Messages.Clear();
+                    },
+                    () => true)); // TODO: attachment enable
+            }
+        }
+
         private RelayCommand _attachCommand;
         public RelayCommand AttachCommand
         {

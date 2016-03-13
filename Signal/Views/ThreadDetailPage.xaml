@@ -67,6 +67,7 @@
             <CommandBar.Content>
                 <AppBarToggleButton Command="{x:Bind ViewModel.MultiSelectCommand}" Icon="Bullets"/>
             </CommandBar.Content>
+            <AppBarButton Icon="Refresh" Command="{x:Bind ViewModel.RefreshCommand}"/>
             <AppBarButton Icon="Phone" Command="{x:Bind ViewModel.PhoneCommand}"/>
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="MessageResetSessionAppBarButton" x:Uid="MessageResetSessionAppBarButton"
@@ -84,7 +85,7 @@
 					Padding="4"
 					Orientation="Vertical"
 					Height="48"
-					Background="{StaticResource SignalDimmedBrush}">
+					>
                     <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
                     <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
 					   Style="{ThemeResource BaseTextBlockStyle}"

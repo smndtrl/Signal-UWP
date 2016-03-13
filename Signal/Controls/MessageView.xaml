@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="80"
-    d:DesignWidth="256">
+    d:DesignWidth="386">
 
     <Grid x:Name="MessageViewGrid" Padding="4" HorizontalAlignment="Right">
         <VisualStateManager.VisualStateGroups>
@@ -20,6 +20,7 @@
                 </VisualState>
                 <VisualState x:Name="Incoming">
                     <VisualState.Setters>
+                        <Setter Target="StatusView.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="MessageViewGrid.(FrameworkElement.HorizontalAlignment)" Value="Left"/>
                         <Setter Target="triangleRight.(UIElement.Visibility)" Value="Collapsed"/>
                     </VisualState.Setters>
@@ -94,22 +95,24 @@
 					Margin="10,0,0,0"
 					HorizontalAlignment="Left"/>
 
-        <StackPanel MinWidth="64" MinHeight="32"
+        <StackPanel MinWidth="64" MinHeight="24"
                     HorizontalAlignment="Stretch"
 					Grid.Row="1" Grid.RowSpan="1" Grid.Column="2"
-					Padding="8"  
+					Padding="8,4,8,20"  
 					Background="{ThemeResource MessageBubbleBackgroundThemeBrush}"
 					>
 
-            <SymbolIcon x:Name="BodyIconBlock"
-                                        Symbol="Admin"
-                                        Visibility="Collapsed"/>
+            
 
             <TextBlock x:Name="BodyTextBlock"
                                        Text="{x:Bind MessageRecord.Body.Body, Mode=OneWay}"
                                        TextWrapping="Wrap"
-                                       HorizontalAlignment="Right"
+                                       HorizontalAlignment="Left"
                        Style="{StaticResource BodyTextBlockStyle}"/>
+            
+            <SymbolIcon x:Name="BodyIconBlock"
+                                        Symbol="Admin"
+                                        Visibility="Collapsed"/>
         </StackPanel>
 
         <StackPanel 
@@ -122,8 +125,8 @@
             <TextBlock x:Name="DeliveryDateTextBlock"
                                            Text="{x:Bind MessageRecord.DateSent, Converter={StaticResource DateConverter}, Mode=OneWay}"
                                            TextWrapping="WrapWholeWords"
-                                           Style="{StaticResource CaptionTextBlockStyle}"/>
-            <controls:StatusView x:Name="StatusView" Width="16" Height="16" />
+                                           Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Right"/>
+            <controls:StatusView x:Name="StatusView" Width="16" Height="16" HorizontalAlignment="Right" />
 
         </StackPanel>
 

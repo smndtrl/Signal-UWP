@@ -13,14 +13,16 @@ namespace Signal.Models
     public abstract class Record : ObservableObject
     {
 
-        protected long Type;
+        /// public long MessageId { get; set; } // In MessageRecord
+        public long ThreadId { get; set; }
+        public DateTime DateSent { get; set; }
+        public DateTime DateReceived { get; set; }
+        public long Type { get; set; }
+        public bool Read { get; set; }
+        public BodyRecord Body { get; set; }
+        public long ReceiptCount { get; set; }
 
         public Recipients Recipients { get; internal set; }
-        public DateTime DateSent { get; internal set; }
-        public DateTime DateReceived { get; internal set; }
-        public long ThreadId { get; internal set; }
-        public BodyRecord Body { get; internal set; }
-        public long ReceiptCount { get; internal set; }
 
         public Record ()
         {

@@ -15,13 +15,17 @@ namespace Signal.Models
 
         internal Recipient IndividualRecipient;
         public long RecipientDeviceId { get; internal set; }
+
         public long MessageId { get; internal set; }
+        //public string Address { get; set; }
+        //public long AddressDeviceId { get; set; }
+
 
         internal List<IdentityKeyMismatch> MismatchedIdentities;
         //internal List<NetworkFailure> NetworkFailures;
 
-        [Ignore, Obsolete]
-        public bool IsSecure => MessageTypes.isSecureType(Type); // TODO
+        [Ignore]
+        public bool IsSecure => MessageTypes.isSecureType(Type);
 
         [Ignore, Obsolete]
         public bool IsLegacyMessage => MessageTypes.isLegacyType(Type); // TODO
