@@ -181,23 +181,23 @@
                     <VisualState.Setters>
                         <Setter Target="MasterColumn.Width" Value="*" />
                         <Setter Target="DetailColumn.Width" Value="0" />
-                        <Setter Target="ThreadListView.SelectionMode" Value="None" />
+                        <Setter Target="ChatListView.SelectionMode" Value="None" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThreadListSelectionStates">
                 <VisualState x:Name="ThreadListSingleSelectionState">
                     <VisualState.Setters>
-                        <Setter Target="ThreadListView.SelectionMode" Value="None" />
+                        <Setter Target="ChatListView.SelectionMode" Value="None" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ThreadListMultiSelectionState">
                     <VisualState.Setters>
-                        <Setter Target="ThreadListView.SelectionMode" Value="Multiple"/>
+                        <Setter Target="ChatListView.SelectionMode" Value="Multiple"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-            <VisualStateGroup x:Name="AppBarButtonState">
+            <!--<VisualStateGroup x:Name="AppBarButtonState">
                 <VisualState x:Name="ChatPivotState">
                     <VisualState.Setters>
                         <Setter Target="SelectChatsABBtn.Visibility" Value="Visible"/>
@@ -210,7 +210,7 @@
                         <Setter Target="SelectChatsABBtn.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
-            </VisualStateGroup>
+            </VisualStateGroup>-->
         </VisualStateManager.VisualStateGroups>
         
         <Grid.RowDefinitions>
