@@ -134,7 +134,7 @@ namespace Signal.ViewModels
                 return string.Empty;
             }
         }
-        public string VerificationToken = "";
+        public string VerificationToken = string.Empty;
 
 
         private bool _isVerifying = false;
@@ -166,7 +166,7 @@ namespace Signal.ViewModels
 
                        _navigationService.NavigateTo(ViewModelLocator.MAIN_PAGE_KEY);
                    },
-                   () => !_isVerifying));
+                   () => !_isVerifying || VerificationToken.Length != 6));
             }
         }
 
@@ -305,14 +305,14 @@ namespace Signal.ViewModels
             }
         }
 
-        public RelayCommand _navigateProvisionCommand { get; private set; }
-        public RelayCommand NavigateProvisionCommand
+        private RelayCommand _navigateLinkCommand;
+        public RelayCommand NavigateLinkCommand
         {
             get
             {
-                return _navigateProvisionCommand ?? new RelayCommand(
+                return _navigateLinkCommand ?? new RelayCommand(
                     () => { _navigationService.NavigateTo(ViewModelLocator.PROVISIONING_PAGE_KEY); },
-                    () => { return true; }
+                    () => false
                     );
             }
         }
@@ -344,7 +344,7 @@ namespace Signal.ViewModels
                 IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair();
                 List<PreKeyRecord> records = await PreKeyUtil.generatePreKeys();
                 PreKeyRecord lastResort = await PreKeyUtil.generateLastResortKey();
-                SignedPreKeyRecord signedPreKey = await PreKeyUtil.generateSignedPreKey(identityKey);
+                SignedPreKeyRecord signedPreKey = PreKeyUtil.generateSignedPreKey(identityKey);
 
                 await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
@@ -387,7 +387,7 @@ namespace Signal.ViewModels
         private void markAsVerified(String number, String password, String signalingKey)
         {
             TextSecurePreferences.setVerifying(false);
-            TextSecurePreferences.setPushRegistered(false);
+            TextSecurePreferences.setPushRegistered(true);
             TextSecurePreferences.setLocalNumber(number);
             TextSecurePreferences.setPushServerPassword(password);
             TextSecurePreferences.setSignalingKey(signalingKey);

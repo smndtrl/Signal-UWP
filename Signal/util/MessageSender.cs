@@ -15,21 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using libtextsecure.util;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TextSecure.database;
-using TextSecure.messages;
-using TextSecure.recipient;
 using Signal.Push;
 using libtextsecure;
 using Strilanc.Value;
 using libtextsecure.push;
-using libaxolotl.util;
 using Signal.Database;
 
 namespace TextSecure.util

@@ -141,11 +141,11 @@
   <data name="registrationVerifyingAccount.Text" xml:space="preserve">
     <value>Accout is verifying...</value>
   </data>
-  <data name="ChatsAppBarSelectItems.Label" xml:space="preserve">
+  <data name="ChatAppBarSelect.Label" xml:space="preserve">
     <value>Select Items</value>
   </data>
-  <data name="MainPagePivotChats.Header" xml:space="preserve">
-    <value>chats</value>
+  <data name="MainHeader.Text" xml:space="preserve">
+    <value>Signal</value>
   </data>
   <data name="VerifyPivotHeaderTextBlock.Text" xml:space="preserve">
     <value>Verify</value>
@@ -162,28 +162,22 @@
   <data name="WelcomePivotHeaderTextBlock.Text" xml:space="preserve">
     <value>Welcome to Signal</value>
   </data>
-  <data name="DirectoryMultiToggleButton.Label" xml:space="preserve">
-    <value>Select</value>
+  <data name="DirectoryAddButton.Label" xml:space="preserve">
+    <value>Add</value>
   </data>
-  <data name="ContactsRefreshAppBar.Label" xml:space="preserve">
+  <data name="ContactAppBarRefresh.Label" xml:space="preserve">
     <value>Refresh</value>
   </data>
-  <data name="MainPagePivotContacts.Header" xml:space="preserve">
-    <value>contacts</value>
-  </data>
-  <data name="ContactListViewEmpty2TextBlock.Text" xml:space="preserve">
+  <data name="ContactListEmptyBody.Text" xml:space="preserve">
     <value>Invite a friend to Signal.</value>
   </data>
-  <data name="ContactListViewEmptyTextBlock.Text" xml:space="preserve">
+  <data name="ContactListEmptyHeader.Text" xml:space="preserve">
     <value>No Signal User</value>
   </data>
-  <data name="ChatListViewEmpty2TextBlock.Text" xml:space="preserve">
+  <data name="ChatListEmptyTextBody.Text" xml:space="preserve">
     <value>Start a new conversation</value>
   </data>
-  <data name="ChatListViewEmptyTextBlock.Text" xml:space="preserve">
+  <data name="ChatListEmptyTextHeader.Text" xml:space="preserve">
     <value>Welcome</value>
-  </data>
-  <data name="ArchievedChatsAppBar.Label" xml:space="preserve">
-    <value>Archived chats</value>
   </data>
 </root>

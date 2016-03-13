@@ -16,33 +16,25 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TextSecure.recipient;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingKeyExchangeMessage : OutgoingTextMessage
     {
-
-        public OutgoingKeyExchangeMessage(Recipients recipients, String message)
+        public OutgoingKeyExchangeMessage(Recipients recipients, string message)
             : base(recipients, message)
         {
         }
 
-        private OutgoingKeyExchangeMessage(OutgoingKeyExchangeMessage message, String body)
+        private OutgoingKeyExchangeMessage(OutgoingKeyExchangeMessage message, string body)
             : base(message, body)
         {
         }
 
-        public override bool isKeyExchange()
-        {
-            return true;
-        }
+        public override bool IsKeyExchange { get; } = true;
 
-        public override OutgoingTextMessage withBody(String body)
+        public override OutgoingTextMessage withBody(string body)
         {
             return new OutgoingKeyExchangeMessage(this, body);
         }

@@ -16,32 +16,22 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingEndSessionMessage : OutgoingTextMessage
     {
-
         public OutgoingEndSessionMessage(OutgoingTextMessage message)
-            : base(message, message.getMessageBody())
+            : base(message, message.MessageBody)
         {
         }
 
-        public OutgoingEndSessionMessage(OutgoingTextMessage message, String body)
+        public OutgoingEndSessionMessage(OutgoingTextMessage message, string body)
              : base(message, body)
         {
         }
 
-
-        public override bool isEndSession()
-        {
-            return true;
-        }
-
+        public override bool IsEndSession { get; } = true;
 
         public override OutgoingTextMessage withBody(String body)
         {

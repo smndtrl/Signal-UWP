@@ -25,11 +25,11 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class MainPage : SignalPage
     {
-        public MainPageViewModel ViewModel
+        public MainViewModel ViewModel
         {
             get
             {
-                return (MainPageViewModel)DataContext;
+                return (MainViewModel)DataContext;
             }
         }
 
@@ -44,23 +44,16 @@ namespace Signal.Views
 
         private void piv_CC_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((PivotItem)piv_CC.SelectedItem).Header.ToString().ToLower() == "chats")
+            if (((PivotItem)piv_CC.SelectedItem).Name == ChatPiv.Name)
             {
-                ArchievedChatsBtn.Visibility = Visibility.Visible;
-                RefreshBtn.Visibility = Visibility.Collapsed;
-                SelectItmesBtn.Visibility = Visibility.Visible;
+                SelectChatsABBtn.Visibility = Visibility.Visible;
+                ContactRefreshABBtn.Visibility = Visibility.Collapsed;
             }
             else
             {
-                ArchievedChatsBtn.Visibility = Visibility.Collapsed;
-                RefreshBtn.Visibility = Visibility.Visible;
-                SelectItmesBtn.Visibility = Visibility.Collapsed;
+                SelectChatsABBtn.Visibility = Visibility.Collapsed;
+                ContactRefreshABBtn.Visibility = Visibility.Visible;
             }
-        }
-
-        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

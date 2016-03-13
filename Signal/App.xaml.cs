@@ -30,6 +30,7 @@ using Strilanc.Value;
 using System.Reflection;
 using Signal.Views;
 using GalaSoft.MvvmLight.Threading;
+using Signal.Util;
 
 namespace Signal
 {
@@ -40,15 +41,9 @@ namespace Signal
     /// </summary>
     sealed partial class App : Application
     {
-        public static new App Current
-        {
-            get { return Application.Current as App; }
-        }
+        public static new App Current => Application.Current as App;
 
-        public static string CurrentVersion
-        {
-            get { return $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}"; }
-        }
+        public static string CurrentVersion => $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}";
 
         private static Frame _frame;
          
@@ -58,12 +53,6 @@ namespace Signal
         }
 
         public TaskWorker Worker { get; private set; }
-
-        /// <summary>
-        /// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
-        /// </summary>
-        public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
-        //public static Microsoft.WindowsAzure.MobileServiceClient client = new Microsoft.WindowsAzure.MobileSerivces.MobileServiceClient("http://textsecure.azure-mobile.net/")
 
 
         private PushNotificationChannel channel;
@@ -76,7 +65,6 @@ namespace Signal
         /// </summary>
         public App()
         {
-            TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
 
             this.InitializeComponent();
             this.Suspending += OnSuspending;
@@ -253,6 +241,31 @@ namespace Signal
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+
+
+            // Add our custom certificate
+            try
+            {
+                // Read the contents of the Certificate file
+                System.Uri certificateFile = new System.Uri("ms-appx:///Assets/testingder.cer");
+                Windows.Storage.StorageFile file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(certificateFile);
+                Windows.Storage.Streams.IBuffer certBlob = await Windows.Storage.FileIO.ReadBufferAsync(file);
+
+                // Create an instance of the Certificate class using the retrieved certificate blob contents
+                Windows.Security.Cryptography.Certificates.Certificate rootCert = new Windows.Security.Cryptography.Certificates.Certificate(certBlob);
+
+                // Get access to the TrustedRootCertificationAuthorities for your own app (not the system one)
+                Windows.Security.Cryptography.Certificates.CertificateStore trustedStore = Windows.Security.Cryptography.Certificates.CertificateStores.TrustedRootCertificationAuthorities;
+
+                // Add the certificate to the TrustedRootCertificationAuthorities store for your app
+                trustedStore.Add(rootCert);
+            }
+            catch (Exception oEx)
+            {
+                // Catch that exception. We don't really have a choice here..
+                var msg = oEx.Message;
+            }
+
             DispatcherHelper.Initialize();
 
             //Note: for development purposes, if you want to quickly re-register the device to another number, just do this:
@@ -301,7 +314,7 @@ namespace Signal
 
             });
             //Worker.AddTaskActivities(websocketTask);
-
+            //App.Current.Worker.AddTaskActivities(new RefreshPreKeysTask());
 
 
 
@@ -324,13 +337,23 @@ namespace Signal
                 rootFrame = new Frame();
             }
 
+            rootFrame.Navigated += (s, se) =>
+            {
+                Log.Debug($"Navigated");
+                foreach (PageStackEntry journalEntry in rootFrame.BackStack)
+                {
+                    Log.Debug($"{journalEntry.SourcePageType.FullName}");
+                }
+            };
             rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
+            
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
 
             BackButtonManager.RegisterFrame(rootFrame, true, true, true);
 
         }
+
 
         private void OnFirstLaunched(LaunchActivatedEventArgs e)
         {
@@ -371,6 +394,7 @@ namespace Signal
 
         private void OnMessageRecevied(TextSecureMessagePipe sender, TextSecureEnvelope envelope)
         {
+            Log.Debug("Push message recieved");
             var task = new PushContentReceiveTask();
             task.handle(envelope, false);
             //throw new NotImplementedException("OnMessageReceived");

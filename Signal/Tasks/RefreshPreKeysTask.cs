@@ -16,7 +16,7 @@ namespace Signal.Tasks
     {
         //@Inject transient TextSecureAccountManager accountManager;
 
-        private static readonly int PREKEY_MINIMUM = 10;
+        private static readonly int PREKEY_MINIMUM = 210;
 
 
         public RefreshPreKeysTask()
@@ -31,12 +31,13 @@ namespace Signal.Tasks
 
         public override void onAdded()
         {
-            throw new NotImplementedException("RefreshPreKeysTask onAdded");
+            //throw new NotImplementedException("RefreshPreKeysTask onAdded");
         }
 
         protected override string Execute()
         {
-            throw new NotImplementedException("RefreshPreKeysTask Execute");
+            return "";
+            //throw new NotImplementedException("RefreshPreKeysTask Execute");
         }
 
         protected override async Task<string> ExecuteAsync()
@@ -54,7 +55,7 @@ namespace Signal.Tasks
             List<PreKeyRecord> preKeyRecords = await PreKeyUtil.generatePreKeys(/*context, masterSecret*/);
             PreKeyRecord lastResortKeyRecord = await PreKeyUtil.generateLastResortKey(/*context, masterSecret*/);
             IdentityKeyPair identityKey = IdentityKeyUtil.GetIdentityKeyPair(/*context, masterSecret*/);
-            SignedPreKeyRecord signedPreKeyRecord = await PreKeyUtil.generateSignedPreKey(/*context, masterSecret, */identityKey);
+            SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(/*context, masterSecret, */identityKey);
 
             Debug.WriteLine("Registering new prekeys...");
 
@@ -62,7 +63,7 @@ namespace Signal.Tasks
 
             TextSecurePreferences.setSignedPreKeyRegistered(true);
 
-            App.Current.Worker.AddTaskActivities(new CleanPreKeysTask());
+            //App.Current.Worker.AddTaskActivities(new CleanPreKeysTask());
 
             return "";
         }

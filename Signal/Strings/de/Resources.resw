@@ -118,72 +118,66 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MessageTextBox.PlaceholderText" xml:space="preserve">
-    <value>Nachricht senden ...</value>
+    <value>Send Message...</value>
   </data>
   <data name="RegisterPivotCaptionTextBlock.Text" xml:space="preserve">
-    <value>mit deiner Telephonenummer</value>
+    <value>with your phone number</value>
   </data>
   <data name="RegisterPivotHeaderTextBlock.Text" xml:space="preserve">
-    <value>Registrieren</value>
+    <value>Register</value>
   </data>
   <data name="RegisterPivotRegisterButtonTextBlock.Text" xml:space="preserve">
-    <value>REGISTRIEREN</value>
+    <value>REGISTER</value>
   </data>
   <data name="RegisterPivotRegisteringButtonTextBlock.Text" xml:space="preserve">
-    <value>REGISTRIERUNG LÄUFT</value>
+    <value>REGISTERING</value>
   </data>
   <data name="registrationGeneratingKeys.Text" xml:space="preserve">
-    <value>Schlüssel werden erstellt ...</value>
+    <value>Keys are generating...</value>
   </data>
   <data name="registrationRefreshingDirectory.Text" xml:space="preserve">
-    <value>Kontakte werden syncorniesiert ...</value>
+    <value>Contacts are syncing...</value>
   </data>
   <data name="registrationVerifyingAccount.Text" xml:space="preserve">
-    <value>Konto wird geprüft ...</value>
+    <value>Accout is verifying...</value>
   </data>
-  <data name="ChatsAppBarSelectItems.Label" xml:space="preserve">
-    <value>Auswählen</value>
+  <data name="ChatAppBarSelect.Label" xml:space="preserve">
+    <value>Select Items</value>
   </data>
-  <data name="MainPagePivotChats.Header" xml:space="preserve">
-    <value>Chats</value>
+  <data name="MainHeader.Text" xml:space="preserve">
+    <value>Signal</value>
   </data>
   <data name="VerifyPivotHeaderTextBlock.Text" xml:space="preserve">
-    <value>Bestätigen</value>
+    <value>Verify</value>
   </data>
   <data name="VerifyPivotVerifyButton.Content" xml:space="preserve">
-    <value>BESTÄTIGEN</value>
+    <value>VERIFY</value>
   </data>
   <data name="WelcomePivotCaptionTextBlock.Text" xml:space="preserve">
-    <value>für Windows</value>
+    <value>for Windows</value>
   </data>
   <data name="WelcomePivotGetStartedButton.Content" xml:space="preserve">
-    <value>LOS GEHTS</value>
+    <value>GET STARTED</value>
   </data>
   <data name="WelcomePivotHeaderTextBlock.Text" xml:space="preserve">
-    <value>Willkommen bei Signal</value>
+    <value>Welcome to Signal</value>
   </data>
-  <data name="DirectoryMultiToggleButton.Label" xml:space="preserve">
-    <value>Auswählen</value>
+  <data name="DirectoryAddButton.Label" xml:space="preserve">
+    <value>Add</value>
   </data>
-  <data name="ContactsRefreshAppBar.Label" xml:space="preserve">
-    <value>Aktualisieren</value>
+  <data name="ContactAppBarRefresh.Label" xml:space="preserve">
+    <value>Refresh</value>
   </data>
-  <data name="MainPagePivotContacts.Header" xml:space="preserve">
-    <value>Kontakte</value>
+  <data name="ContactListEmptyBody.Text" xml:space="preserve">
+    <value>Invite a friend to Signal.</value>
   </data>
-  <data name="ContactListViewEmpty2TextBlock.Text" xml:space="preserve">
-    <value>Lade deine Freunde ein.</value>
+  <data name="ContactListEmptyHeader.Text" xml:space="preserve">
+    <value>No Signal User</value>
   </data>
-  <data name="ContactListViewEmptyTextBlock.Text" xml:space="preserve">
-    <value>Keine Signal Kontakte</value>
+  <data name="ChatListEmptyTextBody.Text" xml:space="preserve">
+    <value>Start a new conversation</value>
   </data>
-  <data name="ChatListViewEmpty2TextBlock.Text" xml:space="preserve">
-    <value>Starten sie ein neues Gespräch</value>
-  </data>
-  <data name="ChatListViewEmptyTextBlock.Text" xml:space="preserve">
-    <value>Willkommen</value>
-  </data>
-  <data name="ArchievedChatsAppBar.Label" xml:space="preserve">
-    <value>Archived chats</value>
+  <data name="ChatListEmptyTextHeader.Text" xml:space="preserve">
+    <value>Welcome</value>
   </data>
 </root>

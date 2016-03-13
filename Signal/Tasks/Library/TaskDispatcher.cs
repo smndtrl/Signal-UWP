@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Signal.Util;
 
 namespace Signal.Tasks.Library
 {
@@ -71,7 +72,7 @@ namespace Signal.Tasks.Library
             }*/
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Log.Error(e.Message);
                 /*TraceHelper.TraceExceptionInstance(TraceEventType.Error, taskMessage.OrchestrationInstance, e);
                 string details = IncludeDetails
                     ? string.Format("Unhandled exception while executing task: {0}\n\t{1}", e, e.StackTrace)

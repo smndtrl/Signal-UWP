@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using libaxolotl;
 using SQLite;
 using System.IO;
+using libtextsecure.push;
 using SQLite.Net.Attributes;
 using SQLite.Net;
 
@@ -35,8 +36,10 @@ namespace TextSecure.crypto.storage
         private class Session
         {
             [AutoIncrement, PrimaryKey]
-            private long SessionId { get; set; }
+            private long SessionId { get; set; } = 0;
+            [Unique]
             public string Name { get; set; } // TODO:: K AxolotlAddress
+            [Unique]
             public long DeviceId { get; set; } // TODO:: K AxolotlAddress
             public byte[] Record { get; set; }
         }
@@ -51,8 +54,8 @@ namespace TextSecure.crypto.storage
 
         public bool ContainsSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Where(v => v.Name == name && v.DeviceId == deviceId);
 
             return query.Count() != 0;
@@ -65,14 +68,14 @@ namespace TextSecure.crypto.storage
 
         public void DeleteSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Delete(t => t.Name == name && t.DeviceId == deviceId);
         }
 
         public List<uint> GetSubDeviceSessions(string name)
         {
-            var query = conn.Table<Session>().Where(t => t.Name == name);
+            var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId != TextSecureAddress.DEFAULT_DEVICE_ID);
             var list = query.ToList();
             var output = list.Select(t => (uint)t.DeviceId).ToList();
             return output;
@@ -80,11 +83,11 @@ namespace TextSecure.crypto.storage
 
         public SessionRecord LoadSession(AxolotlAddress address)
         {
-            var name = address.getName();
-            var deviceId = address.getDeviceId();
+            var name = address.Name;
+            var deviceId = address.DeviceId;
             var query = conn.Table<Session>().Where(t => t.Name == name && t.DeviceId == deviceId);
 
-            if (query != null && query.Count() > 0)
+            if (query != null && query.Any())
             {
                 return new SessionRecord(query.First().Record);
             }
@@ -99,7 +102,7 @@ namespace TextSecure.crypto.storage
         {
             DeleteSession(address); // TODO: sqlite-net combined private keys for insertOrReplace
 
-            var session = new Session() { DeviceId = address.getDeviceId(), Name = address.getName(), Record = record.serialize() };
+            var session = new Session() { DeviceId = address.DeviceId, Name = address.Name, Record = record.serialize() };
             conn.InsertOrReplace(session);
             return;
         }

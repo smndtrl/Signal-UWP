@@ -16,12 +16,8 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TextSecure.messages
+namespace Signal.Messages
 {
     public class OutgoingPrekeyBundleMessage : OutgoingTextMessage
     {
@@ -32,11 +28,13 @@ namespace TextSecure.messages
         }
 
 
-        public override bool isPreKeyBundle()
+        public override bool IsPreKeyBundle
         {
-            return true;
+            get
+            {
+                return true;
+            }
         }
-
 
         public override OutgoingTextMessage withBody(String body)
         {

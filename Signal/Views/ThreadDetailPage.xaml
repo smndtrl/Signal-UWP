@@ -1,0 +1,221 @@
+﻿<local:SignalPage
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:Signal.Views"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+	xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+	x:Class="Signal.Views.ThreadDetailPage"
+	xmlns:model="using:Signal.Models"
+	xmlns:resources="using:Signal.Resources"
+	xmlns:back="using:Bezysoftware.Navigation.BackButton"
+	xmlns:controls="using:Signal.Controls"
+	back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
+	mc:Ignorable="d"
+	NavigationCacheMode="Disabled">
+
+    <Page.DataContext>
+        <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>
+    </Page.DataContext>
+
+    <Interactivity:Interaction.Behaviors>
+        <Interactions:EventTriggerBehavior EventName="Loaded">
+            <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.Loaded}" />
+        </Interactions:EventTriggerBehavior>
+        <Interactions:EventTriggerBehavior EventName="Unloaded">
+            <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.Unloaded}" />
+        </Interactions:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>
+
+    <Page.Resources>
+
+        <Style x:Key="SendMessageTextBox" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#FFFFFFFF"/>
+            <Setter Property="Foreground" Value="#FF000000"/>
+            <Setter Property="Padding" Value="2"/>
+            <!--<Setter Property="BorderBrush">
+					<Setter.Value>
+						<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+							<GradientStop Color="#FFA3AEB9" Offset="0"/>
+							<GradientStop Color="#FF8399A9" Offset="0.375"/>
+							<GradientStop Color="#FF718597" Offset="0.375"/>
+							<GradientStop Color="#FF617584" Offset="1"/>
+						</LinearGradientBrush>
+					</Setter.Value>
+				</Setter>-->
+        </Style>
+
+        <MenuFlyout x:Name="MessageMenuFlyout" x:Key="MessageMenuFlyout">
+            <MenuFlyoutItem x:Name="UpdateIdentityFlyout"
+                            Text="Update Identity" Command="{x:Bind ViewModel.ConfirmIdentityCommand}" CommandParameter="{Binding}"/>
+            <MenuFlyoutItem x:Name="DetailsMessageFlyout"
+                            Text="Details" Command="{x:Bind ViewModel.DetailsCommand}" CommandParameter="{Binding}"/>
+            <MenuFlyoutItem x:Name="DeleteMessageFlyout" 
+						Text="Delete TODO" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{Binding}"/>
+             </MenuFlyout>
+
+
+
+    </Page.Resources>
+
+
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <AppBarToggleButton Command="{x:Bind ViewModel.MultiSelectCommand}" Icon="Bullets"/>
+            </CommandBar.Content>
+            <AppBarButton Icon="Phone" Command="{x:Bind ViewModel.PhoneCommand}"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="MessageResetSessionAppBarButton" x:Uid="MessageResetSessionAppBarButton"
+							  Label="Reset secure session"
+							  Command="{x:Bind ViewModel.ResetSessionCommand}"/>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Page.TopAppBar>
+        <CommandBar Template="{StaticResource CommandBarNoMore}">
+            <CommandBar.Content>
+                <StackPanel x:Name="MessageTitle"
+							 d:LayoutOverrides="Width"
+					Padding="4"
+					Orientation="Vertical"
+					Height="48"
+					Background="{StaticResource SignalDimmedBrush}">
+                    <!--<TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Margin="8" VerticalAlignment="Center"/>-->
+                    <TextBlock x:Name="DirectoryTitleText" x:Uid="DirectoryTitle"
+					   Style="{ThemeResource BaseTextBlockStyle}"
+					   Foreground="White"
+					   Text="{x:Bind ViewModel.SelectedThread.Recipients.PrimaryRecipient.Name}" VerticalAlignment="Center"/>
+
+
+                </StackPanel>
+            </CommandBar.Content>
+            <AppBarButton x:Name="ThreadDetailDeleteAppBarButton" x:Uid="ThreadDetailDeleteAppBarButton"
+                              Icon="Delete"
+                              Label="DELETE"
+                              Command="{x:Bind ViewModel.DeleteCommand}"/>
+        </CommandBar>
+    </Page.TopAppBar>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+
+        <ListView 
+			x:Name="listView"
+             ItemsSource="{x:Bind ViewModel.Messages}"
+			IncrementalLoadingTrigger="Edge"
+			IncrementalLoadingThreshold="1"
+			DataFetchSize="1"
+			HorizontalContentAlignment="Stretch"
+			VerticalContentAlignment="Stretch"
+			IsItemClickEnabled="True"
+            SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}" VerticalAlignment="Bottom"
+				  >
+            <Interactivity:Interaction.Behaviors>
+                <controls:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
+            </Interactivity:Interaction.Behaviors>
+            <!--<Interactivity:Interaction.Behaviors>
+				<resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
+			</Interactivity:Interaction.Behaviors>-->
+            <ListView.ItemTemplate>
+                <DataTemplate x:Name="RecordTemplate" x:DataType="model:MessageRecord">
+                    <Grid FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="Direction">
+                                <VisualState x:Name="Outgoing">
+                                    <VisualState.Setters>
+                                        <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="0"/>
+                                        <Setter Target="Border.(UIElement.Grid.Column)" Value="2"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Incoming">
+                                    <VisualState.Setters>
+                                        <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="2"/>
+                                        <Setter Target="Border.(UIElement.Grid.Column)" Value="0"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Interactivity:Interaction.Behaviors>
+                            <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
+                                <Interactions:GoToStateAction StateName="Incoming" TargetObject="{Binding ElementName=RecordTemplate}"/>
+                            </Interactions:DataTriggerBehavior>
+                            <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="True">
+                                <Interactions:GoToStateAction StateName="Outgoing" TargetObject="{Binding ElementName=RecordTemplate}"/>
+                            </Interactions:DataTriggerBehavior>
+                            <Interactions:EventTriggerBehavior EventName="Holding">
+                                <resources:OpenMenuFlyoutAction/>
+                            </Interactions:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+
+                        <Border x:Name="Border" Width="32" Height="32" Background="BlanchedAlmond"></Border>
+                        <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <Grid Grid.Row="1" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="MessageAttachmentButton" x:Uid="MessageAttachmentButton" 
+					Command="{x:Bind ViewModel.AttachCommand}">
+                <SymbolIcon Symbol="Attach" />
+            </Button>
+
+            <TextBox x:Name="MessageTextBox" x:Uid="MessageTextBox"
+					 Grid.Column="1"
+					 PlaceholderText="Type a message"
+					 TextWrapping="Wrap"
+					 MaxHeight="172"
+					 AcceptsReturn="True"
+					 Text="{Binding MessageText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:LayoutOverrides="Width, Height"
+					 Style="{StaticResource SendMessageTextBox}"/>
+
+            <Button x:Name="MessageSendButton" x:Uid="MessageSendButton"
+					Grid.Column="2"
+					Command="{x:Bind ViewModel.SendCommand}">
+                <SymbolIcon Symbol="Send" />
+            </Button>
+
+        </Grid>
+
+
+
+
+
+    </Grid>
+</local:SignalPage>
+
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+﻿<ContentDialog
+    x:Class="Signal.Controls.ConfirmIdentityDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Signal.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="{x:Bind Title}"
+    PrimaryButtonCommand="{x:Bind AcceptCommand}"
+    SecondaryButtonCommand="{x:Bind CancelCommand}"
+     HorizontalAlignment="Stretch">
+
+    <ContentDialog.PrimaryButtonText>
+        Accept
+    </ContentDialog.PrimaryButtonText>
+    <ContentDialog.SecondaryButtonText>
+        Reject
+    </ContentDialog.SecondaryButtonText>
+    
+    <Grid>
+        <TextBlock x:Name="ConfirmIdentityDialogBodyText"  x:Uid="ConfirmIdentityDialogBodyText"
+                   TextWrapping="Wrap"> 
+            The
+        identifying key material has changed. This could either mean that someone is trying to
+        intercept your communication, or that your contact simply re-installed Signal and now has a new
+        identity key.
+        </TextBlock>
+    </Grid>
+</ContentDialog>

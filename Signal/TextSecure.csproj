@@ -11,8 +11,8 @@
     <AssemblyName>Signal</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -101,15 +101,35 @@
     <Content Include="Resources\CountryCodes.xml" />
     <None Include="MultilingualResources\TextSecure.de.xlf" />
     <None Include="project.json" />
+    <Content Include="Assets\testing.p7b" />
+    <Content Include="Assets\testingbase.cer" />
+    <Content Include="Assets\testingder.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <PRIResource Include="Strings\Resources.resw" />
-    <PRIResource Include="Strings\de\Resources.resw" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
+    <Compile Include="Controls\AlertView.cs" />
+    <Compile Include="Controls\AvatarView.cs" />
+    <Compile Include="Controls\ConfirmIdentityDialog.xaml.cs">
+      <DependentUpon>ConfirmIdentityDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DataTriggerBehavior.cs" />
+    <Compile Include="Controls\ListBoxSelectedItemsBehavior.cs" />
+    <Compile Include="Controls\MessageView.xaml.cs">
+      <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatusView.xaml.cs">
+      <DependentUpon>StatusView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TextView.cs" />
+    <Compile Include="Controls\ThumbnailView.cs" />
     <Compile Include="crypto\IdentityKeyUtil.cs" />
     <Compile Include="crypto\PreKeyUtil.cs" />
     <Compile Include="crypto\storage\TextSecureAxolotlStore.cs" />
@@ -118,6 +138,8 @@
     <Compile Include="crypto\storage\TextSecureSessionStore.cs" />
     <Compile Include="Database\ContactsDatabase.cs" />
     <Compile Include="Database\Database.cs" />
+    <Compile Include="Models\Record.cs" />
+    <Compile Include="Database\IdentityKeyMismatch.cs" />
     <Compile Include="Database\interfaces\IThreadDatabase.cs" />
     <Compile Include="Database\loaders\GroupedDirectoryCollection.cs" />
     <Compile Include="Database\PushDatabase.cs" />
@@ -135,25 +157,27 @@
     <Compile Include="Database\loaders\IncrementalCollection.cs" />
     <Compile Include="Database\MessageDatabase.cs" />
     <Compile Include="Database\MessageTypes.cs" />
-    <Compile Include="Database\models\DisplayRecord.cs" />
-    <Compile Include="Database\models\MessageRecord.cs" />
-    <Compile Include="Database\models\SmsMessageRecord.cs" />
     <Compile Include="Database\TextMessageDatabase.cs" />
     <Compile Include="Database\TextSecureDirectory.cs" />
     <Compile Include="Database\SQLite\ThreadDatabase.cs" />
     <Compile Include="Drawables\ContactPicture.cs" />
     <Compile Include="MessageSender.cs" />
-    <Compile Include="messages\IncomingEncryptedMessage.cs" />
-    <Compile Include="messages\IncomingEndSessionMessage.cs" />
-    <Compile Include="messages\IncomingTextMessage.cs" />
-    <Compile Include="messages\OutgoingEncryptedMessage.cs" />
-    <Compile Include="messages\OutgoingEndSessionMessage.cs" />
-    <Compile Include="messages\OutgoingKeyExchangeMessage.cs" />
-    <Compile Include="messages\OutgoingMediaMessage.cs" />
-    <Compile Include="messages\OutgoingPrekeyBundleMessage.cs" />
-    <Compile Include="messages\OutgoingTextMessage.cs" />
+    <Compile Include="Messages\IncomingEncryptedMessage.cs" />
+    <Compile Include="Messages\IncomingEndSessionMessage.cs" />
+    <Compile Include="Messages\IncomingGroupMessage.cs" />
+    <Compile Include="Messages\IncomingJoinedMessage.cs" />
+    <Compile Include="Messages\IncomingPreKeyBundleMessage.cs" />
+    <Compile Include="Messages\IncomingTextMessage.cs" />
+    <Compile Include="Messages\OutgoingEncryptedMessage.cs" />
+    <Compile Include="Messages\OutgoingEndSessionMessage.cs" />
+    <Compile Include="Messages\OutgoingKeyExchangeMessage.cs" />
+    <Compile Include="Messages\OutgoingMediaMessage.cs" />
+    <Compile Include="Messages\OutgoingPrekeyBundleMessage.cs" />
+    <Compile Include="Messages\OutgoingTextMessage.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\MessageRecord.cs" />
+    <Compile Include="Models\TextMessageRecord.cs" />
     <Compile Include="Models\Thread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Push\TextSecureCommunicationFactory.cs" />
@@ -165,8 +189,11 @@
     <Compile Include="Resources\ContactRetriever.cs" />
     <Compile Include="Resources\ContactPictureConverter.cs" />
     <Compile Include="Resources\CountryCollection.cs" />
+    <Compile Include="Resources\DebugConverter.cs" />
+    <Compile Include="Resources\ExtendedVisualStateManager.cs" />
     <Compile Include="Resources\DeliveryStatusConverter.cs" />
     <Compile Include="Resources\DateConverter.cs" />
+    <Compile Include="Resources\ExtendedGoToStateAction.cs" />
     <Compile Include="Resources\IdentityLoader.cs" />
     <Compile Include="Resources\ItemClickCommand.cs" />
     <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
@@ -174,27 +201,31 @@
     <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
     <Compile Include="Resources\SignalNavigationService.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
+    <Compile Include="Tasks\CreateSignedPreKeyTask.cs" />
     <Compile Include="Tasks\Library\TaskDispatcher.cs" />
     <Compile Include="Tasks\Library\TaskQueue.cs" />
     <Compile Include="Tasks\Library\TaskStorage.cs" />
     <Compile Include="Tasks\Library\TaskWorker.cs" />
     <Compile Include="Tasks\MeintenanceTask.cs" />
     <Compile Include="Tasks\CleanPreKeysTask.cs" />
+    <Compile Include="Tasks\DeliveryReceiptTask.cs" />
+    <Compile Include="Tasks\SendTask.cs" />
     <Compile Include="Tasks\RefreshPreKeysTask.cs" />
     <Compile Include="Tasks\RegistrationTask.cs" />
     <Compile Include="Tasks\Library\TaskActivity.cs" />
     <Compile Include="Tasks\Library\TaskContext.cs" />
-    <Compile Include="Tasks\ReceiveTask.cs" />
-    <Compile Include="Tasks\SendTask.cs" />
+    <Compile Include="Tasks\PushReceivedTask.cs" />
+    <Compile Include="Tasks\PushSendTask.cs" />
     <Compile Include="Tasks\PushContentReceiveTask.cs" />
     <Compile Include="Tasks\PushDecryptTask.cs" />
     <Compile Include="Tasks\WebsocketTask.cs" />
-    <Compile Include="Tasks\TextSendTask.cs" />
+    <Compile Include="Tasks\PushTextSendTask.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
     <Compile Include="Util\GroupUtil.cs" />
     <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\Hex.cs" />
+    <Compile Include="Util\JsonSerializers.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\LRUCache.cs" />
     <Compile Include="Util\MessageSender.cs" />
@@ -205,11 +236,12 @@
     <Compile Include="Util\Util.cs" />
     <Compile Include="ViewModels\IAmbientColor.cs" />
     <Compile Include="ViewModels\INavigableViewModel.cs" />
+    <Compile Include="ViewModels\MessageDetailViewModel.cs" />
     <Compile Include="ViewModels\SplashViewModel.cs" />
     <Compile Include="ViewModels\Messages.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\ProvisionViewModel.cs" />
-    <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RegistrationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -221,17 +253,11 @@
     </Compile>
     <Compile Include="Views\IInputAwarePage.cs" />
     <Compile Include="Views\ItemClickCommand.cs" />
-    <Compile Include="Views\MessageDetailPage.xaml.cs">
-      <DependentUpon>MessageDetailPage.xaml</DependentUpon>
+    <Compile Include="Views\MessageDetailsPage.xaml.cs">
+      <DependentUpon>MessageDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Registration\ProtocolProvisioningView.xaml.cs">
-      <DependentUpon>ProtocolProvisioningView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Registration\ProvisioningView.xaml.cs">
-      <DependentUpon>ProvisioningView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Registration\RegistrationTypeView.xaml.cs">
-      <DependentUpon>RegistrationTypeView.xaml</DependentUpon>
+    <Compile Include="Views\ThreadDetailPage.xaml.cs">
+      <DependentUpon>ThreadDetailPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsViewTest.xaml.cs">
       <DependentUpon>SettingsViewTest.xaml</DependentUpon>
@@ -272,6 +298,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ConfirmIdentityDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\StatusView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -284,6 +322,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ExtendedSplash.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -292,19 +334,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MessageDetailPage.xaml">
+    <Page Include="Views\MessageDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Registration\ProtocolProvisioningView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Registration\ProvisioningView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Registration\RegistrationTypeView.xaml">
+    <Page Include="Views\ThreadDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -325,9 +359,17 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\libaxolotl-uwp\libaxolotl\libaxolotl-uwp.csproj">
+      <Project>{78eaa4cf-8789-43ee-a216-a50522303c92}</Project>
+      <Name>libaxolotl-uwp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\libsettings\libsettings.csproj">
       <Project>{0be37c5f-5ce1-4ad4-8f22-7423d0610085}</Project>
       <Name>libsettings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libtextsecure-uwp\libtextsecure-uwp\libtextsecure-uwp.csproj">
+      <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>
+      <Name>libtextsecure-uwp</Name>
     </ProjectReference>
     <ProjectReference Include="..\SignalTasks\TextSecureTasks.csproj">
       <Project>{e1a09fe7-a62f-4b2b-a4e4-fc3eff4220ae}</Project>
@@ -335,21 +377,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
-      <Name>BehaviorsXamlSDKManaged</Name>
+    <SDKReference Include="SQLite.UWP.2015, Version=3.11.1">
+      <Name>SQLite for Universal Windows Platform</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.10240.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.10586.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\UserControlls\" />
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

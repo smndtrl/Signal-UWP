@@ -19,7 +19,7 @@ namespace Signal.database
         Task<IEnumerable<Thread>> getThreads();
         void CreateThread(Thread thread);
         Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary();
-        Task<IEnumerable<Message>> getMessages(long threadId);
+        Task<IEnumerable<MessageRecord>> getMessages(long threadId);
         long getMessagesCount(long threadId);
     }
 
@@ -27,14 +27,14 @@ namespace Signal.database
     {
         IList<Contact> Contacts;
         IList<Thread> Threads;
-        IList<Message> Messages;
+        IList<MessageRecord> Messages;
         IList<TextSecureDirectory.Directory> Directory;
 
         public Design()
         {
             Contacts = new List<Contact>();
             Threads = new List<Thread>();
-            Messages = new List<Message>();
+            Messages = new List<MessageRecord>();
             Directory = new List<TextSecureDirectory.Directory>();
 
 
@@ -62,7 +62,7 @@ namespace Signal.database
                         ThreadId = i % 5
                     };
 
-                    Messages.Add(msg);
+                    Messages.Add(new TextMessageRecord(msg));
                 }
             }
 
@@ -78,9 +78,9 @@ namespace Signal.database
             return Task.FromResult<IEnumerable<Thread>>(Threads);
         }
 
-        public Task<IEnumerable<Message>> getMessages(long threadId)
+        public Task<IEnumerable<MessageRecord>> getMessages(long threadId)
         {
-            return Task.FromResult<IEnumerable<Message>>(Messages.Where(p => p.ThreadId == threadId));
+            return Task.FromResult<IEnumerable<MessageRecord>>(Messages.Where(p => p.ThreadId == threadId));
         }
 
         public Task<IEnumerable<TextSecureDirectory.Directory>> getDictionary()
@@ -122,9 +122,10 @@ namespace Signal.database
             return await DatabaseFactory.getDirectoryDatabase().GetAllAsync();
         }
 
-        public async Task<IEnumerable<Message>> getMessages(long threadId)
+        public async Task<IEnumerable<MessageRecord>> getMessages(long threadId)
         {
-            return await DatabaseFactory.getTextMessageDatabase().getMessages(threadId);
+            var list = await DatabaseFactory.getTextMessageDatabase().getMessages(threadId);
+            return list.Select(t => new TextMessageRecord(t));
         }
 
         public async Task<IEnumerable<Thread>> getThreads()
