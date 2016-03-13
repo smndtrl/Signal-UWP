@@ -23,11 +23,9 @@ namespace Signal.ViewModels
         public static string SPLASH_PAGE_KEY = "SplashPageKey";
         public static string SETTINGS_PAGE_KEY = "SettingsPageKey";
 
-        public static string THREADS_PAGE_KEY = "ThreadsPageKey";
+        public static string MAIN_PAGE_KEY = "MainPageKey";
         public static string MESSAGES_PAGE_KEY = "ThreadDetailPageKey";
         public static string MESSAGEDETAIL_PAGE_KEY = "MessageDetailPageKey";
-
-        public static string DIRECTORY_PAGE_KEY = "DirectoryPageKey";
 
 
         public ViewModelLocator()
@@ -35,7 +33,7 @@ namespace Signal.ViewModels
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             var nav = new SignalNavigationService();
-            nav.Configure(THREADS_PAGE_KEY, typeof(ThreadMasterPage));
+            nav.Configure(MAIN_PAGE_KEY, typeof(MainPage));
             nav.Configure(MESSAGES_PAGE_KEY, typeof(ThreadDetailPage));
             nav.Configure(MESSAGEDETAIL_PAGE_KEY, typeof(MessageDetailsPage));
 
@@ -43,8 +41,7 @@ namespace Signal.ViewModels
             //nav.Configure(REGISTERTYPE_PAGE_KEY, typeof(RegistrationTypeView));
             nav.Configure(REGISTERING_PAGE_KEY, typeof(RegistrationView));
             //nav.Configure(PROVISIONING_PAGE_KEY, typeof(ProvisioningView));
-
-            nav.Configure(DIRECTORY_PAGE_KEY, typeof(DirectoryView));
+            
             nav.Configure(SETTINGS_PAGE_KEY, typeof(SettingsViewTest));
 
             SimpleIoc.Default.Register<INavigationServiceSignal>(() => nav);
@@ -61,12 +58,10 @@ namespace Signal.ViewModels
 
             SimpleIoc.Default.Register<SplashViewModel>();
             SimpleIoc.Default.Register<RegistrationViewModel>();
-            SimpleIoc.Default.Register<ThreadViewModel>();
+            SimpleIoc.Default.Register<MainViewModel>();
             //SimpleIoc.Default.Register<ContactViewModel>();
             SimpleIoc.Default.Register<MessageViewModel>();
             SimpleIoc.Default.Register<MessageDetailViewModel>();
-
-            SimpleIoc.Default.Register<DirectoryViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<ProvisionViewModel>();
 
@@ -88,9 +83,9 @@ namespace Signal.ViewModels
             get { return ServiceLocator.Current.GetInstance<MessageDetailViewModel>(); }
         }
 
-        public ThreadViewModel Thread
+        public MainViewModel Thread
         {
-            get { return ServiceLocator.Current.GetInstance<ThreadViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<MainViewModel>(); }
         }
 
         /*public ContactViewModel Contact
@@ -107,12 +102,7 @@ namespace Signal.ViewModels
         {
             get { return ServiceLocator.Current.GetInstance<ProvisionViewModel>(); }
         }
-
-        public DirectoryViewModel Directory
-        {
-            get { return ServiceLocator.Current.GetInstance<DirectoryViewModel>(); }
-        }
-
+        
         public SettingsViewModel Settings
         {
             get { return ServiceLocator.Current.GetInstance<SettingsViewModel>(); }

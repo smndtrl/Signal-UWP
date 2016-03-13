@@ -141,14 +141,11 @@
   <data name="registrationVerifyingAccount.Text" xml:space="preserve">
     <value>Accout is verifying...</value>
   </data>
-  <data name="ThreadMasterAppBarAddItem.Label" xml:space="preserve">
-    <value>Add Item</value>
-  </data>
-  <data name="ThreadMasterAppBarSelectItems.Label" xml:space="preserve">
+  <data name="ChatAppBarSelect.Label" xml:space="preserve">
     <value>Select Items</value>
   </data>
-  <data name="ThreadMasterHeaderThread.Text" xml:space="preserve">
-    <value>THREADS</value>
+  <data name="MainHeader.Text" xml:space="preserve">
+    <value>Signal</value>
   </data>
   <data name="VerifyPivotHeaderTextBlock.Text" xml:space="preserve">
     <value>Verify</value>
@@ -168,25 +165,19 @@
   <data name="DirectoryAddButton.Label" xml:space="preserve">
     <value>Add</value>
   </data>
-  <data name="DirectoryMultiToggleButton.Label" xml:space="preserve">
-    <value>Select</value>
-  </data>
-  <data name="DirectoryRefreshButton.Label" xml:space="preserve">
+  <data name="ContactAppBarRefresh.Label" xml:space="preserve">
     <value>Refresh</value>
   </data>
-  <data name="DirectoryTitle.Text" xml:space="preserve">
-    <value>DIRECTORY</value>
-  </data>
-  <data name="DirectoryListViewEmpty2TextBlock.Text" xml:space="preserve">
+  <data name="ContactListEmptyBody.Text" xml:space="preserve">
     <value>Invite a friend to Signal.</value>
   </data>
-  <data name="DirectoryListViewEmptyTextBlock.Text" xml:space="preserve">
+  <data name="ContactListEmptyHeader.Text" xml:space="preserve">
     <value>No Signal User</value>
   </data>
-  <data name="ThreadListViewEmpty2TextBlock.Text" xml:space="preserve">
+  <data name="ChatListEmptyTextBody.Text" xml:space="preserve">
     <value>Start a new conversation</value>
   </data>
-  <data name="ThreadListViewEmptyTextBlock.Text" xml:space="preserve">
+  <data name="ChatListEmptyTextHeader.Text" xml:space="preserve">
     <value>Welcome</value>
   </data>
 </root>
