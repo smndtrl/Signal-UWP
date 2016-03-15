@@ -48,7 +48,7 @@ namespace Signal.ViewModels
                            return;
                        }
 
-                       _navigationService.NavigateTo(ViewModelLocator.THREADS_PAGE_KEY);
+                       _navigationService.NavigateTo(ViewModelLocator.MAIN_PAGE_KEY);
 
 
                    },
