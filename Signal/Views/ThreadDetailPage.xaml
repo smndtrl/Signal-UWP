@@ -10,7 +10,8 @@
 	xmlns:model="using:Signal.Models"
 	xmlns:resources="using:Signal.Resources"
 	xmlns:back="using:Bezysoftware.Navigation.BackButton"
-	xmlns:controls="using:Signal.Controls"
+	xmlns:controls="using:Signal.Xaml.Controls"
+    xmlns:interactions="using:Signal.Xaml.Interactions"
 	back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
 	mc:Ignorable="d"
 	NavigationCacheMode="Disabled">
@@ -122,7 +123,7 @@
             SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}" VerticalAlignment="Bottom"
 				  >
             <Interactivity:Interaction.Behaviors>
-                <controls:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
+                <interactions:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
             </Interactivity:Interaction.Behaviors>
             <!--<Interactivity:Interaction.Behaviors>
 				<resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
@@ -165,7 +166,7 @@
                                 <Interactions:GoToStateAction StateName="Outgoing" TargetObject="{Binding ElementName=RecordTemplate}"/>
                             </Interactions:DataTriggerBehavior>
                             <Interactions:EventTriggerBehavior EventName="Holding">
-                                <resources:OpenMenuFlyoutAction/>
+                                <interactions:OpenMenuFlyoutAction/>
                             </Interactions:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
 

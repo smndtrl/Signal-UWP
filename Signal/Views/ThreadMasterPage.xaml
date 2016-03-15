@@ -7,7 +7,7 @@
     xmlns:resources="using:Signal.Resources"
     xmlns:models="using:Signal.Models"
     xmlns:settings="using:Settings.UI.Xaml.Controls"
-    xmlns:drawables="using:Signal.Drawables"
+    xmlns:controls="using:Signal.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
@@ -77,7 +77,7 @@
                 <Border x:Name="ImageBorder"
                         Grid.RowSpan="2"
                         Width="64" Height="64">
-                    <drawables:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <controls:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <!--<Image Height="64" Width="64" DataContext="{x:Bind Recipients.PrimaryRecipient.Number, Converter={StaticResource ContactPictureConverter}}" Source="{Binding Result}"/>-->
                 </Border>
 

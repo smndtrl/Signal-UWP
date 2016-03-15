@@ -6,7 +6,7 @@
     xmlns:models="using:Signal.Models"
     xmlns:database="using:Signal.Database"
     xmlns:viewmodels="using:Signal.ViewModels"
-    xmlns:drawables="using:Signal.Drawables"
+    xmlns:controls="using:Signal.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
@@ -36,7 +36,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Width="64" Height="64" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <drawables:ContactPicture 
+                    <controls:ContactPicture 
                       Radius="24" Contact="{Binding Result}" DataContext="{x:Bind ContactId, Converter={StaticResource ContactRetriever}}"/>
                 </Border>
                 

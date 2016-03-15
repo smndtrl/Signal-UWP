@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 
-namespace Signal.Controls
+namespace Signal.Xaml.Interactions
 {
     public class ListBoxSelectedItemsBehavior : Behavior<ListView>
     {

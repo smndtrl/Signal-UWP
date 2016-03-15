@@ -114,10 +114,27 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Database\BackgroundDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmsReceiverTask.cs" />
     <Compile Include="PushReceiverTask.cs" />
+    <Compile Include="TextSecurePreferences.cs" />
+    <Compile Include="Background\WebsocketTask.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libaxolotl-uwp\libaxolotl\libaxolotl-uwp.csproj">
+      <Project>{78eaa4cf-8789-43ee-a216-a50522303c92}</Project>
+      <Name>libaxolotl-uwp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libtextsecure-uwp\libtextsecure-uwp\libtextsecure-uwp.csproj">
+      <Project>{fab01aa5-dafa-4fd5-8642-770c6548adf8}</Project>
+      <Name>libtextsecure-uwp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="SQLite.UAP.2015, Version=3.10.2">
+      <Name>SQLite for Universal App Platform</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

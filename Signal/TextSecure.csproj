@@ -114,21 +114,22 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
-    <Compile Include="Controls\AlertView.cs" />
-    <Compile Include="Controls\AvatarView.cs" />
-    <Compile Include="Controls\ConfirmIdentityDialog.xaml.cs">
+    <Compile Include="Xaml\Controls\AlertView.xaml.cs">
+      <DependentUpon>AlertView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Xaml\Controls\AvatarView.xaml.cs">
+      <DependentUpon>AvatarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Xaml\Controls\ConfirmIdentityDialog.xaml.cs">
       <DependentUpon>ConfirmIdentityDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DataTriggerBehavior.cs" />
-    <Compile Include="Controls\ListBoxSelectedItemsBehavior.cs" />
-    <Compile Include="Controls\MessageView.xaml.cs">
+    <Compile Include="Xaml\Interactions\ListBoxSelectedItemsBehavior.cs" />
+    <Compile Include="Xaml\Controls\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\StatusView.xaml.cs">
+    <Compile Include="Xaml\Controls\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TextView.cs" />
-    <Compile Include="Controls\ThumbnailView.cs" />
     <Compile Include="crypto\IdentityKeyUtil.cs" />
     <Compile Include="crypto\PreKeyUtil.cs" />
     <Compile Include="crypto\storage\TextSecureAxolotlStore.cs" />
@@ -159,7 +160,7 @@
     <Compile Include="Database\TextMessageDatabase.cs" />
     <Compile Include="Database\TextSecureDirectory.cs" />
     <Compile Include="Database\SQLite\ThreadDatabase.cs" />
-    <Compile Include="Drawables\ContactPicture.cs" />
+    <Compile Include="Xaml\Controls\ContactPicture.cs" />
     <Compile Include="MessageSender.cs" />
     <Compile Include="Messages\IncomingEncryptedMessage.cs" />
     <Compile Include="Messages\IncomingEndSessionMessage.cs" />
@@ -185,19 +186,17 @@
     <Compile Include="recipient\RecipientFactory.cs" />
     <Compile Include="recipient\RecipientProvider.cs" />
     <Compile Include="recipient\Recipients.cs" />
-    <Compile Include="Resources\ContactRetriever.cs" />
-    <Compile Include="Resources\ContactPictureConverter.cs" />
+    <Compile Include="Xaml\Converters\ContactRetriever.cs" />
+    <Compile Include="Xaml\Converters\ContactPictureConverter.cs" />
     <Compile Include="Resources\CountryCollection.cs" />
-    <Compile Include="Resources\DebugConverter.cs" />
-    <Compile Include="Resources\ExtendedVisualStateManager.cs" />
-    <Compile Include="Resources\DeliveryStatusConverter.cs" />
-    <Compile Include="Resources\DateConverter.cs" />
-    <Compile Include="Resources\ExtendedGoToStateAction.cs" />
-    <Compile Include="Resources\IdentityLoader.cs" />
+    <Compile Include="Xaml\Converters\DebugConverter.cs" />
+    <Compile Include="Xaml\ExtendedVisualStateManager.cs" />
+    <Compile Include="Xaml\Converters\DateConverter.cs" />
+    <Compile Include="Xaml\Interactions\ExtendedGoToStateAction.cs" />
     <Compile Include="Resources\ItemClickCommand.cs" />
-    <Compile Include="Resources\OpenMenuFlyoutAction.cs" />
-    <Compile Include="Resources\RadioConverter.cs" />
-    <Compile Include="Resources\ScrollToBottomBehaviour.cs" />
+    <Compile Include="Xaml\Interactions\OpenMenuFlyoutAction.cs" />
+    <Compile Include="Xaml\Converters\RadioConverter.cs" />
+    <Compile Include="Xaml\Interactions\ScrollToBottomBehaviour.cs" />
     <Compile Include="Resources\SignalNavigationService.cs" />
     <Compile Include="Resources\ThemeAwareFrame.cs" />
     <Compile Include="Tasks\CreateSignedPreKeyTask.cs" />
@@ -226,7 +225,6 @@
     <Compile Include="Util\JsonSerializers.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\LRUCache.cs" />
-    <Compile Include="Util\MessageSender.cs" />
     <Compile Include="Util\PushHelper.cs" />
     <Compile Include="Util\TaskHelper.cs" />
     <Compile Include="Util\TextSecurePreferences.cs" />
@@ -301,15 +299,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\ConfirmIdentityDialog.xaml">
+    <Page Include="Xaml\Controls\AlertView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MessageView.xaml">
+    <Page Include="Xaml\Controls\AvatarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\StatusView.xaml">
+    <Page Include="Xaml\Controls\ConfirmIdentityDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Xaml\Controls\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Xaml\Controls\StatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -393,6 +399,9 @@
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Xaml\Interactivity\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

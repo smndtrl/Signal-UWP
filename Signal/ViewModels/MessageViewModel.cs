@@ -24,11 +24,11 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using Signal.Controls;
 using Signal.Database;
 using Signal.Messages;
 using Signal.Resources;
 using Signal.Views;
+using Signal.Xaml.Controls;
 
 namespace Signal.ViewModels
 {
