@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Security.Cryptography.Core;
 using TextSecure;
 using TextSecure.database;
 using TextSecure.recipient;
@@ -23,12 +24,12 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using Signal.Controls;
 using Signal.Database;
 using Signal.Messages;
 using Signal.Resources;
 using Signal.Util;
 using Signal.Views;
+using Signal.Xaml.Controls;
 
 namespace Signal.ViewModels
 {
@@ -197,12 +198,18 @@ namespace Signal.ViewModels
         }
 
 
-        private IEnumerable _selectedMessages = new List<object>();
-        public IEnumerable SelectedMessages
+        private IList _selectedMessages = new List<object>();
+        public IList SelectedMessages
         {
             get { return _selectedMessages; }
             set
             {
+                if (value.Count > 0)
+                {
+                    AreItemsSelected = true;
+                }
+                else AreItemsSelected = false;
+
                 if (value != _selectedMessages)
                 {
                     Set(ref _selectedMessages, value);
@@ -210,6 +217,13 @@ namespace Signal.ViewModels
                 }
                 
             }
+        }
+
+        private bool _areItemsSelected = false;
+        public bool AreItemsSelected
+        {
+            get { return _areItemsSelected; }
+            set { Set(ref _areItemsSelected, value); RaisePropertyChanged(); }
         }
 
         private ListViewSelectionMode _listViewMultiSelect = ListViewSelectionMode.Single;

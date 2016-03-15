@@ -10,7 +10,8 @@
 	xmlns:model="using:Signal.Models"
 	xmlns:resources="using:Signal.Resources"
 	xmlns:back="using:Bezysoftware.Navigation.BackButton"
-	xmlns:controls="using:Signal.Controls"
+	xmlns:controls="using:Signal.Xaml.Controls"
+    xmlns:interactions="using:Signal.Xaml.Interactions"
 	back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
 	mc:Ignorable="d"
 	NavigationCacheMode="Disabled">
@@ -52,7 +53,7 @@
                             Text="Update Identity" Command="{x:Bind ViewModel.ConfirmIdentityCommand}" CommandParameter="{Binding}"/>
             <MenuFlyoutItem x:Name="DetailsMessageFlyout"
                             Text="Details" Command="{x:Bind ViewModel.DetailsCommand}" CommandParameter="{Binding}"/>
-            <MenuFlyoutItem x:Name="DeleteMessageFlyout" 
+            <MenuFlyoutItem x:Name="DeleteMessageFlyout"
 						Text="Delete TODO" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{Binding}"/>
              </MenuFlyout>
 
@@ -98,7 +99,8 @@
             <AppBarButton x:Name="ThreadDetailDeleteAppBarButton" x:Uid="ThreadDetailDeleteAppBarButton"
                               Icon="Delete"
                               Label="DELETE"
-                              Command="{x:Bind ViewModel.DeleteCommand}"/>
+                              Command="{x:Bind ViewModel.DeleteCommand}"
+                          Visibility="{x:Bind ViewModel.AreItemsSelected, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </CommandBar>
     </Page.TopAppBar>
 
@@ -111,7 +113,7 @@
 
 
 
-        <ListView 
+        <ListView
 			x:Name="listView"
              ItemsSource="{x:Bind ViewModel.Messages}"
 			IncrementalLoadingTrigger="Edge"
@@ -123,7 +125,7 @@
             SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}" VerticalAlignment="Bottom"
 				  >
             <Interactivity:Interaction.Behaviors>
-                <controls:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
+                <interactions:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
             </Interactivity:Interaction.Behaviors>
             <!--<Interactivity:Interaction.Behaviors>
 				<resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
@@ -137,12 +139,16 @@
                                     <VisualState.Setters>
                                         <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="0"/>
                                         <Setter Target="Border.(UIElement.Grid.Column)" Value="2"/>
+                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="2"/>
+
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Incoming">
                                     <VisualState.Setters>
                                         <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="2"/>
                                         <Setter Target="Border.(UIElement.Grid.Column)" Value="0"/>
+                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="0"/>
+
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -162,11 +168,12 @@
                                 <Interactions:GoToStateAction StateName="Outgoing" TargetObject="{Binding ElementName=RecordTemplate}"/>
                             </Interactions:DataTriggerBehavior>
                             <Interactions:EventTriggerBehavior EventName="Holding">
-                                <resources:OpenMenuFlyoutAction/>
+                                <interactions:OpenMenuFlyoutAction/>
                             </Interactions:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
 
                         <Border x:Name="Border" Width="32" Height="32" Background="BlanchedAlmond"></Border>
+                        <controls:AlertView x:Name="AlertView" Grid.Column="0" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
                         <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
                     </Grid>
                 </DataTemplate>
@@ -185,7 +192,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="MessageAttachmentButton" x:Uid="MessageAttachmentButton" 
+            <Button x:Name="MessageAttachmentButton" x:Uid="MessageAttachmentButton"
 					Command="{x:Bind ViewModel.AttachCommand}">
                 <SymbolIcon Symbol="Attach" />
             </Button>
@@ -213,10 +220,3 @@
 
     </Grid>
 </local:SignalPage>
-
-
-
-
-
-
-

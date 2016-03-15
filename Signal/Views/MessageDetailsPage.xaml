@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:controls="using:Signal.Controls"
+    xmlns:controls="using:Signal.Xaml.Controls"
     xmlns:resources="using:Signal.Resources"
     mc:Ignorable="d">
 

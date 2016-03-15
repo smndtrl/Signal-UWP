@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Microsoft.Xaml.Interactivity;
 
-namespace Signal.Resources
+namespace Signal.Xaml.Interactions
 {
     public class ExtendedGoToStateAction : DependencyObject, IAction
     {

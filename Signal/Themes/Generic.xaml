@@ -1,91 +1,11 @@
 <ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:control="using:Signal.Controls"
+
 	xmlns:resources="using:Signal.Resources"
 	xmlns:models="using:Signal.Models"
 	xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
 	xmlns:interactions="using:Microsoft.Xaml.Interactions.Core">
 
 
-
-    <Style TargetType="control:AlertView">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:AlertView">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="Alert">
-                                <VisualState x:Name="PendingApproval">
-                                    <VisualState.Setters>
-                                        <Setter Target="AlertViewFailedImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                        <Setter Target="AlertViewPendingApprovalImage.(UIElement.Visibility)" Value="Visible"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Failed">
-                                    <VisualState.Setters>
-                                        <Setter Target="AlertViewFailedImage.(UIElement.Visibility)" Value="Visible"/>
-                                        <Setter Target="AlertViewPendingApprovalImage.(UIElement.Visibility)" Value="Collapsed"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        
-                        <StackPanel>
-                            <SymbolIcon x:Name="AlertViewFailedImage" Symbol="Important" Visibility="Collapsed"/>
-                            <SymbolIcon x:Name="AlertViewPendingApprovalImage" Symbol="ReportHacked" Visibility="Collapsed"/>
-                            <!--<Image x:Name="AlertViewFailedImage" Visibility="Collapsed"/>
-                            <Image x:Name="AlertViewPendingApprovalImage" Visibility="Collapsed"/>-->
-                        </StackPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
-    <Style TargetType="control:ThumbnailView">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:ThumbnailView">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="control:TextView">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:TextView">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="control:AvatarView">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="control:AvatarView">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 </ResourceDictionary>

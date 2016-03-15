@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace Signal.Resources
+namespace Signal.Xaml.Converters
 {
     public class DebugConverter : IValueConverter
     {
