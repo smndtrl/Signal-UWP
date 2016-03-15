@@ -131,7 +131,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Width="64" Height="64" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <drawables:ContactPicture
+                    <controls:ContactPicture
                       Radius="24" Contact="{Binding Result}" DataContext="{x:Bind ContactId, Converter={StaticResource ContactRetriever}}"/>
                 </Border>
 

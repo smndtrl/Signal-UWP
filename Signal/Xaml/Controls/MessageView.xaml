@@ -98,7 +98,7 @@
         <StackPanel MinWidth="64" MinHeight="24"
                     HorizontalAlignment="Stretch"
 					Grid.Row="1" Grid.RowSpan="1" Grid.Column="2"
-					Padding="8,4,8,20"  
+					Padding="8,4,8,4"  
 					Background="{ThemeResource MessageBubbleBackgroundThemeBrush}"
 					>
 
