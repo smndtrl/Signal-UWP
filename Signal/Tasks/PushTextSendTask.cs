@@ -103,7 +103,7 @@ namespace Signal.Tasks
                                                                                  .build();
 
                 Debug.WriteLine("TextSendTask deliver");
-                await messageSender.sendMessage(address, textSecureMessage);
+                messageSender.sendMessage(address, textSecureMessage);
             }
             catch (InvalidNumberException e/*| UnregisteredUserException e*/) {
                 //Log.w(TAG, e);
