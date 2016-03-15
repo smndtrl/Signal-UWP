@@ -1,8 +1,7 @@
 ﻿<Application
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Signal"
-    xmlns:resource="using:Signal.Resources"
+    xmlns:converters="using:Signal.Xaml.Converters"
     xmlns:viewmodels="using:Signal.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     x:Class="Signal.App"
@@ -26,12 +25,14 @@
 
 
 
-            <resource:DebugConverter x:Key="DebugConverter" />
-            <resource:DateConverter x:Key="DateConverter" />
-            <resource:RadioConverter x:Key="RadioConverter" />
-            <resource:ContactRetriever x:Key="ContactRetriever" />
-            <resource:ContactPictureConverter x:Key="ContactPictureConverter" />
-            <resource:DeliveryStatusConverter x:Key="DeliveryStatusConverter" />
+            <converters:DebugConverter x:Key="DebugConverter" />
+            <converters:DateConverter x:Key="DateConverter" />
+            <converters:ContactPictureConverter x:Key="ContactPictureConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:RadioConverter x:Key="RadioConverter" />
+            
+            <converters:ContactRetriever x:Key="ContactRetriever" />
+
             <viewmodels:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
          
         </ResourceDictionary>

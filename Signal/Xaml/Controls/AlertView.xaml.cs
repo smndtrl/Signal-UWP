@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Signal.Models;
+using Signal.Util;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Signal.Controls
+namespace Signal.Xaml.Controls
 {
     public enum AlertType
     {
@@ -20,8 +25,7 @@ namespace Signal.Controls
         Failed = 1,
         PendingApproval = 2
     }
-
-    public sealed class AlertView : Control
+    public sealed partial class AlertView : UserControl
     {
         public static readonly DependencyProperty AlertTypeProperty = DependencyProperty.Register("Type", typeof(AlertType), typeof(AlertView), new PropertyMetadata(AlertType.Failed, new PropertyChangedCallback(OnStateChanged)));
 
@@ -35,12 +39,36 @@ namespace Signal.Controls
         {
             var control = d as AlertView;
 
-            control?.Update((AlertType)e.NewValue);
+            control?.Update();
+        }
+
+        public static readonly DependencyProperty MessageRecordProperty = DependencyProperty.Register("MessageRecord", typeof(MessageRecord), typeof(AlertView), new PropertyMetadata(new MessageRecord(), new PropertyChangedCallback(OnMessageRecordChanged)));
+
+        public MessageRecord MessageRecord
+        {
+            get { return (MessageRecord)GetValue(MessageRecordProperty); }
+            set
+            {
+                Log.Debug($"set");
+                SetValue(MessageRecordProperty, value);
+
+            }
+        }
+
+        private static void OnMessageRecordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            Log.Debug($"OnMessageRecordChanged");
+
+            AlertView control = d as AlertView;
+            control.MessageRecord = (Models.MessageRecord)e.NewValue;
+
+            control.Update();
+
         }
 
         public AlertView()
         {
-            this.DefaultStyleKey = typeof(AlertView);
+            this.InitializeComponent();
             DataContextChanged += OnDataContextChanged;
         }
 
@@ -50,12 +78,17 @@ namespace Signal.Controls
             var m = this.DataContext as MessageRecord;
             if (m != null)
             {
-                Update(m.IsFailed ? AlertType.Failed : AlertType.None);
+                this.MessageRecord = m;
+                Update();
 
             }
         }
-        private void Update(AlertType type)
+        private void Update()
         {
+            var type = this.MessageRecord.IsFailed
+                ? AlertType.Failed
+                : (this.MessageRecord.IsKeyExchange ? AlertType.PendingApproval : AlertType.None);
+
             switch (type)
             {
                 case AlertType.Failed:
@@ -68,6 +101,5 @@ namespace Signal.Controls
                     break;
             }
         }
-
     }
 }

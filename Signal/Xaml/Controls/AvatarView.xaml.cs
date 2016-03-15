@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Signal.Models;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Signal.Controls
+namespace Signal.Xaml.Controls
 {
-    public sealed class AvatarView : Control
+    public sealed partial class AvatarView : UserControl
     {
         public static readonly DependencyProperty RecipientProperty = DependencyProperty.Register("Type", typeof(Recipient), typeof(AvatarView), new PropertyMetadata(new Recipient(), new PropertyChangedCallback(OnRecipientChanged)));
-
         public Recipient Recipient
         {
             get { return (Recipient)GetValue(RecipientProperty); }
@@ -30,10 +33,9 @@ namespace Signal.Controls
 
             control?.Update((Recipient)e.NewValue);
         }
-
         public AvatarView()
         {
-            this.DefaultStyleKey = typeof(AvatarView);
+            this.InitializeComponent();
         }
 
         private void Update(Recipient recipient)

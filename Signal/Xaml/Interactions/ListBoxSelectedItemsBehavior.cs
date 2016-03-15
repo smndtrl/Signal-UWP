@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 
-namespace Signal.Controls
+namespace Signal.Xaml.Interactions
 {
     public class ListBoxSelectedItemsBehavior : Behavior<ListView>
     {
@@ -30,12 +30,12 @@ namespace Signal.Controls
         }
 
         public static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.Register("SelectedItems", typeof(IEnumerable), typeof(ListBoxSelectedItemsBehavior),
+            DependencyProperty.Register("SelectedItems", typeof(IList), typeof(ListBoxSelectedItemsBehavior),
             new PropertyMetadata(null));
 
-        public IEnumerable SelectedItems
+        public IList SelectedItems
         {
-            get { return (IEnumerable)GetValue(SelectedItemsProperty); }
+            get { return (IList)GetValue(SelectedItemsProperty); }
             set { SetValue(SelectedItemsProperty, value); }
         }
     }

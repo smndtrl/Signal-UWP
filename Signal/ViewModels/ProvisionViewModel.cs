@@ -61,7 +61,6 @@ namespace Signal.ViewModels
         {
             _dataService = service;
             _navigationService = navService;
-
         }
 
         private async Task<DeviceInformation> GetCamera()
