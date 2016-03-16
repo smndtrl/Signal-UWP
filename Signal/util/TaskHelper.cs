@@ -55,6 +55,67 @@ namespace TextSecure.util
 
         public TaskHelper() { }
 
+        public async void Register()
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name ==)
+            }
+        }
+
+        public List<TaskInformation> Tasks = new List<TaskInformation>()
+        {
+            new TaskInformation()
+            {
+                taskEntryPoint = "SignalTasks.Background.WebsocketTask",
+                name = "WebsocketTask",
+                trigger = new TimeTrigger(15, false),
+                condition = new SystemCondition(SystemConditionType.InternetAvailable)
+            }
+        };
+
+        public struct TaskInformation
+        {
+            public string taskEntryPoint;
+            public string name;
+            public IBackgroundTrigger trigger;
+            public IBackgroundCondition condition;
+        }
+
+        public static async Task<BackgroundTaskRegistration> RegisterBackgroundTask(string taskEntryPoint, string name,
+            IBackgroundTrigger trigger, IBackgroundCondition condition)
+        {
+            if (TaskRequiresBackgroundAccess(name))
+            {
+                await BackgroundExecutionManager.RequestAccessAsync();
+            }
+
+            var builder = new BackgroundTaskBuilder();
+
+            builder.Name = name;
+            builder.TaskEntryPoint = taskEntryPoint;
+            builder.SetTrigger(trigger);
+
+            if (condition != null)
+            {
+                builder.AddCondition(condition);
+
+                builder.CancelOnConditionLoss = true;
+            }
+
+            BackgroundTaskRegistration task = builder.Register();
+
+            return task;
+        }
+
+        public static void UnregisterBackgroundTasks(string name)
+        {
+            foreach (var cur in BackgroundTaskRegistration.AllTasks)
+            {
+                if (cur.Value.Name == name) cur.Value.Unregister(true);
+            }
+        }
+
         public void RegisterPushReceiver()
         {
             RegisterBackgroundTask();
