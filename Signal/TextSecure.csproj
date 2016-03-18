@@ -115,6 +115,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
+    <Compile Include="SignalApp.cs" />
     <Compile Include="Xaml\Controls\AlertView.xaml.cs">
       <DependentUpon>AlertView.xaml</DependentUpon>
     </Compile>

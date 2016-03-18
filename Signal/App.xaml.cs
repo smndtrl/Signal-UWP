@@ -1,33 +1,18 @@
 ﻿using Bezysoftware.Navigation.BackButton;
 using libtextsecure;
-using Signal.Database;
 using Signal.Push;
 using Signal.Tasks;
 using Signal.Tasks.Library;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using TextSecure.util;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using libtextsecure.messages;
-using Strilanc.Value;
-using System.Reflection;
 using Signal.Views;
 using GalaSoft.MvvmLight.Threading;
 using Signal.Util;
@@ -39,18 +24,18 @@ namespace Signal
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : SignalApp
     {
         public static new App Current => Application.Current as App;
 
         public static string CurrentVersion => $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}";
 
-        private static Frame _frame;
+        /*private static Frame _frame;
          
         public static Frame Frame
         {
             get { return _frame; }
-        }
+        }*/
 
         public TaskWorker Worker { get; private set; }
 
@@ -67,96 +52,9 @@ namespace Signal
         {
 
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
-
-#if DEBUG
-            libtextsecure.util.HttpClientCertificatePolicyState.Policy = libtextsecure.util.HttpClientCertificatePolicy.DevelopmentMode;
-#endif
-
-            /* using (var db = new SignalContext())
-             {
-                 Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
-                 //db.Database.ApplyMigrations();
-                 db.Database.EnsureCreated();
-             }*/
-
-            //var culture = new CultureInfo("en-US");
-            /* Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
-             CultureInfo.DefaultThreadCurrentCulture = culture;
-             CultureInfo.DefaultThreadCurrentUICulture = culture;*/
-
-
-            /* 
-            new TextSecureAccountManager(URL, TRUST_STORE,
-                                                                        USERNAME, PASSWORD);
-
-     */
-
-            App.Current.DebugSettings.IsBindingTracingEnabled = true;
-            App.Current.DebugSettings.BindingFailed += (s, e) =>
-            {
-                Debug.WriteLine("binding failed");
-            };
-
-
-
 
         }
 
-        /*private IBackgroundTaskRegistration GetRegisteredTask()
-        {
-            foreach (var task in BackgroundTaskRegistration.AllTasks.Values)
-            {
-                if (task.Name == "UpdateChannel")
-                {
-                    return task;
-                }
-            }
-            return null;
-        }
-
-        private async Task<bool> init()
-        {
-            if (channel == null)
-            {
-                var response = await PushHelper.getInstance().OpenChannelAndUpload();
-                channel = response.Channel;
-
-                channel.PushNotificationReceived += OnPushNotificationReceived;
-            }
-
-            if (GetRegisteredTask() == null)
-            {
-                BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
-                MaintenanceTrigger trigger = new MaintenanceTrigger(24*60, false);
-                taskBuilder.SetTrigger(trigger);
-                taskBuilder.TaskEntryPoint = "MaintenanceTask";
-                taskBuilder.Name = "UpdateChannel";
-
-                SystemCondition internetCondition = new SystemCondition(SystemConditionType.InternetAvailable);
-                taskBuilder.AddCondition(internetCondition);
-
-                try
-                {
-                    
-
-                    taskBuilder.Register();
-                    //rootPage.NotifyUser("Task registered", NotifyType.StatusMessage);
-                }
-                catch (Exception ex)
-                {
-                    //rootPage.NotifyUser("Error registering task: " + ex.Message, NotifyType.ErrorMessage);
-                }
-            }
-            else
-            {
-                //rootPage.NotifyUser("Task already registered", NotifyType.ErrorMessage);
-            }
-
-            //var response = await PushHelper.getInstance().OpenChannelAndUpload();
-
-            return true;
-        }*/
 
         /*private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs e)
         {
@@ -190,107 +88,32 @@ namespace Signal
         }*/
 
 
-        protected override void OnActivated(IActivatedEventArgs args)
+
+
+
+        protected override void InitializeUi()
         {
-            if (args.Kind == ActivationKind.Protocol)
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame == null)
             {
-                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
-
-                // TODO: Handle URI activation
-                // The received URI is eventArgs.Uri.AbsoluteUri
-
-                var uri = eventArgs.Uri.Query;
-
-                try
-                {
-                    var test = eventArgs.Uri;
-                    WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(uri);
-                    var param = decoder.ToDictionary(x => x.Name, x => x.Value);
-
-                    var uuid = param["uuid"];
-                    var pubKey = param["pub_key"];
-
-                    Debug.WriteLine($"UUID: {uuid}, PubKey: {pubKey}");
-
-                    if (uuid.Equals(string.Empty) || pubKey.Equals(string.Empty))
-                    {
-
-                    }
-                } catch (Exception e)
-                {
-                    Debug.WriteLine($"Error while parsing protocol uri tsdevice://{uri}");
-                }
-
-
-
+                rootFrame = new Frame();
             }
+
+            Window.Current.Content = rootFrame;
+            Window.Current.Activate();
+
+            BackButtonManager.RegisterFrame(rootFrame, true, true, true);
         }
 
-
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnNormalLaunch(LaunchActivatedEventArgs e)
         {
-
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                this.DebugSettings.EnableFrameRateCounter = false;
-            }
-#endif
+            Frame rootFrame = Window.Current.Content as Frame;
 
 
-            // Add our custom certificate
-            try
-            {
-                // Read the contents of the Certificate file
-                System.Uri certificateFile = new System.Uri("ms-appx:///Assets/testingder.cer");
-                Windows.Storage.StorageFile file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(certificateFile);
-                Windows.Storage.Streams.IBuffer certBlob = await Windows.Storage.FileIO.ReadBufferAsync(file);
 
-                // Create an instance of the Certificate class using the retrieved certificate blob contents
-                Windows.Security.Cryptography.Certificates.Certificate rootCert = new Windows.Security.Cryptography.Certificates.Certificate(certBlob);
-
-                // Get access to the TrustedRootCertificationAuthorities for your own app (not the system one)
-                Windows.Security.Cryptography.Certificates.CertificateStore trustedStore = Windows.Security.Cryptography.Certificates.CertificateStores.TrustedRootCertificationAuthorities;
-
-                // Add the certificate to the TrustedRootCertificationAuthorities store for your app
-                trustedStore.Add(rootCert);
-            }
-            catch (Exception oEx)
-            {
-                // Catch that exception. We don't really have a choice here..
-                var msg = oEx.Message;
-            }
 
             DispatcherHelper.Initialize();
-
-            //Note: for development purposes, if you want to quickly re-register the device to another number, just do this:
-            //TextSecurePreferences.setLocalNumber("");
-
-            if (TextSecurePreferences.getLocalNumber() == string.Empty)
-            {
-                Debug.WriteLine("Launching first launch experience");
-                OnFirstLaunched(e);
-                return;
-            }
-
-            Debug.WriteLine("Launching...");
-
-            /*if (TextSecurePreferences.isPushRegistered() == true)
-            {
-                TaskHelper.getInstance().RegisterPushReceiver();
-
-                if (channel == null)
-                {
-                    var response = await PushHelper.getInstance().OpenChannelAndUpload();
-                    channel = response.Channel;
-                }
-
-            }*/
 
             accountManager = TextSecureCommunicationFactory.createManager();
 
@@ -317,75 +140,29 @@ namespace Signal
             //App.Current.Worker.AddTaskActivities(new RefreshPreKeysTask());
 
 
-
-            /*if (rootFrame.Content == null)
+            if (rootFrame != null && rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
-            }*/
-            // Ensure the current window is active
-
-            Frame rootFrame = Window.Current.Content as Frame;
-            
-
-            _frame = rootFrame;
-
-            if (rootFrame == null)
-            {
-                rootFrame = new Frame();
             }
 
-            rootFrame.Navigated += (s, se) =>
-            {
-                Log.Debug($"Navigated");
-                foreach (PageStackEntry journalEntry in rootFrame.BackStack)
-                {
-                    Log.Debug($"{journalEntry.SourcePageType.FullName}");
-                }
-            };
-            rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
-            
-            Window.Current.Content = rootFrame;
             Window.Current.Activate();
-
-            BackButtonManager.RegisterFrame(rootFrame, true, true, true);
 
         }
 
 
-        private void OnFirstLaunched(LaunchActivatedEventArgs e)
+        protected override void OnFirstLaunch(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
+            if (rootFrame != null && rootFrame.Content == null)
             {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-
-                //rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
-
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
-                if (e.PreviousExecutionState != ApplicationExecutionState.Running)
-                {
-                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
-                    ExtendedSplash extendedSplash = new ExtendedSplash();
-                    rootFrame.Content = extendedSplash;
-                }
-
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
-
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(typeof(ExtendedSplash), e.Arguments);
             }
 
             Window.Current.Activate();
@@ -417,7 +194,7 @@ namespace Signal
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        protected override void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
