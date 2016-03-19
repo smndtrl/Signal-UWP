@@ -8,8 +8,39 @@
     mc:Ignorable="d"
     d:DesignHeight="64"
     d:DesignWidth="64">
+    
+
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="Avatar">
+                <VisualState x:Name="DefaultState">
+                    <VisualState.Setters>
+                        <Setter Target="Initials.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="InitialsState">
+                    <VisualState.Setters>
+                        <Setter Target="Default.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ImageState">
+                    <VisualState.Setters>
 
+                        <Setter Target="Default.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="Initials.(UIElement.Visibility)" Value="Collapsed"/>
+
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Ellipse x:Name="Circle" Fill="Chocolate"/>
+        <Viewbox x:Name="Default"
+                 Width="24" Height="24" 
+                 HorizontalAlignment="Center" VerticalAlignment="Center">
+            <SymbolIcon Symbol="Contact"/>
+        </Viewbox>
+        <TextBlock x:Name="Initials" Text="AS" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

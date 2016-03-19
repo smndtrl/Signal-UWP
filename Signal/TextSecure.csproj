@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
     <Compile Include="SignalApp.cs" />
+    <Compile Include="ViewModels\IBackAwareViewModel.cs" />
     <Compile Include="Xaml\Controls\AlertView.xaml.cs">
       <DependentUpon>AlertView.xaml</DependentUpon>
     </Compile>
@@ -124,6 +125,10 @@
     </Compile>
     <Compile Include="Xaml\Controls\ConfirmIdentityDialog.xaml.cs">
       <DependentUpon>ConfirmIdentityDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Xaml\Controls\InputAwareContainer.cs" />
+    <Compile Include="Xaml\Controls\QrCode.xaml.cs">
+      <DependentUpon>QrCode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Xaml\Interactions\ListBoxSelectedItemsBehavior.cs" />
     <Compile Include="Xaml\Controls\MessageView.xaml.cs">
@@ -247,16 +252,13 @@
     <Compile Include="Views\ExtendedSplash.xaml.cs">
       <DependentUpon>ExtendedSplash.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Guide\First.xaml.cs">
-      <DependentUpon>First.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\IInputAwarePage.cs" />
     <Compile Include="Views\ItemClickCommand.cs" />
     <Compile Include="Views\MessageDetailsPage.xaml.cs">
       <DependentUpon>MessageDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ThreadDetailPage.xaml.cs">
-      <DependentUpon>ThreadDetailPage.xaml</DependentUpon>
+    <Compile Include="Views\ThreadPage.xaml.cs">
+      <DependentUpon>ThreadPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsViewTest.xaml.cs">
       <DependentUpon>SettingsViewTest.xaml</DependentUpon>
@@ -314,6 +316,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Xaml\Controls\QrCode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Xaml\Controls\StatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -338,15 +344,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Guide\First.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MessageDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ThreadDetailPage.xaml">
+    <Page Include="Views\ThreadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -395,9 +397,7 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Xaml\Interactivity\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

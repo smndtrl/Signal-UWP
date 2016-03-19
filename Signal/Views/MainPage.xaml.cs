@@ -25,35 +25,11 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class MainPage : SignalPage
     {
-        public MainViewModel ViewModel
-        {
-            get
-            {
-                return (MainViewModel)DataContext;
-            }
-        }
+        public MainViewModel ViewModel => (MainViewModel)DataContext;
 
         public MainPage()
         {
             this.InitializeComponent();
-
-            ViewModel.DetailFrame = detailFrame;
-
-            ViewModel.AdaptiveStates = AdaptiveStates;
-        }
-
-        private void piv_CC_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (((PivotItem)piv_CC.SelectedItem).Name == ChatPiv.Name)
-            {
-                SelectChatsABBtn.Visibility = Visibility.Visible;
-                ContactRefreshABBtn.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                SelectChatsABBtn.Visibility = Visibility.Collapsed;
-                ContactRefreshABBtn.Visibility = Visibility.Visible;
-            }
         }
     }
 }

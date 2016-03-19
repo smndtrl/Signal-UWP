@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Signal.Xaml.Controls
 {
+    [Obsolete]
     class ContactPicture : Canvas
     {
         public static readonly DependencyProperty RadiusProperty = DependencyProperty.Register("Radius", typeof(double), typeof(ContactPicture), new PropertyMetadata(50.0, OnSizePropertyChanged));
@@ -36,6 +37,7 @@ namespace Signal.Xaml.Controls
         public ContactPicture()
         {
             this.Loaded += OnLoaded;
+            Draw();
         }
 
         /*public string ContactId

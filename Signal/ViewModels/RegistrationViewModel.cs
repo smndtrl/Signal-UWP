@@ -1,38 +1,32 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.Generic;
+using GalaSoft.MvvmLight;
+using Signal.database;
+using System.Diagnostics;
+using Signal.Resources;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using ZXing;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using libaxolotl;
 using libaxolotl.state;
 using libaxolotl.util;
 using libtextsecure.push.exceptions;
 using libtextsecure.util;
-using Signal.database;
-using Signal.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TextSecure.crypto;
-using TextSecure.database;
-using Signal.Push;
-using TextSecure.recipient;
-using Signal.Util;
-using TextSecure.util;
-using System.Windows.Input;
-using Signal.Resources;
-using Windows.UI.Xaml;
-using System.Globalization;
-using System.Collections;
-using System.Xml.Serialization;
-using System.Xml;
-using System.IO;
-using System.Reflection;
 using Signal.Database;
-using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Signal.Models;
+using Signal.Push;
+using Signal.Util;
+using TextSecure.crypto;
+using TextSecure.util;
 
 namespace Signal.ViewModels
 {
@@ -54,10 +48,11 @@ namespace Signal.ViewModels
             this.DisplayName = Name;
             this.Code = Code;
             this.Name = Name.ToLower();
+         
         }
     }
 
-    public class RegistrationViewModel : ViewModelBase, INavigableViewModel
+    public class RegistrationViewModel : ViewModelBase, INavigableViewModel, IBackAwareViewModel
     {
         private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
@@ -67,15 +62,63 @@ namespace Signal.ViewModels
         {
             _dataService = service;
             _navigationService = navService;
+        }
 
-            /*XmlSerializer ser = new XmlSerializer(typeof(Country));
 
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.Load.GetExecutingAssembly().Location), );
-            var reader = new StreamReader(Application.Start);
-            var test = ser.Deserializeread()*/
+        #region Properties
+        /*
+         * Register Pivot
+         */
+        private string _countryCode = string.Empty;
+        public string CountryCode
+        {
+            get { return _countryCode; }
+            set { Set(ref _countryCode, value); RegisterCommand.RaiseCanExecuteChanged(); }
+        }
 
+        private string _phoneNumber = string.Empty;
+        public string PhoneNumber
+        {
+            get { return _phoneNumber; }
+            set { Set(ref _phoneNumber, value); RegisterCommand.RaiseCanExecuteChanged(); }
+        }
+
+        private bool _isRegistering = false;
+        public bool IsRegistering
+        {
+            get { return _isRegistering; }
+            set { Set(ref _isRegistering, value); RaisePropertyChanged(); RegisterCommand.RaiseCanExecuteChanged(); }
+        }
+
+        /*
+         * Verification Pivot
+         */
+        private string _verificationToken = string.Empty;
+        public string VerificationToken
+        {
+            get { return _verificationToken; }
+            set { Set(ref _verificationToken, value); VerifyCommand.RaiseCanExecuteChanged(); }
+        }
+
+        private bool _isVerifying = false;
+        public bool IsVerifying
+        {
+            get { return _isVerifying; }
+            set { Set(ref _isVerifying, value); RaisePropertyChanged(); VerifyCommand.RaiseCanExecuteChanged(); }
 
         }
+        /*
+         * Link Pivot
+         */
+        private string _qrCode = "asdf";
+        public string QrCode
+        {
+            get { return _qrCode; }
+            set { Set(ref _qrCode, value); RaisePropertyChanged(); }
+        }
+
+        #endregion
+
 
         private ICollection<Country> _unfilteredCountries = new CountryCollection();
 
@@ -109,41 +152,24 @@ namespace Signal.ViewModels
             }
         }
 
-        private string _countryCode = string.Empty;
-        public string CountryCode
-        {
-            get { return _countryCode; }
-            set { Set(ref _countryCode, value); RegisterCommand.RaiseCanExecuteChanged(); }
-        }
 
-        private string _phoneNumber = string.Empty;
-        public string PhoneNumber
-        {
-            get { return _phoneNumber; }
-            set { Set(ref _phoneNumber, value); RegisterCommand.RaiseCanExecuteChanged(); }
-        }
+
 
         private string getNumber()
         {
             try
             {
-                return PhoneNumberFormatter.formatE164(CountryCode, PhoneNumber);
+                return PhoneNumberFormatter.formatE164(CountryCode, PhoneNumber.TrimStart('0'));
             }
             catch (Exception e)
             {
                 return string.Empty;
             }
         }
-        public string VerificationToken = string.Empty;
+        
 
 
-        private bool _isVerifying = false;
-        public bool IsVerifying
-        {
-            get { return _isVerifying; }
-            set { Set(ref _isVerifying, value); RaisePropertyChanged("IsVerifying"); Debug.WriteLine($"Veriying {_isVerifying}"); }
-
-        }
+        
 
         private RelayCommand _verifyCommand;
         public RelayCommand VerifyCommand
@@ -166,34 +192,15 @@ namespace Signal.ViewModels
 
                        _navigationService.NavigateTo(ViewModelLocator.MAIN_PAGE_KEY);
                    },
-                   () => !_isVerifying || VerificationToken.Length != 6));
+                   () => true || !IsVerifying && VerificationToken.Length == 6));
             }
         }
 
-        private bool _isRegistering = false;
-        public bool IsRegistering
+        private bool _isPushNetworkException = false;
+        public bool IsPushNetworkException
         {
-            get { return _isRegistering; }
-            set { Set(ref _isRegistering, value); RaisePropertyChanged("IsRegistering"); Debug.WriteLine($"Registering {_isRegistering}"); }
-
-        }
-
-        private RelayCommand _testCommand;
-        public RelayCommand TestCommand
-        {
-            get
-            {
-                return _testCommand ?? (_testCommand = new RelayCommand(
-                    () =>
-                    {
-                        CountryCode = "+49";
-                            Debug.WriteLine("TestCommand");
-                    },
-                    () => {
-                        return true;
-                    }
-                    ));
-            }
+            get { return _isPushNetworkException; }
+            set { Set(ref _isPushNetworkException, value); RaisePropertyChanged(); }
         }
 
         private RelayCommand _registerCommand;
@@ -207,10 +214,10 @@ namespace Signal.ViewModels
                     IsRegistering = true;
                     RegisterCommand.RaiseCanExecuteChanged();
 
-                    number = getNumber();
+                    FlipIndex += 1;
+
+                    /*number = getNumber();
                     Debug.WriteLine($"Register: {number}");
-
-
 
                     password = Utils.getSecret(18);
                     signalingKey = Utils.getSecret(52);
@@ -223,19 +230,19 @@ namespace Signal.ViewModels
 
                         FlipIndex += 1;
                     }
+                    catch (PushNetworkException pne)
+                    {
+                        
+                    }
                     catch (Exception e)
                     {
                         Debug.WriteLine(e.Message);
-                    }
+                    }*/
 
                     IsRegistering = false;
                     RegisterCommand.RaiseCanExecuteChanged();
-
                 },
-                    () =>
-                    {
-                        return !IsRegistering && (CountryCode != string.Empty) && PhoneNumberFormatter.isValidNumber(getNumber());
-                    }));
+                    () => true || !IsRegistering && (CountryCode != string.Empty) && PhoneNumberFormatter.isValidNumber(getNumber())));
             }
         }
 
@@ -257,9 +264,8 @@ namespace Signal.ViewModels
             {
                 return _getStartedCommand ?? (
                     _getStartedCommand = new RelayCommand(
-                        () => { Debug.WriteLine($"getstarted"); FlipIndex += 1; },
-                        () => { return true; }
-                        )
+                        () => { FlipIndex += 1; },
+                        () => true)
                     );
             }
         }
@@ -293,27 +299,27 @@ namespace Signal.ViewModels
          * ReegistrationTypeView
          */
 
-        private RelayCommand _navigateRegisterCommand;
+        /*private RelayCommand _navigateRegisterCommand;
         public RelayCommand NavigateRegisterCommand
         {
             get
             {
-                return _navigateRegisterCommand ?? new RelayCommand(
+                return _navigateRegisterCommand ?? (_navigateRegisterCommand = new RelayCommand(
                     () => { _navigationService.NavigateTo(ViewModelLocator.REGISTERING_PAGE_KEY); },
                     () => { return true; }
-                    );
+                    ));
             }
-        }
+        }*/
 
         private RelayCommand _navigateLinkCommand;
         public RelayCommand NavigateLinkCommand
         {
             get
             {
-                return _navigateLinkCommand ?? new RelayCommand(
+                return _navigateLinkCommand ?? (_navigateLinkCommand = new RelayCommand(
                     () => { _navigationService.NavigateTo(ViewModelLocator.PROVISIONING_PAGE_KEY); },
                     () => false
-                    );
+                    ));
             }
         }
 
@@ -336,8 +342,7 @@ namespace Signal.ViewModels
                 var registrationId = KeyHelper.generateRegistrationId(false);
                 TextSecurePreferences.setLocalRegistrationId((int)registrationId);
 
-                await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
-                //await PushHelper.getInstance().OpenChannelAndUpload(); // also updates push channel id
+                //await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
 
                 Recipient self = DatabaseFactory.getRecipientDatabase().GetSelfRecipient(number);
                 IdentityKeyUtil.generateIdentityKeys();
@@ -346,11 +351,9 @@ namespace Signal.ViewModels
                 PreKeyRecord lastResort = await PreKeyUtil.generateLastResortKey();
                 SignedPreKeyRecord signedPreKey = PreKeyUtil.generateSignedPreKey(identityKey);
 
-                await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
+                //await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
                 DatabaseFactory.getIdentityDatabase().SaveIdentity(self.getRecipientId(), identityKey.getPublicKey());
-
-                //await DirectoryHelper.refreshDirectory(App.Current.accountManager, TextSecurePreferences.getLocalNumber());
 
 
                 markAsVerified(number, password, signalingKey);
@@ -412,6 +415,18 @@ namespace Signal.ViewModels
         public void NavigateFrom(NavigationEventArgs parameter)
         {
             _navigationService.RemoveBackEntry();
+        }
+
+        /*
+         * IBackAwareViewModel
+         */
+        public void BackRequested(BackRequestedEventArgs args)
+        {
+            Log.Debug("Reg BackRequested");
+            if (FlipIndex >= 1) { FlipIndex -= 1; args.Handled = true; }
+            else args.Handled = false;
+
+
         }
     }
 }

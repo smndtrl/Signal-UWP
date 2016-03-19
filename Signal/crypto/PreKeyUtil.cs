@@ -159,7 +159,7 @@ namespace TextSecure.crypto
             conn.InsertOrReplace(signedPreKey);
         }
 
-        [DebuggerHidden]
+
         private static uint getNextPreKeyId()
         {
             try
@@ -173,7 +173,7 @@ namespace TextSecure.crypto
             }
         }
 
-        [DebuggerHidden]
+
         private static uint getNextSignedPreKeyId()
         {
             try

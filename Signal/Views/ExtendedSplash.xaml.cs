@@ -51,32 +51,14 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class ExtendedSplash : SignalPage
     {
-        internal bool dismissed = false;
-        internal Frame rootFrame;
-        internal bool isRegistered = false;
+        public SplashViewModel ViewModel => (SplashViewModel)DataContext;
 
         public ExtendedSplash()
         {
             this.InitializeComponent();
-            //DirectoryHelper.refreshDirectory();
-
-            rootFrame = new Frame();
-
-            
-
         }
 
-        public SplashViewModel ViewModel
-        {
-            get
-            {
-                return (SplashViewModel)DataContext;
-            }
-        }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
     }
 }
+

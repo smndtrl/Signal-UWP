@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using TextSecure.recipient;
 using TextSecure.util;
 using Windows.UI.Xaml;
@@ -25,7 +26,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Signal.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase, IBackAwareViewModel
     {
         private readonly INavigationServiceSignal _navigationService;
         private readonly IDataService _dataService;
@@ -36,6 +37,16 @@ namespace Signal.ViewModels
             _navigationService = navService;
 
             Chats = new ThreadCollection(service);
+        }
+
+        private int _pivotIndex = 0;
+        public int PivotIndex
+        {
+            get { return _pivotIndex; }
+            set
+            {
+                Set(ref _pivotIndex, value);
+            }
         }
 
         public Frame DetailFrame;
@@ -203,10 +214,19 @@ namespace Signal.ViewModels
             else if (CurrentVisualState != null && CurrentVisualState.Name == "DefaultState")
             {
                 Debug.WriteLine($"WideState -> Thread #{chat.ThreadId}");
-                DetailFrame.Navigate(typeof(ThreadDetailPage), chat);
+                DetailFrame.Navigate(typeof(ThreadPage), chat);
             }
         }
 
+
+        /*
+         * IBackAwareViewModel
+         */
+        public void BackRequested(BackRequestedEventArgs args)
+        {
+            if (PivotIndex != 0) { PivotIndex -= 1; args.Handled = true; }
+            else args.Handled = false;
+        }
 
         #region Visual State . . .
         private VisualStateGroup _vsg;

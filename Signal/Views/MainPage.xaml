@@ -17,12 +17,6 @@
     xmlns:back="using:Bezysoftware.Navigation.BackButton"
     back:BackButtonManager.IsBackButtonEnabled="False">
 
-    <!--<Interactivity:Interaction.Behaviors>
-        <Interactions:EventTriggerBehavior EventName="Loaded">
-            <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.Loaded}" />
-        </Interactions:EventTriggerBehavior>
-    </Interactivity:Interaction.Behaviors>-->
-
     <Page.Resources>
         <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI"/>
@@ -33,21 +27,14 @@
             <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
             <Setter Property="TextLineBounds" Value="Full"/>
         </Style>
-        <Style x:Key="LastMessageUnreadTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
-            <!--<Setter Property="FontWeight" Value="SemiBold"/>-->
-            <Setter Property="Foreground" Value="Black"/>
-        </Style>
-        <Style x:Key="RecipientNameUnreadTextBlockStyle" BasedOn="{StaticResource SubtitleTextBlockStyle}" TargetType="TextBlock">
-            <!--<Setter Property="FontWeight" Value="SemiBold"/>-->
-            <Setter Property="Foreground" Value="Black"/>
-        </Style>
 
         <MenuFlyout x:Key="ChatMenuFlyout">
             <MenuFlyoutItem x:Name="DeleteChatFlyout"
                         Text="Delete TODO" Command="{x:Bind ViewModel.DeleteChatCommand}" CommandParameter="{Binding}"/>
         </MenuFlyout>
 
-        <DataTemplate x:Key="ChatTemplate" x:DataType="models:Thread">
+        <DataTemplate x:Key="ChatTemplate"
+                      x:DataType="models:Thread">
             <Grid x:Name="ChatTemplateGrid"
                   Height="64"
                   FlyoutBase.AttachedFlyout="{StaticResource ChatMenuFlyout}">
@@ -77,8 +64,9 @@
 
                 <Border x:Name="ImageBorder"
                         Grid.RowSpan="2"
-                        Width="64" Height="64">
-                    <controls:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        Width="48" Height="48">
+                    <controls:AvatarView />
+                    <!--<controls:ContactPicture Radius="32" Contact="{Binding Result}" DataContext="{x:Bind Recipients.PrimaryRecipient.ContactId, Converter={StaticResource ContactRetriever}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
                     <!--<Image Height="64" Width="64" DataContext="{x:Bind Recipients.PrimaryRecipient.Number, Converter={StaticResource ContactPictureConverter}}" Source="{Binding Result}"/>-->
                 </Border>
 
@@ -89,16 +77,16 @@
                                Text="{x:Bind Recipients.ShortString}"
                                TextWrapping="NoWrap"
                                TextTrimming="CharacterEllipsis"
-                               Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="8,0,0,0" />
+                               Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="8,0,0,0" />
 
 
                 <TextBlock x:Name="DateTextBlock"
                                Grid.Column="2"
                                HorizontalAlignment="Right"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Text="{x:Bind Date, Converter={StaticResource DateConverter}}"
                                TextWrapping="NoWrap"
-                               Style="{StaticResource BodyTextBlockStyle}" />
+                               Style="{StaticResource CaptionTextBlockStyle}" />
 
                 <TextBlock x:Name="LastMessageTextBlock"
                                Grid.Row="2"
@@ -107,6 +95,7 @@
                                VerticalAlignment="Top"
                                Text="{x:Bind Snippet}"
                                TextWrapping="NoWrap"
+                           Style="{StaticResource BodyTextBlockStyle}"
                                TextTrimming="WordEllipsis" HorizontalAlignment="Left" Margin="8,0,0,0" />
 
             </Grid>
@@ -117,8 +106,9 @@
 
         <CollectionViewSource x:Key="contactsCvs" Source="{x:Bind ViewModel.Contacts}" />
 
-        <DataTemplate x:Key="ContactsItemNarrow" x:DataType="database:TextSecureDirectory+Directory">
-            <Grid Padding="4">
+        <DataTemplate x:Key="ContactsItemNarrow"
+                      x:DataType="database:TextSecureDirectory+Directory">
+            <Grid>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -130,7 +120,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Width="64" Height="64" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Width="48" Height="48" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <controls:ContactPicture
                       Radius="24" Contact="{Binding Result}" DataContext="{x:Bind ContactId, Converter={StaticResource ContactRetriever}}"/>
                 </Border>
@@ -138,13 +128,13 @@
                 <TextBlock
                     Grid.Column="2"
                     Text="{x:Bind Name}"
-                    VerticalAlignment="Center"
+                    VerticalAlignment="Bottom"
                     HorizontalAlignment="Left"
                     Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock
                     Grid.Row="1" Grid.Column="2"
                     Text="{x:Bind Number}"
-                    VerticalAlignment="Center"
+                    VerticalAlignment="Top"
                     Style="{ThemeResource BodyTextBlockStyle}"/>
             </Grid>
         </DataTemplate>
@@ -159,14 +149,7 @@
 
     <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AdaptiveStates" >
-                <!-- CurrentStateChanged -->
-                <!--<Interactivity:Interaction.Behaviors>
-                    <Interactions:EventTriggerBehavior EventName="CurrentStateChanged">
-                        <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.StateChanged}" />
-                    </Interactions:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>-->
-
+            <!--<VisualStateGroup x:Name="AdaptiveStates" >
                 <VisualState x:Name="DefaultState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720" />
@@ -184,7 +167,7 @@
                         <Setter Target="ChatListView.SelectionMode" Value="None" />
                     </VisualState.Setters>
                 </VisualState>
-            </VisualStateGroup>
+            </VisualStateGroup>-->
             <VisualStateGroup x:Name="ThreadListSelectionStates">
                 <VisualState x:Name="ThreadListSingleSelectionState">
                     <VisualState.Setters>
@@ -197,7 +180,7 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-            <!--<VisualStateGroup x:Name="AppBarButtonState">
+            <VisualStateGroup x:Name="AppBarButtonState">
                 <VisualState x:Name="ChatPivotState">
                     <VisualState.Setters>
                         <Setter Target="SelectChatsABBtn.Visibility" Value="Visible"/>
@@ -210,32 +193,41 @@
                         <Setter Target="SelectChatsABBtn.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
-            </VisualStateGroup>-->
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <Interactivity:Interaction.Behaviors>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.PivotIndex, Mode=OneWay}" Value="0">
+                <Interactions:GoToStateAction StateName="ChatPivotState"/>
+            </Interactions:DataTriggerBehavior>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.PivotIndex, Mode=OneWay}" Value="1">
+                <Interactions:GoToStateAction StateName="ContactPivotState"/>
+            </Interactions:DataTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="MasterColumn" Width="320" />
-            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
 
-        <StackPanel x:Name="SignalHeader"
+        <!--<StackPanel x:Name="SignalHeader"
                     Padding="4"
                     Orientation="Horizontal"
                     Height="48"
                     Background="{StaticResource SignalDimmedBrush}">
-            <TextBlock x:Name="MainHeaderText"  x:Uid="MainHeader"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       Foreground="White" VerticalAlignment="Center">
+            
             </TextBlock>
-        </StackPanel>
+        </StackPanel>-->
 
-        <Pivot Grid.Row="1" x:Uid="MainPagePivot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="piv_CC" SelectionChanged="piv_CC_SelectionChanged">
+        <Pivot x:Name="MainPagePivot"
+               x:Uid="MainPagePivot"
+               SelectedIndex="{x:Bind ViewModel.PivotIndex, Mode=TwoWay}"
+               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+               >
             <PivotItem Header="Chats" x:Name="ChatPiv">
                 <settings:ListView x:Name="ChatListView"
                            ItemsSource="{Binding Source={StaticResource chatsCvs}}"
@@ -264,7 +256,9 @@
             </PivotItem>
             <PivotItem Header="Contacts" x:Name="ContactPiv">
                 <settings:ListView x:Name="ContactListView"
-                                ItemsSource="{Binding Source={StaticResource contactsCvs}}" ItemTemplate="{StaticResource ContactsItemNarrow}"
+                                   x:Uid="ContactListView"
+                                   ItemsSource="{Binding Source={StaticResource contactsCvs}}"
+                                   ItemTemplate="{StaticResource ContactsItemNarrow}"
                                 HorizontalContentAlignment="Stretch"
                                 SelectionMode="Single"
                                 IsItemClickEnabled="True"
@@ -303,7 +297,7 @@
             </PivotItem>
         </Pivot>
 
-        <Frame x:Name="detailFrame" Grid.Column="1"
+        <!--<Frame x:Name="detailFrame" Grid.Column="1"
             Grid.RowSpan="2"
             BorderThickness="1,0,0,0"
             Padding="24,0" Foreground="{x:Null}" Background="#FFE8ADAD">
@@ -312,11 +306,17 @@
                     <PaneThemeTransition Edge="Bottom"></PaneThemeTransition>
                 </TransitionCollection>
             </Frame.ContentTransitions>
-        </Frame>
+        </Frame>-->
     </Grid>
+    
+    <Page.TopAppBar>
+        <CommandBar>
+
+        </CommandBar>
+    </Page.TopAppBar>
 
     <Page.BottomAppBar>
-        <CommandBar Grid.Row="2">
+        <CommandBar>
             <!--Chats-->
             <AppBarButton x:Name="SelectChatsABBtn" x:Uid="ChatAppBarSelect" FontFamily="OverflowCheckGlyph" Label="">
                 <AppBarButton.Icon>

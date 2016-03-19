@@ -5,13 +5,11 @@
 
     <Color x:Key="SignalBlue">#ff2090ea</Color>
     <Color x:Key="SignalDimmed">#ff0c7cd6</Color>
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="White" />
+    <!--<SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="White" />-->
     <SolidColorBrush x:Key="SignalBlueBrush" Color="{StaticResource SignalBlue}" />
     <SolidColorBrush x:Key="SignalDimmedBrush" Color="{StaticResource SignalDimmed}" />
 
     <Style x:Key="BlueButton" TargetType="Button">
-        <Setter Property="Background" Value="White" />
-        <Setter Property="Foreground" Value="{StaticResource SignalBlueBrush}"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
 

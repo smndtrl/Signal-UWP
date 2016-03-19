@@ -34,7 +34,7 @@ namespace TextSecure.crypto.storage
     [Table("PreKeys")]
     public class PreKeyRecordI
     {
-        [PrimaryKey]
+        [PrimaryKey, Unique]
         public uint PreKeyId { get; set; }
         public byte[] Record { get; set; }
     }
@@ -42,7 +42,7 @@ namespace TextSecure.crypto.storage
     [Table("PreKeyIndex")]
     public class PreKeyIndex
     {
-        [PrimaryKey]
+        [PrimaryKey, Unique]
         public uint PreyKeyIndex { get; set; }
         public uint Next { get; set; }
     }
@@ -50,7 +50,7 @@ namespace TextSecure.crypto.storage
     [Table("SignedPreKeys")]
     public class SignedPreKeyRecordI
     {
-        [PrimaryKey]
+        [PrimaryKey, Unique]
         public uint SignedPreKeyId { get; set; }
         public byte[] Record { get; set; }
     }
@@ -58,7 +58,7 @@ namespace TextSecure.crypto.storage
     [Table("SingedPreKeyIndex")]
     public class SignedPreKeyIndex
     {
-        [PrimaryKey]
+        [PrimaryKey, Unique]
         public uint SignedPreyKeyIndex { get; set; }
         public uint Next { get; set; }
     }
@@ -94,7 +94,6 @@ namespace TextSecure.crypto.storage
             return query.Any();
         }
 
-        [DebuggerHidden]
         public PreKeyRecord LoadPreKey(uint preKeyId)
         {
             try
@@ -115,7 +114,6 @@ namespace TextSecure.crypto.storage
         /// <param name="signedPreKeyId">Used to lookup a SignedPreKey.</param>
         /// <exception cref="InvalidKeyIdException"></exception>
         /// <returns>Returns a SignedPreKeyRecord if found.</returns>
-        [DebuggerHidden] // please do not break
         public SignedPreKeyRecord LoadSignedPreKey(uint signedPreKeyId)
         {
             try

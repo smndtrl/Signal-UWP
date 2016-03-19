@@ -34,7 +34,7 @@ namespace Signal.ViewModels
 
             var nav = new SignalNavigationService();
             nav.Configure(MAIN_PAGE_KEY, typeof(MainPage));
-            nav.Configure(MESSAGES_PAGE_KEY, typeof(ThreadDetailPage));
+            nav.Configure(MESSAGES_PAGE_KEY, typeof(ThreadPage));
             nav.Configure(MESSAGEDETAIL_PAGE_KEY, typeof(MessageDetailsPage));
 
 

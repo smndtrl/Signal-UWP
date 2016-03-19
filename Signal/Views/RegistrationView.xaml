@@ -3,122 +3,157 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Signal.Views"
     xmlns:viewmodels="using:Signal.ViewModels"
+    xmlns:interactions="using:Signal.Xaml.Interactions"
+    xmlns:xaml="using:Signal.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="using:Settings.UI.Xaml.Controls"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:controls="using:Signal.Xaml.Controls"
     x:Class="Signal.Views.RegistrationView"
     mc:Ignorable="d">
-
 
     <Page.DataContext>
         <Binding Source="{Binding Registration, Source={StaticResource Locator}}"/>
     </Page.DataContext>
 
     <Page.Resources>
+        <Style x:Key="ListViewItemHorizontalStretchStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
     </Page.Resources>
 
-    <Interactivity:Interaction.Behaviors>
-        <!-- TODO: Behavior 
-        <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
-            <Interactions:GoToStateAction StateName="RegistratingState" TargetObject="{Binding ElementName=registerButton}"/>
-        </Interactions:DataTriggerBehavior>-->
-    </Interactivity:Interaction.Behaviors>
 
+    <VisualStateManager.CustomVisualStateManager>
+        <xaml:ExtendedVisualStateManager/>
+    </VisualStateManager.CustomVisualStateManager>
 
-        <Grid x:Name="RegistrationGrid"  Background="{ThemeResource ApplicationForegroundThemeBrush}">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="RegistrationStateGroup">
-                    <VisualState x:Name="FlipRegister">
-                        <VisualState.Setters>
-                            <Setter Target="WelcomePivot.(UIElement.Visibility)" Value="Collapsed"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="FlipStarted"/>
-                    <VisualState x:Name="FlipVerify">
-                        <VisualState.Setters>
-                            <Setter Target="WelcomePivot.(UIElement.Visibility)" Value="Collapsed"/>
-                            <Setter Target="RegisterPivot.(UIElement.Visibility)" Value="Collapsed"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
+    <!--<VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="RegisterStateGroup">
+            <VisualState x:Name="RegisterVisualState">
+                <VisualState.Setters>
+                    <Setter Target="RegistrationGrid.(Control.Background).(SolidColorBrush.Color)">
+                        <Setter.Value>
+                            <Color>#FF991F1F</Color>
+                        </Setter.Value>
+                    </Setter>
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="RegisteringVisualState">
+                <VisualState.Setters>
+                    <Setter Target="RegisterPivotRegisterProgressRing.(ProgressRing.IsActive)" Value="True"/>
+                    <Setter Target="RegisterPivotRegisterTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
+                    <Setter Target="RegistrationGrid.(Control.Background).(SolidColorBrush.Color)">
+                        <Setter.Value>
+                            <Color>#FF42B037</Color>
+                        </Setter.Value>
+                    </Setter>
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+        <VisualStateGroup x:Name="VerifyStateGroup">
+            <VisualState x:Name="VerifyVisualState"/>
+            <VisualState x:Name="VerifyingVisualState"/>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>-->
+
+    <Grid x:Name="RegistrationGrid"  Background="{ThemeResource ApplicationForegroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="RegisterStateGroup">
+                <VisualState x:Name="RegisterVisualState">
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="RegisteringVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="RegisterPivotRegisterProgressRing.(ProgressRing.IsActive)" Value="True"/>
+                        <Setter Target="RegisterPivotRegisterTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="VerifyStateGroup">
+                <VisualState x:Name="VerifyVisualState"/>
+                <VisualState x:Name="VerifyingVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="VerifyPivotVerifyProgressRing.(ProgressRing.IsActive)" Value="True"/>
+                        <Setter Target="VerifyPivotVerifyTextBlock.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Interactivity:Interaction.Behaviors>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsVerifying, Mode=OneWay}" Value="False">
+                <Interactions:GoToStateAction StateName="VerifyVisualState"/>
+            </Interactions:DataTriggerBehavior>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsVerifying, Mode=OneWay}" Value="True">
+                <Interactions:GoToStateAction StateName="VerifyingVisualState"/>
+            </Interactions:DataTriggerBehavior>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="False">
+                <Interactions:GoToStateAction StateName="RegisterVisualState"/>
+            </Interactions:DataTriggerBehavior>
+            <Interactions:DataTriggerBehavior Binding="{x:Bind ViewModel.IsRegistering, Mode=OneWay}" Value="True">
+                <Interactions:GoToStateAction StateName="RegisteringVisualState"/>
+            </Interactions:DataTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Pivot x:Name="RegistrationFlipView"
+                  SelectedIndex="{x:Bind ViewModel.FlipIndex, Mode=OneWay}">
 
-
-
-
-            <FlipView x:Name="RegistrationFlipView"
-                  SelectedIndex="{x:Bind ViewModel.FlipIndex, Mode=TwoWay}">
-
-                <FlipViewItem x:Name="WelcomePivot" ManipulationMode="All">
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="WelcomePivotHeaderTextBlock" x:Uid="WelcomePivotHeaderTextBlock"
+            <PivotItem x:Name="WelcomePivot"
+                       ManipulationMode="All">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="WelcomePivotHeaderTextBlock" x:Uid="WelcomePivotHeaderTextBlock"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text=""/>
+                               Text="Welcome"/>
 
 
-                        <TextBlock x:Name="WelcomePivotCaptionTextBlock" x:Uid="WelcomePivotCaptionTextBlock"
+                    <TextBlock x:Name="WelcomePivotCaptionTextBlock" x:Uid="WelcomePivotCaptionTextBlock"
                                HorizontalAlignment="Center" 
                                Style="{StaticResource BlueCaptionTextBlockStyle}"
-                               Text=""/>
+                               Text="to Signal for Windows"/>
 
-                        <Button x:Name="WelcomePivotGetStartedButton" x:Uid="WelcomePivotGetStartedButton"
-                            Margin="32"  
+                    <Button x:Name="WelcomePivotGetStartedButton" x:Uid="WelcomePivotGetStartedButton"
+                            Margin="0,32,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center" 
                             d:LayoutOverrides="Width"
                             Command="{x:Bind ViewModel.GetStartedCommand}"
-                            Content=""
-                            Style="{StaticResource BlueButton}"
-                            ManipulationMode="All" />
-                    </StackPanel>
-                </FlipViewItem>
-            <FlipViewItem x:Name="RegisterPivot"  ManipulationMode="All">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                            Content="GET STARTED"
+                            ManipulationMode="All"  />
+                </StackPanel>
+            </PivotItem>
+            <PivotItem x:Name="RegisterPivot"
+                       ManipulationMode="All">
+                <StackPanel VerticalAlignment="Center">
 
                     <TextBlock x:Name="RegisterPivotHeaderTextBlock" x:Uid="RegisterPivotHeaderTextBlock"
-                               Grid.Row="1"
-                               HorizontalAlignment="Center"
-                               Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text=""/>
+            			HorizontalAlignment="Center"
+            			Style="{StaticResource BlueSubheaderTextBlockStyle}"
+            			Text="Register"/>
 
                     <TextBlock x:Name="RegisterPivotCaptionTextBlock" x:Uid="RegisterPivotCaptionTextBlock"
-                               Grid.Row="2"
-                               HorizontalAlignment="Center" 
-                               Style="{StaticResource BlueCaptionTextBlockStyle}"
-                               Text="" />
+            			HorizontalAlignment="Center" 
+            			Style="{StaticResource BlueCaptionTextBlockStyle}"
+            			Text="with your phone number" />
 
                     <AutoSuggestBox x:Name="RegisterPivotCountrySuggestBox" x:Uid="RegisterPivotCountrySuggestBox"
-                                        Grid.Row="3"
-                                        Margin="32,16,32,8"
-                                    HorizontalAlignment="Stretch"
-                                    PlaceholderText="Country"
-                                    QueryIcon="Globe"
-                                    ItemsSource="{x:Bind ViewModel.FilteredCountries, Mode=OneWay}"
-                                    Text="{Binding CountryText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                    TextMemberPath="DisplayName"
+            			Margin="0,16,0,0"
+            			HorizontalAlignment="Stretch"
+            			PlaceholderText="Country"
+            			QueryIcon="Globe"
+            			ItemsSource="{x:Bind ViewModel.FilteredCountries, Mode=OneWay}"
+            			Text="{Binding CountryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            			TextMemberPath="DisplayName"
+                        ItemContainerStyle="{StaticResource ListViewItemHorizontalStretchStyle}"
                                     >
-                        <AutoSuggestBox.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </AutoSuggestBox.ItemContainerStyle>
+
 
                         <AutoSuggestBox.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:Country">
@@ -129,15 +164,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock 
-                                        Grid.Column="0"
-                                        Text="{x:Bind DisplayName}" 
-                                        HorizontalAlignment="Left"
-                                        TextWrapping="NoWrap"
-                                        TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock 
-                                        Grid.Column="1"
-                                        Text="{x:Bind Code}"
-                                        HorizontalAlignment="Right" />
+            							Grid.Column="0"
+            							Text="{x:Bind DisplayName}" 
+            							HorizontalAlignment="Left"
+            							TextWrapping="NoWrap"
+            							TextTrimming="CharacterEllipsis"/>
+                                    <!--<TextBlock 
+            							Grid.Column="1"
+            							Text="{x:Bind Code}"
+            							HorizontalAlignment="Right" />-->
                                 </Grid>
                             </DataTemplate>
                         </AutoSuggestBox.ItemTemplate>
@@ -152,92 +187,113 @@
 
 
 
-                    <settings:PrefixTextBox x:Name="RegisterPivotNumberTextBox" x:Uid="RegisterPivotNumberTextBox"
-                                                Grid.Row="4"
-                             Margin="32,0,32,0"
-                                            Prefix="{x:Bind ViewModel.CountryCode, Mode=OneWay}"
-                             Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource BlueTextBox}"
-                             BorderThickness="0,0,0,2"
-                             PlaceholderText="555 1505"
-                             InputScope="TelephoneNumber"/>
+                    <settings:PrefixTextBox x:Name="RegisterPivotNumberTextBox"
+                                            x:Uid="RegisterPivotNumberTextBox"
+                                            Margin="0,8,0,0"
+            			Prefix="{x:Bind ViewModel.CountryCode, Mode=OneWay}"
+            			Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            			Style="{StaticResource BlueTextBox}"
+            			BorderThickness="0,0,0,2"
+            			PlaceholderText="555 1505"
+            			InputScope="TelephoneNumber"/>
 
-                    <Button x:Name="RegisterPivotRegisterButton" x:Uid="RegisterPivotRegisterButton"
-                                Grid.Row="5"
-                            d:LayoutOverrides="Width"
-                            Margin="32,16,32,32"  
-                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Command="{x:Bind ViewModel.RegisterCommand}"
-                            Style="{StaticResource BlueButton}"
-                            ManipulationMode="All"
+                    <Button x:Name="RegisterPivotRegisterButton"
+                            x:Uid="RegisterPivotRegisterButton"
+                            Margin="0,16,0,0"
+            			d:LayoutOverrides="Width" 
+            			HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            			Command="{x:Bind ViewModel.RegisterCommand}"
+            			Style="{StaticResource BlueButton}"
+            			ManipulationMode="All"
+                            >
+
+                        <Grid>
+
+
+                            <TextBlock x:Name="RegisterPivotRegisterTextBlock" x:Uid="RegisterPivotRegisterTextBlock"
+                                   Text="REGISTER"/>
+                            <ProgressRing x:Name="RegisterPivotRegisterProgressRing" x:Uid="RegisterPivotRegisterProgressRing"
+                                      />
+                        </Grid>
+
+                    </Button>
+
+                    <!--<Grid x:Name="RegisterPivotRegisterExceptionStackPanel"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Center">
+                        <SymbolIcon Symbol="Cancel" Foreground="{ThemeResource TextSelectionHighlightColorThemeBrush}"/>
+                        <TextBlock x:Name="RegisterPivotRegisterNetworkExceptionTextBlock"
+                                   x:Uid="RegisterNetworkExceptionTextBlock"
+                                   Text="It seems your device is having a problem connecting to our servers."
+                                   TextWrapping="WrapWholeWords"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TextSelectionHighlightColorThemeBrush}"/>
+                    </Grid>-->
+
+
+
+                    <!--<Button x:Name="RegisterPivotLinkButton" x:Uid="RegisterPivotLinkButton"
+            			d:LayoutOverrides="Width"
+            			Margin="0,32,0,0"  
+            			HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            			Command="{x:Bind ViewModel.NavigateLinkCommand}"
+            			Style="{StaticResource BlueButton}"
+            			ManipulationMode="All"
                             >
 
 
 
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="RegisterPivotRegisterButtonTextBlock" x:Uid="RegisterPivotRegisterButtonTextBlock"
-                                       Text=""/>
-                            <TextBlock x:Name="RegisterPivotRegisteringButtonTextBlock" x:Uid="RegisterPivotRegisteringButtonTextBlock"
-                                       Text=""
-                                       Visibility="Collapsed"/>
-                            <ProgressRing x:Name="RegisterPivotRegisteringButtonProgressRing" x:Uid="RegisterPivotRegisteringButtonProgressRing"
-                                          Foreground="Black"
-                                          Visibility="Collapsed"/>
+                            <TextBlock x:Name="RegisterPivotLinkButtonTextBlock" x:Uid="RegisterPivotLinkButtonTextBlock"
+            					Text="LINK WITH ANOTHER DEVICE"/>
                         </StackPanel>
-                    </Button>
+                    </Button>-->
 
-                    <Button x:Name="RegisterPivotLinkButton" x:Uid="RegisterPivotLinkButton"
-                                Grid.Row="7"
-                            d:LayoutOverrides="Width"
-                            Margin="32,0,32,8"  
-                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Command="{x:Bind ViewModel.NavigateLinkCommand}"
-                            Style="{StaticResource BlueButton}"
-                            ManipulationMode="All"
-                            >
-
-
-
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="RegisterPivotLinkButtonTextBlock" x:Uid="RegisterPivotRegisterButtonTextBlock"
-                                       Text="LINK WITH ANOTHER DEVICE"/>
-                        </StackPanel>
-                    </Button>
-
-                </Grid>
-            </FlipViewItem>
-                <FlipViewItem x:Name="VerifyPivot"  ManipulationMode="All">
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="VerifyPivotHeaderTextBlock" x:Uid="VerifyPivotHeaderTextBlock"
+                </StackPanel>
+            </PivotItem>
+            <PivotItem x:Name="VerifyPivot"
+                       ManipulationMode="All">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="VerifyPivotHeaderTextBlock" x:Uid="VerifyPivotHeaderTextBlock"
                                HorizontalAlignment="Center"
                                Style="{StaticResource BlueSubheaderTextBlockStyle}"
-                               Text=""/>
+                               Text="Verify"/>
 
-                        <TextBlock x:Name="VerifyPivotCaptionTextBlock" x:Uid="VerifyPivotCaptionTextBlock"
+                    <TextBlock x:Name="VerifyPivotCaptionTextBlock" x:Uid="VerifyPivotCaptionTextBlock"
                                HorizontalAlignment="Center" 
                                Style="{StaticResource BlueCaptionTextBlockStyle}"
                                Text="with your 6-digit code" />
 
-                        <TextBox x:Name="VerifyPivotTokenTextBox" x:Uid="VerifyPivotTokenTextBox"
+                    <TextBox x:Name="VerifyPivotTokenTextBox" x:Uid="VerifyPivotTokenTextBox"
                              Margin="0,16,0,0"
-                             Text="{x:Bind ViewModel.VerificationToken, Mode=TwoWay}" 
+                             Text="{Binding VerificationToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                          BorderThickness="0,0,0,2" 
                          InputScope="Number" 
                          MaxLength="6" HorizontalAlignment="Center"/>
 
-                        <Button x:Name="VerifyPivotVerifyButton" x:Uid="VerifyPivotVerifyButton"
-                            Margin="32"
+                    <Button x:Name="VerifyPivotVerifyButton" x:Uid="VerifyPivotVerifyButton"
+                            Margin="0,16,0,0"
                             Command="{x:Bind ViewModel.VerifyCommand}"
                             HorizontalAlignment="Stretch" 
                             VerticalAlignment="Center"
                             d:LayoutOverrides="Width"
-                            Style="{StaticResource BlueButton}"
-                            Content=""/>
-                    </StackPanel>
-                </FlipViewItem>
-            </FlipView>
-    </Grid>
+                            Style="{StaticResource BlueButton}">
+                        <Grid>
 
+
+                            <TextBlock x:Name="VerifyPivotVerifyTextBlock" x:Uid="VerifyPivotVerifyTextBlock"
+                                   Text="VERIFY"/>
+                            <ProgressRing x:Name="VerifyPivotVerifyProgressRing" x:Uid="VerifyPivotVerifyProgressRing"
+                                      />
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </PivotItem>
+            <!--<PivotItem x:Name="LinkPivot" ManipulationMode="All">
+                <controls:QrCode Text="{x:Bind ViewModel.QrCode}"  VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+            </PivotItem>-->
+        </Pivot>
+    </Grid>
 
 
 </local:SignalPage>

@@ -8,23 +8,39 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI;
 using Windows.Foundation.Metadata;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Navigation;
+using Signal.Util;
 
 namespace Signal.Views
-{
+{ 
     public partial class SignalPage : Page
     {
+
         public SignalPage()
         {
+
             this.DataContextChanged += this.OnDataContextChanged;
             SetDefaultAmbientColor();
 
-            this.Loaded += (s,e) => OnLoaded(s, e);
-            this.Unloaded += (s, e) => OnUnloaded(s, e);
+            this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
+
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame != null)
+            {
+                SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequsted;
+            }
+            
         }
 
-
+        private void OnBackRequsted(object s, BackRequestedEventArgs e)
+        {
+            var backAwareViewModel = this.DataContext as IBackAwareViewModel;
+            backAwareViewModel?.BackRequested(e);
+        }
 
         protected void OnUnloaded(object s, RoutedEventArgs e)
         {
@@ -45,7 +61,7 @@ namespace Signal.Views
             base.OnNavigatedTo(e);
 
             var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.NavigateTo(e);
+            navigableViewModel?.NavigateTo(e);
 
             //SystemNavigationManager.GetForCurrentView().BackRequested += DetailPage_BackRequested;
         }
@@ -55,21 +71,11 @@ namespace Signal.Views
             base.OnNavigatedFrom(e);
 
             var navigableViewModel = this.DataContext as INavigableViewModel;
-            if (navigableViewModel != null) navigableViewModel.NavigateFrom(e);
+            navigableViewModel?.NavigateFrom(e);
 
             //SystemNavigationManager.GetForCurrentView().BackRequested -= DetailPage_BackRequested;
         }
 
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            //var inputAwarePage = this as IInputAwarePage;
-            if (this != null)
-            {
-                
-            }
-        }
 
         private void OnDataContextChanged(object sender, DataContextChangedEventArgs e)
         {
@@ -122,16 +128,33 @@ namespace Signal.Views
 
         private void OnInputPaneShowing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
-            UpdatePanelLayout(args.OccludedRect.Height);
+            //UpdatePanelLayout(args.OccludedRect.Height);
         }
 
         private void OnInputPaneHiding(InputPane sender, InputPaneVisibilityEventArgs args)
         {
-            UpdatePanelLayout(args.OccludedRect.Height);
+            //UpdatePanelLayout(args.OccludedRect.Height);
         }
 
-        protected virtual void UpdatePanelLayout(double height)
+        private double lastHeight;
+
+        protected void UpdatePanelLayout(double height)
         {
+            this.VerticalAlignment = VerticalAlignment.Top;
+
+            if (height == 0)
+            {
+                Log.Debug($"change Back to {height}");
+                this.Height = 640;
+            }
+            else
+            {
+                Log.Debug($"change to {Height}");
+                lastHeight = Height;
+                this.Height -= height;
+            }
+            
+            
         }
     }
 }

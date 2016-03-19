@@ -22,22 +22,21 @@ namespace Signal.database.loaders
         //IEnumerable<Contact> _storage;
 
         long max = long.MaxValue;
-        long threadId = -1;
+        long threadId = 0;
         private bool IsUpdating = false;
+
+        public MessageCollection(IDataService service)
+            : this(service, 0)
+        {
+        }
+
 
         public MessageCollection(IDataService service, long threadId)
         {
             this.service = service;
             this.threadId = threadId;
 
-            max = service.getMessagesCount(threadId);
-            /*var list = service.getMessages(threadId).ToList();
-            max = list.Count;
-            //_storage = list.Take(10);
-            foreach (var con in list)
-            {
-                Add(con);
-            }*/
+            
 
             Messenger.Default.Register<RefreshThreadMessage>(
                 this,

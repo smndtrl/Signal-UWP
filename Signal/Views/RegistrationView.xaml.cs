@@ -47,6 +47,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Signal.Util;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -57,34 +58,13 @@ namespace Signal.Views
     /// </summary>
     public sealed partial class RegistrationView : SignalPage
     {
-        public RegistrationViewModel ViewModel
-        {
-            get
-            {
-                return (RegistrationViewModel)DataContext;
-            }
-        }
+
+        public RegistrationViewModel ViewModel => (RegistrationViewModel)DataContext;
 
         public RegistrationView()
         {
             this.InitializeComponent();
         }
 
-        protected async override void UpdatePanelLayout(double height)
-        {
-            /*Debug.WriteLine($"update panel layout {height}");
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                RootViewer.Height -= height;
-                RootViewer.VerticalScrollMode = ScrollMode.Enabled;
-                RootViewer.ChangeView(null, height, null);
-                //RootViewer.VerticalScrollMode = ScrollMode.Disabled;
-
-                //RootViwer.ScrollToVerticalOffset(2 * height);
-              // RootViewer.UpdateLayout();
-            });*/
-            
-        }
     }
 }

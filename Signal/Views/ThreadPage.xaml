@@ -6,7 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
 	xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
-	x:Class="Signal.Views.ThreadDetailPage"
+	x:Class="Signal.Views.ThreadPage"
 	xmlns:model="using:Signal.Models"
 	xmlns:resources="using:Signal.Resources"
 	xmlns:back="using:Bezysoftware.Navigation.BackButton"
@@ -16,20 +16,20 @@
 	mc:Ignorable="d"
 	NavigationCacheMode="Disabled">
 
-    <Page.DataContext>
-        <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>
-    </Page.DataContext>
 
-    <Interactivity:Interaction.Behaviors>
+    <!--<Interactivity:Interaction.Behaviors>
         <Interactions:EventTriggerBehavior EventName="Loaded">
             <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.Loaded}" />
         </Interactions:EventTriggerBehavior>
         <Interactions:EventTriggerBehavior EventName="Unloaded">
             <Interactions:InvokeCommandAction Command="{x:Bind ViewModel.Unloaded}" />
         </Interactions:EventTriggerBehavior>
-    </Interactivity:Interaction.Behaviors>
+    </Interactivity:Interaction.Behaviors>-->
 
     <Page.Resources>
+
+        <CollectionViewSource x:Key="MessagesCvs" Source="{x:Bind ViewModel.Messages}"/>
+
 
         <Style x:Key="SendMessageTextBox" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="1"/>
@@ -58,10 +58,59 @@
              </MenuFlyout>
 
 
+        <DataTemplate x:Key="MessageRecordTemplate" 
+                      x:DataType="model:MessageRecord">
+            <Grid x:Name="RootGrid" FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="Direction">
+                        <VisualState x:Name="Outgoing">
+                            <VisualState.Setters>
+                                <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="0"/>
+                                <Setter Target="Border.(UIElement.Grid.Column)" Value="2"/>
+                                <Setter Target="AlertView.(UIElement.Grid.Column)" Value="2"/>
+
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Incoming">
+                            <VisualState.Setters>
+                                <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="2"/>
+                                <Setter Target="Border.(UIElement.Grid.Column)" Value="0"/>
+                                <Setter Target="AlertView.(UIElement.Grid.Column)" Value="0"/>
+
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Interactivity:Interaction.Behaviors>
+                    <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
+                        <Interactions:GoToStateAction StateName="Incoming" TargetObject="{Binding ElementName=RecordTemplate}"/>
+                    </Interactions:DataTriggerBehavior>
+                    <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="True">
+                        <Interactions:GoToStateAction StateName="Outgoing" TargetObject="{Binding ElementName=RecordTemplate}"/>
+                    </Interactions:DataTriggerBehavior>
+                    <Interactions:EventTriggerBehavior EventName="Holding">
+                        <interactions:OpenMenuFlyoutAction/>
+                    </Interactions:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <controls:AlertView x:Name="AlertView" Grid.Column="0" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
+                <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
+            </Grid>
+        </DataTemplate>
+
 
     </Page.Resources>
 
-
+    <Page.DataContext>
+        <Binding Source="{Binding Message, Source={StaticResource Locator}}"/>
+    </Page.DataContext>
 
     <Page.BottomAppBar>
         <CommandBar>
@@ -113,71 +162,27 @@
 
 
 
-        <ListView
-			x:Name="listView"
-             ItemsSource="{x:Bind ViewModel.Messages}"
-			IncrementalLoadingTrigger="Edge"
+        <ListView x:Name="ThreadListView"
+                  ItemsSource="{Binding Source={StaticResource MessagesCvs}}"
+                  ItemTemplate="{StaticResource MessageRecordTemplate}"
+
+            SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}"
+                  VerticalAlignment="Bottom"
+				  >
+            <!--			IncrementalLoadingTrigger="Edge"
 			IncrementalLoadingThreshold="1"
 			DataFetchSize="1"
 			HorizontalContentAlignment="Stretch"
 			VerticalContentAlignment="Stretch"
 			IsItemClickEnabled="True"
-            SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}" VerticalAlignment="Bottom"
-				  >
+            -->
             <Interactivity:Interaction.Behaviors>
                 <interactions:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedMessages, Mode=TwoWay}" />
             </Interactivity:Interaction.Behaviors>
             <!--<Interactivity:Interaction.Behaviors>
 				<resources:ScrollToBottomBehavior ItemsSource="{Binding Messages}"/>
 			</Interactivity:Interaction.Behaviors>-->
-            <ListView.ItemTemplate>
-                <DataTemplate x:Name="RecordTemplate" x:DataType="model:MessageRecord">
-                    <Grid FlyoutBase.AttachedFlyout="{StaticResource MessageMenuFlyout}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="Direction">
-                                <VisualState x:Name="Outgoing">
-                                    <VisualState.Setters>
-                                        <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="0"/>
-                                        <Setter Target="Border.(UIElement.Grid.Column)" Value="2"/>
-                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="2"/>
 
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Incoming">
-                                    <VisualState.Setters>
-                                        <Setter Target="MessageBubble.(UIElement.Grid.Column)" Value="2"/>
-                                        <Setter Target="Border.(UIElement.Grid.Column)" Value="0"/>
-                                        <Setter Target="AlertView.(UIElement.Grid.Column)" Value="0"/>
-
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Interactivity:Interaction.Behaviors>
-                            <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
-                                <Interactions:GoToStateAction StateName="Incoming" TargetObject="{Binding ElementName=RecordTemplate}"/>
-                            </Interactions:DataTriggerBehavior>
-                            <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="True">
-                                <Interactions:GoToStateAction StateName="Outgoing" TargetObject="{Binding ElementName=RecordTemplate}"/>
-                            </Interactions:DataTriggerBehavior>
-                            <Interactions:EventTriggerBehavior EventName="Holding">
-                                <interactions:OpenMenuFlyoutAction/>
-                            </Interactions:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-
-                        <Border x:Name="Border" Width="32" Height="32" Background="BlanchedAlmond"></Border>
-                        <controls:AlertView x:Name="AlertView" Grid.Column="0" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
-                        <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
