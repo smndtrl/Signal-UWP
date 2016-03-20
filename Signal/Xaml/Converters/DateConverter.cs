@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI.Xaml.Data;
 
 namespace Signal.Xaml.Converters
 {
     public class DateConverter : IValueConverter
     {
+       
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var timestamp = (DateTime)value;
@@ -73,45 +75,47 @@ namespace Signal.Xaml.Converters
             }
         }
 
-       /* public static String getExtendedRelativeTimeSpanString(final Context c, final Locale locale, final long timestamp)
-        {
-            if (isWithin(timestamp, 1, TimeUnit.MINUTES))
-            {
-                return c.getString(R.string.DateUtils_now);
-            }
-            else if (isWithin(timestamp, 1, TimeUnit.HOURS))
-            {
-                int mins = (int)TimeUnit.MINUTES.convert(System.currentTimeMillis() - timestamp, TimeUnit.MILLISECONDS);
-                return c.getResources().getString(R.string.DateUtils_minutes_ago, mins);
-            }
-            else
-            {
-                StringBuilder format = new StringBuilder();
-                if (isWithin(timestamp, 6, TimeUnit.DAYS)) format.append("EEE ");
-                else if (isWithin(timestamp, 365, TimeUnit.DAYS)) format.append("MMM d, ");
-                else format.append("MMM d, yyyy, ");
+        DateTimeFormatter stimefmt = new DateTimeFormatter("shorttime");
 
-                if (DateFormat.is24HourFormat(c)) format.append("HH:mm");
-                else format.append("hh:mm a");
+        /* public static String getExtendedRelativeTimeSpanString(final Context c, final Locale locale, final long timestamp)
+         {
+             if (isWithin(timestamp, 1, TimeUnit.MINUTES))
+             {
+                 return c.getString(R.string.DateUtils_now);
+             }
+             else if (isWithin(timestamp, 1, TimeUnit.HOURS))
+             {
+                 int mins = (int)TimeUnit.MINUTES.convert(System.currentTimeMillis() - timestamp, TimeUnit.MILLISECONDS);
+                 return c.getResources().getString(R.string.DateUtils_minutes_ago, mins);
+             }
+             else
+             {
+                 StringBuilder format = new StringBuilder();
+                 if (isWithin(timestamp, 6, TimeUnit.DAYS)) format.append("EEE ");
+                 else if (isWithin(timestamp, 365, TimeUnit.DAYS)) format.append("MMM d, ");
+                 else format.append("MMM d, yyyy, ");
 
-                return getFormattedDateTime(timestamp, format.toString(), locale);
-            }
-        }
+                 if (DateFormat.is24HourFormat(c)) format.append("HH:mm");
+                 else format.append("hh:mm a");
 
-        public static SimpleDateFormat getDetailedDateFormatter(Context context, Locale locale)
-        {
-            String dateFormatPattern;
+                 return getFormattedDateTime(timestamp, format.toString(), locale);
+             }
+         }
 
-            if (DateFormat.is24HourFormat(context))
-            {
-                dateFormatPattern = "MMM d, yyyy HH:mm:ss zzz";
-            }
-            else
-            {
-                dateFormatPattern = "MMM d, yyyy hh:mm:ss a zzz";
-            }
+         public static SimpleDateFormat getDetailedDateFormatter(Context context, Locale locale)
+         {
+             String dateFormatPattern;
 
-            return new SimpleDateFormat(dateFormatPattern, locale);
-        }*/
+             if (DateFormat.is24HourFormat(context))
+             {
+                 dateFormatPattern = "MMM d, yyyy HH:mm:ss zzz";
+             }
+             else
+             {
+                 dateFormatPattern = "MMM d, yyyy hh:mm:ss a zzz";
+             }
+
+             return new SimpleDateFormat(dateFormatPattern, locale);
+         }*/
     }
 }

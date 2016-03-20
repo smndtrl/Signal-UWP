@@ -214,9 +214,9 @@ namespace Signal.ViewModels
                     IsRegistering = true;
                     RegisterCommand.RaiseCanExecuteChanged();
 
-                    FlipIndex += 1;
+                    //FlipIndex += 1;
 
-                    /*number = getNumber();
+                    number = getNumber();
                     Debug.WriteLine($"Register: {number}");
 
                     password = Utils.getSecret(18);
@@ -237,7 +237,7 @@ namespace Signal.ViewModels
                     catch (Exception e)
                     {
                         Debug.WriteLine(e.Message);
-                    }*/
+                    }
 
                     IsRegistering = false;
                     RegisterCommand.RaiseCanExecuteChanged();
@@ -342,7 +342,7 @@ namespace Signal.ViewModels
                 var registrationId = KeyHelper.generateRegistrationId(false);
                 TextSecurePreferences.setLocalRegistrationId((int)registrationId);
 
-                //await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
+                await App.Current.accountManager.verifyAccountWithCode(receivedSmsVerificationCode, signalingKey, registrationId, false);
 
                 Recipient self = DatabaseFactory.getRecipientDatabase().GetSelfRecipient(number);
                 IdentityKeyUtil.generateIdentityKeys();
@@ -351,7 +351,7 @@ namespace Signal.ViewModels
                 PreKeyRecord lastResort = await PreKeyUtil.generateLastResortKey();
                 SignedPreKeyRecord signedPreKey = PreKeyUtil.generateSignedPreKey(identityKey);
 
-                //await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
+                await App.Current.accountManager.setPreKeys(identityKey.getPublicKey(), lastResort, signedPreKey, records);
 
                 DatabaseFactory.getIdentityDatabase().SaveIdentity(self.getRecipientId(), identityKey.getPublicKey());
 

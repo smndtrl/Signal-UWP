@@ -116,6 +116,8 @@
     </Compile>
     <Compile Include="contacts\ContactAccessor.cs" />
     <Compile Include="SignalApp.cs" />
+    <Compile Include="Util\TileHelper.cs" />
+    <Compile Include="Util\ToastHelper.cs" />
     <Compile Include="ViewModels\IBackAwareViewModel.cs" />
     <Compile Include="Xaml\Controls\AlertView.xaml.cs">
       <DependentUpon>AlertView.xaml</DependentUpon>
@@ -243,7 +245,7 @@
     <Compile Include="ViewModels\MessageDetailViewModel.cs" />
     <Compile Include="ViewModels\SplashViewModel.cs" />
     <Compile Include="ViewModels\Messages.cs" />
-    <Compile Include="ViewModels\MessageViewModel.cs" />
+    <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="ViewModels\ProvisionViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RegistrationViewModel.cs" />
@@ -397,7 +399,9 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Notifications\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

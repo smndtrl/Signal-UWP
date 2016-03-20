@@ -19,14 +19,13 @@ namespace Signal.database.loaders
     public class MessageCollection : IncrementalCollection<MessageRecord>
     {
         IDataService service;
-        //IEnumerable<Contact> _storage;
 
         long max = long.MaxValue;
-        long threadId = 0;
+        long threadId = -1;
         private bool IsUpdating = false;
 
         public MessageCollection(IDataService service)
-            : this(service, 0)
+            : this(service, -1)
         {
         }
 
@@ -36,7 +35,7 @@ namespace Signal.database.loaders
             this.service = service;
             this.threadId = threadId;
 
-            
+            max = service.getMessagesCount(threadId);
 
             Messenger.Default.Register<RefreshThreadMessage>(
                 this,
@@ -77,11 +76,6 @@ namespace Signal.database.loaders
 
         protected override async Task<IEnumerable<MessageRecord>> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
-            /*if (max == int.MaxValue)
-            {
-                max = (await service.getMessages(threadId)).Count();
-            }*/
-
             //Debug.WriteLine($"Messages: Load {count} more, has already {Count}");
 
             return (await service.getMessages(threadId)).ToList(); // Skip(Count).Take((int)count);

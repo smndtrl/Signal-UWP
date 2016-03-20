@@ -39,17 +39,17 @@ namespace Signal.Tasks
             textDatabase.MarkAsPush(messageId);
         }
 
-        public new void OnCanceled()
+        public new async  void OnCanceled()
         {
             DatabaseFactory.getTextMessageDatabase().MarkAsSentFailed(messageId);
 
-            /*long threadId = DatabaseFactory.getSmsDatabase(context).getThreadIdForMessage(messageId); // TODO
-            Recipients recipients = DatabaseFactory.getThreadDatabase(context).getRecipientsForThreadId(threadId);
+            long threadId = DatabaseFactory.getTextMessageDatabase().GetThreadIdForMessage(messageId); // TODO
+            Recipients recipients = await DatabaseFactory.getThreadDatabase().getRecipientsForThreadId(threadId);
 
             if (threadId != -1 && recipients != null)
             {
-                MessageNotifier.notifyMessageDeliveryFailed(context, recipients, threadId);
-            }*/
+                ToastHelper.NotifyMessageDeliveryFailed(recipients, threadId);
+            }
         }
 
         protected override string Execute()
@@ -97,17 +97,23 @@ namespace Signal.Tasks
             {
                 TextSecureAddress address = getPushAddress(message.IndividualRecipient.Number);
                 TextSecureDataMessage textSecureMessage = TextSecureDataMessage.newBuilder()
-                                                                                 .withTimestamp((ulong)TimeUtil.GetUnixTimestampMillis(message.DateSent))
-                                                                                 .withBody(message.Body.Body)
-                                                                                 .asEndSessionMessage(message.IsEndSession)
-                                                                                 .build();
+                    .withTimestamp((ulong) TimeUtil.GetUnixTimestampMillis(message.DateSent))
+                    .withBody(message.Body.Body)
+                    .asEndSessionMessage(message.IsEndSession)
+                    .build();
 
                 Debug.WriteLine("TextSendTask deliver");
-                messageSender.sendMessage(address, textSecureMessage);
+                await messageSender.sendMessage(address, textSecureMessage);
             }
-            catch (InvalidNumberException e/*| UnregisteredUserException e*/) {
+            catch (InvalidNumberException e /*| UnregisteredUserException e*/)
+            {
                 //Log.w(TAG, e);
                 //throw new InsecureFallbackApprovalException(e);
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Delivery of message failed");
+                OnCanceled();
             }
         }
     }

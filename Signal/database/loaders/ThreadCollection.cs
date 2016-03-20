@@ -3,19 +3,9 @@ using Signal.Models;
 using Signal.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TextSecure.database;
-using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using Signal.Util;
 
 namespace Signal.database.loaders

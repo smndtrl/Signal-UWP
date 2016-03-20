@@ -1,28 +1,18 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
 using Signal.database;
 using Signal.database.loaders;
 using Signal.Database;
 using Signal.Models;
 using Signal.Resources;
 using Signal.Util;
-using Signal.ViewModel.Messages;
-using Signal.Views;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using TextSecure.recipient;
 using TextSecure.util;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Signal.ViewModels
 {
@@ -49,7 +39,6 @@ namespace Signal.ViewModels
             }
         }
 
-        public Frame DetailFrame;
 
         #region Chats . . .
         private Thread _selectedChat = null;
@@ -170,6 +159,7 @@ namespace Signal.ViewModels
                 return _contactClicked ?? (_contactClicked = new RelayCommand<TextSecureDirectory.Directory>(
                     (t) =>
                     {
+                        Log.Debug($"Selected {t.Name}");
                         SelectedContact = t;
                     },
                     (t) => true));
@@ -182,7 +172,40 @@ namespace Signal.ViewModels
             get
             {
                 return _refreshContactsCommand ?? (_refreshContactsCommand = new RelayCommand(
-                   () => { refreshCommandInternal(); },
+                    () =>
+                    {
+                        try
+                        {
+                            refreshCommandInternal();
+                        }
+                        catch (Exception e)
+                        {
+                            // TODO:
+                        }
+                    },
+                   () => true
+                   ));
+            }
+        }
+
+        private RelayCommand _testCommand;
+        public RelayCommand TestCommand
+        {
+            get
+            {
+                return _testCommand ?? (_testCommand = new RelayCommand(
+                    () =>
+                    {
+                        try
+                        {
+                            TileHelper.Update();
+                            //ToastHelper.NewMessage();
+                        }
+                        catch (Exception e)
+                        {
+                            // TODO:
+                        }
+                    },
                    () => true
                    ));
             }
@@ -206,16 +229,16 @@ namespace Signal.ViewModels
 
         private void OpenChat(Thread chat)
         {
-            if (CurrentVisualState != null && CurrentVisualState.Name == "NarrowState") // navigate to detail page
+            /*if (CurrentVisualState != null && CurrentVisualState.Name == "NarrowState") // navigate to detail page
             {
-                Debug.WriteLine($"NarrowState -> Thread #{chat.ThreadId}");
+                Debug.WriteLine($"NarrowState -> Thread #{chat.ThreadId}");*/
                 _navigationService.NavigateTo(ViewModelLocator.MESSAGES_PAGE_KEY, chat);
-            }
+            /*}
             else if (CurrentVisualState != null && CurrentVisualState.Name == "DefaultState")
             {
                 Debug.WriteLine($"WideState -> Thread #{chat.ThreadId}");
                 DetailFrame.Navigate(typeof(ThreadPage), chat);
-            }
+            }*/
         }
 
 
@@ -224,6 +247,7 @@ namespace Signal.ViewModels
          */
         public void BackRequested(BackRequestedEventArgs args)
         {
+            Log.Debug($"Back from Main");
             if (PivotIndex != 0) { PivotIndex -= 1; args.Handled = true; }
             else args.Handled = false;
         }

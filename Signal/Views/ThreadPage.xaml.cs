@@ -37,13 +37,7 @@ namespace Signal.Views
             set { SetValue(_threadProperty, value); }
         }
 
-        public MessageViewModel ViewModel
-        {
-            get
-            {
-                return (MessageViewModel)DataContext;
-            }
-        }
+        public ThreadViewModel ViewModel => (ThreadViewModel)DataContext;
 
         public ThreadPage()
         {
@@ -51,7 +45,7 @@ namespace Signal.Views
         }
 
         
-        void NavigateBackForWideState(bool useTransition)
+        /*void NavigateBackForWideState(bool useTransition)
         {
             // Evict this page from the cache as we may not need it again.
             NavigationCacheMode = NavigationCacheMode.Disabled;
@@ -103,7 +97,7 @@ namespace Signal.Views
                 // We shouldn't see this page since we are in "wide master-detail" mode.
                 NavigateBackForWideState(useTransition: false);
             }
-        }
+        }*/
 
         /*private void BackButton_Click(object sender, RoutedEventArgs e)
         {

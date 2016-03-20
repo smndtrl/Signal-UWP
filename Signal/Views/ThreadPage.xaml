@@ -9,10 +9,8 @@
 	x:Class="Signal.Views.ThreadPage"
 	xmlns:model="using:Signal.Models"
 	xmlns:resources="using:Signal.Resources"
-	xmlns:back="using:Bezysoftware.Navigation.BackButton"
 	xmlns:controls="using:Signal.Xaml.Controls"
     xmlns:interactions="using:Signal.Xaml.Interactions"
-	back:BackButtonManager.IsBackButtonEnabled="{x:Bind ViewModel.IsBackEnabled}"
 	mc:Ignorable="d"
 	NavigationCacheMode="Disabled">
 
@@ -55,7 +53,9 @@
                             Text="Details" Command="{x:Bind ViewModel.DetailsCommand}" CommandParameter="{Binding}"/>
             <MenuFlyoutItem x:Name="DeleteMessageFlyout"
 						Text="Delete TODO" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{Binding}"/>
-             </MenuFlyout>
+            <MenuFlyoutItem x:Name="ToastMessageFlyout"
+						Text="Toast" Command="{x:Bind ViewModel.TestCommand}" CommandParameter="{Binding}"/>
+        </MenuFlyout>
 
 
         <DataTemplate x:Key="MessageRecordTemplate" 
@@ -88,7 +88,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Interactivity:Interaction.Behaviors>
+                <!--<Interactivity:Interaction.Behaviors>
                     <Interactions:DataTriggerBehavior Binding="{x:Bind IsOutgoing}" Value="False">
                         <Interactions:GoToStateAction StateName="Incoming" TargetObject="{Binding ElementName=RecordTemplate}"/>
                     </Interactions:DataTriggerBehavior>
@@ -98,7 +98,7 @@
                     <Interactions:EventTriggerBehavior EventName="Holding">
                         <interactions:OpenMenuFlyoutAction/>
                     </Interactions:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
+                </Interactivity:Interaction.Behaviors>-->
 
                 <controls:AlertView x:Name="AlertView" Grid.Column="0" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
                 <controls:MessageView x:Name="MessageBubble" Grid.Column="1" MessageRecord="{Binding DataContext , ElementName=RecordTemplate}"/>
@@ -165,13 +165,14 @@
         <ListView x:Name="ThreadListView"
                   ItemsSource="{Binding Source={StaticResource MessagesCvs}}"
                   ItemTemplate="{StaticResource MessageRecordTemplate}"
-
-            SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}"
+                  
+                  IncrementalLoadingTrigger="Edge"
+                  IncrementalLoadingThreshold="1"
+                  DataFetchSize="1"
+                  SelectionMode="{x:Bind ViewModel.ListViewMultiSelect, Mode=OneWay}"
                   VerticalAlignment="Bottom"
 				  >
-            <!--			IncrementalLoadingTrigger="Edge"
-			IncrementalLoadingThreshold="1"
-			DataFetchSize="1"
+            <!--			
 			HorizontalContentAlignment="Stretch"
 			VerticalContentAlignment="Stretch"
 			IsItemClickEnabled="True"

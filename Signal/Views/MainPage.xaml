@@ -86,6 +86,7 @@
                                VerticalAlignment="Bottom"
                                Text="{x:Bind Date, Converter={StaticResource DateConverter}}"
                                TextWrapping="NoWrap"
+                           Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}"
                                Style="{StaticResource CaptionTextBlockStyle}" />
 
                 <TextBlock x:Name="LastMessageTextBlock"
@@ -95,6 +96,7 @@
                                VerticalAlignment="Top"
                                Text="{x:Bind Snippet}"
                                TextWrapping="NoWrap"
+                           Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}"
                            Style="{StaticResource BodyTextBlockStyle}"
                                TextTrimming="WordEllipsis" HorizontalAlignment="Left" Margin="8,0,0,0" />
 
@@ -226,8 +228,17 @@
         <Pivot x:Name="MainPagePivot"
                x:Uid="MainPagePivot"
                SelectedIndex="{x:Bind ViewModel.PivotIndex, Mode=TwoWay}"
-               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+               Margin="0,0,0,0"
                >
+            <Pivot.ItemContainerStyle>
+                <Style TargetType="PivotItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </Pivot.ItemContainerStyle>
+            
             <PivotItem Header="Chats" x:Name="ChatPiv">
                 <settings:ListView x:Name="ChatListView"
                            ItemsSource="{Binding Source={StaticResource chatsCvs}}"
@@ -323,6 +334,7 @@
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
                 </AppBarButton.Icon>
             </AppBarButton>
+            <AppBarButton Icon="Emoji" Command="{x:Bind ViewModel.TestCommand}"/>
 
             <!--Contacts-->
             <CommandBar.Content>

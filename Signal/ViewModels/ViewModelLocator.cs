@@ -60,7 +60,7 @@ namespace Signal.ViewModels
             SimpleIoc.Default.Register<RegistrationViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             //SimpleIoc.Default.Register<ContactViewModel>();
-            SimpleIoc.Default.Register<MessageViewModel>();
+            SimpleIoc.Default.Register<ThreadViewModel>();
             SimpleIoc.Default.Register<MessageDetailViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<ProvisionViewModel>();
@@ -73,9 +73,9 @@ namespace Signal.ViewModels
         }
 
 
-        public MessageViewModel Message
+        public ThreadViewModel Message
         {
-            get { return ServiceLocator.Current.GetInstance<MessageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<ThreadViewModel>(); }
         }
 
         public MessageDetailViewModel MessageDetail
