@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 
-namespace TextSecure.util
+namespace Signal.Util
 {
     public class TaskHelper
     {
@@ -53,9 +53,100 @@ namespace TextSecure.util
             return instance;
         }
 
-        public TaskHelper() { }
+        private TaskHelper() { }
 
-        public void RegisterPushReceiver()
+        public async Task RegisterAll()
+        {
+            foreach (var task in Tasks)
+            {
+               await Register(task);
+            }
+        }
+
+        public async Task Register(TaskInformation info)
+        {
+            bool found = false;
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == info.name) found = true;
+            }
+
+            if (!found)
+            {
+                var reg =
+                    await
+                        RegisterBackgroundTask(info.taskEntryPoint, info.name, info.trigger, info.condition,
+                            info.background);
+            }
+        }
+
+        public List<TaskInformation> Tasks = new List<TaskInformation>()
+        {
+            new TaskInformation()
+            {
+                taskEntryPoint = "SignalTasks.WebsocketTask",
+                name = "WebsocketTask",
+                trigger = new TimeTrigger(15, false),
+                condition = null, //new SystemCondition(SystemConditionType.InternetAvailable),
+                background = true
+            }
+        };
+
+        public struct TaskInformation
+        {
+            public string taskEntryPoint;
+            public string name;
+            public IBackgroundTrigger trigger;
+            public IBackgroundCondition condition;
+            public bool background;
+            public delegate void TaskCompletedCallback(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args);
+        }
+
+        public static async Task<BackgroundTaskRegistration> RegisterBackgroundTask(TaskInformation info)
+        {
+            if (info.background)
+            {
+                await BackgroundExecutionManager.RequestAccessAsync();
+            }
+
+            var builder = new BackgroundTaskBuilder();
+
+            builder.Name = info.name;
+            builder.TaskEntryPoint = info.taskEntryPoint;
+            builder.SetTrigger(info.trigger);
+
+            if (info.condition != null)
+            {
+                builder.AddCondition(info.condition);
+
+                builder.CancelOnConditionLoss = true;
+            }
+
+
+            BackgroundTaskRegistration task = builder.Register();
+
+            /*if (info.callback != null)
+            {
+                task.Completed +=
+            }*/
+
+            return task;
+        }
+
+        private static void Aasda(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void UnregisterBackgroundTasks(string name)
+        {
+            foreach (var cur in BackgroundTaskRegistration.AllTasks)
+            {
+                if (cur.Value.Name == name) cur.Value.Unregister(true);
+            }
+        }
+
+        /*public void RegisterPushReceiver()
         {
             RegisterBackgroundTask();
         }
@@ -113,6 +204,6 @@ namespace TextSecure.util
                 }
             }
             return false;
-        }
+        }*/
     }
 }

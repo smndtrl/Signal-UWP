@@ -124,7 +124,6 @@ namespace Signal
             //await DirectoryHelper.refreshDirectory();
 
             // var task = new EchoActivity("ASDFFDSA");
-            var websocketTask = new WebsocketTask();
             Task.Factory.StartNew(() =>
             {
                 try

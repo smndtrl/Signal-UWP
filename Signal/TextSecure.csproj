@@ -225,7 +225,6 @@
     <Compile Include="Tasks\PushSendTask.cs" />
     <Compile Include="Tasks\PushContentReceiveTask.cs" />
     <Compile Include="Tasks\PushDecryptTask.cs" />
-    <Compile Include="Tasks\WebsocketTask.cs" />
     <Compile Include="Tasks\PushTextSendTask.cs" />
     <Compile Include="Util\Base64.cs" />
     <Compile Include="Util\DirectoryHelper.cs" />
@@ -384,7 +383,7 @@
       <Name>libtextsecure-uwp</Name>
     </ProjectReference>
     <ProjectReference Include="..\SignalTasks\TextSecureTasks.csproj">
-      <Project>{e1a09fe7-a62f-4b2b-a4e4-fc3eff4220ae}</Project>
+      <Project>{3308ed7b-cd29-481d-b582-48d23c7159d2}</Project>
       <Name>TextSecureTasks</Name>
     </ProjectReference>
   </ItemGroup>

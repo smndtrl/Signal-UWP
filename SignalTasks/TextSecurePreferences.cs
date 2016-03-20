@@ -24,82 +24,50 @@ using Windows.Storage;
 
 namespace SignalTasks
 {
-    internal class TextSecurePreferences
+    public sealed class TextSecurePreferences
     {
-        /*public static readonly String INSTALL_NUMBER_PREF = "pref_install_number";
-        public static readonly String INSTALL_PASSWORD_PREF = "pref_install_password";
-        public static readonly String ACCOUNT_VERIFIED_PREF = "pref_account_verified";
-        private static readonly String LOCAL_REGISTRATION_ID_PREF = "pref_local_registration_id";
-        private static readonly String SIGNED_PREKEY_REGISTERED_PREF = "pref_signed_prekey_registered";
 
-        public static string getLocalNumber()
-        {
-            return (string)ApplicationData.Current.LocalSettings.Values[INSTALL_NUMBER_PREF];
-        }
 
-        public static string getPushServerPassword()
-        {
-            return (string)ApplicationData.Current.LocalSettings.Values[INSTALL_PASSWORD_PREF];
-        }
-
-        public static void setVerified()
-        {
-            ApplicationData.Current.LocalSettings.Values[ACCOUNT_VERIFIED_PREF] = true;
-        }
-
-        public static bool isVerified()
-        {
-            if (ApplicationData.Current.LocalSettings.Values[ACCOUNT_VERIFIED_PREF] != null)
-            {
-                return (bool)ApplicationData.Current.LocalSettings.Values[ACCOUNT_VERIFIED_PREF];
-            }
-            else
-            {
-                return false;
-            }
-
-        }*/
-
-        public static readonly String IDENTITY_PREF = "pref_choose_identity";
-        public static readonly String CHANGE_PASSPHRASE_PREF = "pref_change_passphrase";
-        public static readonly String DISABLE_PASSPHRASE_PREF = "pref_disable_passphrase";
-        public static readonly String THEME_PREF = "pref_theme";
-        public static readonly String LANGUAGE_PREF = "pref_language";
+        private static readonly String IDENTITY_PREF = "pref_choose_identity";
+        private static readonly String CHANGE_PASSPHRASE_PREF = "pref_change_passphrase";
+        private static readonly String DISABLE_PASSPHRASE_PREF = "pref_disable_passphrase";
+        private static readonly String THEME_PREF = "pref_theme";
+        private static readonly String LANGUAGE_PREF = "pref_language";
         private static readonly String MMSC_CUSTOM_HOST_PREF = "pref_apn_mmsc_custom_host";
-        public static readonly String MMSC_HOST_PREF = "pref_apn_mmsc_host";
+        private static readonly String MMSC_HOST_PREF = "pref_apn_mmsc_host";
         private static readonly String MMSC_CUSTOM_PROXY_PREF = "pref_apn_mms_custom_proxy";
-        public static readonly String MMSC_PROXY_HOST_PREF = "pref_apn_mms_proxy";
+        private static readonly String MMSC_PROXY_HOST_PREF = "pref_apn_mms_proxy";
         private static readonly String MMSC_CUSTOM_PROXY_PORT_PREF = "pref_apn_mms_custom_proxy_port";
-        public static readonly String MMSC_PROXY_PORT_PREF = "pref_apn_mms_proxy_port";
+        private static readonly String MMSC_PROXY_PORT_PREF = "pref_apn_mms_proxy_port";
         private static readonly String MMSC_CUSTOM_USERNAME_PREF = "pref_apn_mmsc_custom_username";
-        public static readonly String MMSC_USERNAME_PREF = "pref_apn_mmsc_username";
+        private static readonly String MMSC_USERNAME_PREF = "pref_apn_mmsc_username";
         private static readonly String MMSC_CUSTOM_PASSWORD_PREF = "pref_apn_mmsc_custom_password";
-        public static readonly String MMSC_PASSWORD_PREF = "pref_apn_mmsc_password";
-        public static readonly String THREAD_TRIM_LENGTH = "pref_trim_length";
-        public static readonly String THREAD_TRIM_NOW = "pref_trim_now";
-        public static readonly String ENABLE_MANUAL_MMS_PREF = "pref_enable_manual_mms";
+        private static readonly String MMSC_PASSWORD_PREF = "pref_apn_mmsc_password";
+        private static readonly String THREAD_TRIM_LENGTH = "pref_trim_length";
+        private static readonly String THREAD_TRIM_NOW = "pref_trim_now";
+        private static readonly String ENABLE_MANUAL_MMS_PREF = "pref_enable_manual_mms";
 
         private static readonly String LAST_VERSION_CODE_PREF = "last_version_code";
-        public static readonly String RINGTONE_PREF = "pref_key_ringtone";
+        private static readonly String RINGTONE_PREF = "pref_key_ringtone";
         private static readonly String VIBRATE_PREF = "pref_key_vibrate";
         private static readonly String NOTIFICATION_PREF = "pref_key_enable_notifications";
-        public static readonly String LED_COLOR_PREF = "pref_led_color";
-        public static readonly String LED_BLINK_PREF = "pref_led_blink";
+        private static readonly String LED_COLOR_PREF = "pref_led_color";
+        private static readonly String LED_BLINK_PREF = "pref_led_blink";
         private static readonly String LED_BLINK_PREF_CUSTOM = "pref_led_blink_custom";
-        public static readonly String ALL_MMS_PREF = "pref_all_mms";
-        public static readonly String ALL_SMS_PREF = "pref_all_sms";
-        public static readonly String PASSPHRASE_TIMEOUT_INTERVAL_PREF = "pref_timeout_interval";
+        private static readonly String ALL_MMS_PREF = "pref_all_mms";
+        private static readonly String ALL_SMS_PREF = "pref_all_sms";
+        private static readonly String PASSPHRASE_TIMEOUT_INTERVAL_PREF = "pref_timeout_interval";
         private static readonly String PASSPHRASE_TIMEOUT_PREF = "pref_timeout_passphrase";
-        public static readonly String SCREEN_SECURITY_PREF = "pref_screen_security";
+        private static readonly String SCREEN_SECURITY_PREF = "pref_screen_security";
         private static readonly String ENTER_SENDS_PREF = "pref_enter_sends";
         private static readonly String ENTER_PRESENT_PREF = "pref_enter_key";
         private static readonly String SMS_DELIVERY_REPORT_PREF = "pref_delivery_report_sms";
-        public static readonly String MMS_USER_AGENT = "pref_mms_user_agent";
+        private static readonly String MMS_USER_AGENT = "pref_mms_user_agent";
         private static readonly String MMS_CUSTOM_USER_AGENT = "pref_custom_mms_user_agent";
         private static readonly String THREAD_TRIM_ENABLED = "pref_trim_threads";
         private static readonly String LOCAL_NUMBER_PREF = "pref_local_number";
         private static readonly String VERIFYING_STATE_PREF = "pref_verifying";
-        public static readonly String REGISTERED_GCM_PREF = "pref_gcm_registered";
+        private static readonly String REGISTERED_GCM_PREF = "pref_gcm_registered";
         private static readonly String GCM_PASSWORD_PREF = "pref_gcm_password";
         private static readonly String PROMPTED_PUSH_REGISTRATION_PREF = "pref_prompted_push_registration";
         private static readonly String PROMPTED_DEFAULT_SMS_PREF = "pref_prompted_default_sms";
@@ -117,44 +85,44 @@ namespace SignalTasks
         private static readonly String RATING_LATER_PREF = "pref_rating_later";
         private static readonly String RATING_ENABLED_PREF = "pref_rating_enabled";
 
-        public static readonly String REPEAT_ALERTS_PREF = "pref_repeat_alerts";
+        private static readonly String REPEAT_ALERTS_PREF = "pref_repeat_alerts";
 
-        public static long getRatingLaterTimestamp()
+        private static long getRatingLaterTimestamp()
         {
             return GetValueOrDefault<long>(RATING_LATER_PREF, 0);
         }
 
-        public static void setRatingLaterTimestamp(long timestamp)
+        private static void setRatingLaterTimestamp(long timestamp)
         {
             AddOrUpdateValue(RATING_LATER_PREF, timestamp);
         }
 
-        public static bool isRatingEnabled()
+        private static bool isRatingEnabled()
         {
             return GetValueOrDefault<bool>(RATING_ENABLED_PREF, true);
         }
 
-        public static void setRatingEnabled(bool enabled)
+        private static void setRatingEnabled(bool enabled)
         {
             AddOrUpdateValue(RATING_ENABLED_PREF, enabled);
         }
 
-        public static bool isWebsocketRegistered()
+        private static bool isWebsocketRegistered()
         {
             return GetValueOrDefault<bool>(WEBSOCKET_REGISTERED_PREF, false);
         }
 
-        public static void setWebsocketRegistered(bool registered)
+        private static void setWebsocketRegistered(bool registered)
         {
             AddOrUpdateValue(WEBSOCKET_REGISTERED_PREF, registered);
         }
 
-        public static bool isWifiSmsEnabled()
+        private static bool isWifiSmsEnabled()
         {
             return GetValueOrDefault<bool>(WIFI_SMS_PREF, false);
         }
 
-        /*public static int getRepeatAlertsCount()
+        /*private static int getRepeatAlertsCount()
         {
             try
             {
@@ -167,28 +135,28 @@ namespace SignalTasks
             }
         }*/
 
-        public static void setRepeatAlertsCount(int count)
+        private static void setRepeatAlertsCount(int count)
         {
             AddOrUpdateValue(REPEAT_ALERTS_PREF, Convert.ToString(count));
         }
 
-        public static bool isSignedPreKeyRegistered()
+        private static bool isSignedPreKeyRegistered()
         {
             return GetValueOrDefault<bool>(SIGNED_PREKEY_REGISTERED_PREF, false);
         }
 
-        public static void setSignedPreKeyRegistered(bool value)
+        private static void setSignedPreKeyRegistered(bool value)
         {
             AddOrUpdateValue(SIGNED_PREKEY_REGISTERED_PREF, value);
         }
 
-        public static void setWnsRegistrationId(String registrationId)
+        private static void setWnsRegistrationId(String registrationId)
         {
             AddOrUpdateValue(WNS_REGISTRATION_ID_PREF, registrationId);
             //AddOrUpdateValue(GCM_REGISTRATION_ID_VERSION_PREF, Util.getCurrentApkReleaseVersion(context));
         }
 
-        public static String getWnsRegistrationId()
+        private static String getWnsRegistrationId()
         {
             /*int storedRegistrationIdVersion = GetValueOrDefault<int>(GCM_REGISTRATION_ID_VERSION_PREF, 0);
 
@@ -202,7 +170,7 @@ namespace SignalTasks
             //}
         }
 
-        /*public static bool isSmsEnabled()
+        /*private static bool isSmsEnabled()
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             {
@@ -214,27 +182,27 @@ namespace SignalTasks
             }
         }*/
 
-        public static int GetLocalRegistrationId()
+        private static int GetLocalRegistrationId()
         {
             return GetValueOrDefault<int>(LOCAL_REGISTRATION_ID_PREF, -1);
         }
 
-        public static void setLocalRegistrationId(int registrationId)
+        private static void setLocalRegistrationId(int registrationId)
         {
             AddOrUpdateValue(LOCAL_REGISTRATION_ID_PREF, registrationId);
         }
 
-        public static bool isInThreadNotifications()
+        private static bool isInThreadNotifications()
         {
             return GetValueOrDefault<bool>(IN_THREAD_NOTIFICATION_PREF, true);
         }
 
-        public static long getDirectoryRefreshTime()
+        private static long getDirectoryRefreshTime()
         {
             return GetValueOrDefault<long>(DIRECTORY_FRESH_TIME_PREF, 0L);
         }
 
-        public static void setDirectoryRefreshTime(long value)
+        private static void setDirectoryRefreshTime(long value)
         {
             AddOrUpdateValue(DIRECTORY_FRESH_TIME_PREF, value);
         }
@@ -244,7 +212,7 @@ namespace SignalTasks
             return GetValueOrDefault<string>(LOCAL_NUMBER_PREF, string.Empty);
         }
 
-        public static void setLocalNumber(String localNumber)
+        private static void setLocalNumber(String localNumber)
         {
             AddOrUpdateValue(LOCAL_NUMBER_PREF, localNumber);
         }
@@ -254,147 +222,147 @@ namespace SignalTasks
             return GetValueOrDefault<string>(GCM_PASSWORD_PREF, string.Empty);
         }
 
-        public static void setPushServerPassword(String password)
+        private static void setPushServerPassword(String password)
         {
             AddOrUpdateValue(GCM_PASSWORD_PREF, password);
         }
 
-        public static void setSignalingKey(String signalingKey)
+        private static void setSignalingKey(String signalingKey)
         {
             AddOrUpdateValue(SIGNALING_KEY_PREF, signalingKey);
         }
 
-        public static String getSignalingKey()
+        private static String getSignalingKey()
         {
             return GetValueOrDefault<string>(SIGNALING_KEY_PREF, string.Empty);
         }
 
-        public static bool isEnterImeKeyEnabled()
+        private static bool isEnterImeKeyEnabled()
         {
             return GetValueOrDefault<bool>(ENTER_PRESENT_PREF, false);
         }
 
-        public static bool isEnterSendsEnabled()
+        private static bool isEnterSendsEnabled()
         {
             return GetValueOrDefault<bool>(ENTER_SENDS_PREF, false);
         }
 
-        public static bool isPasswordDisabled()
+        private static bool isPasswordDisabled()
         {
             return GetValueOrDefault<bool>(DISABLE_PASSPHRASE_PREF, false);
         }
 
-        public static void setPasswordDisabled(bool disabled)
+        private static void setPasswordDisabled(bool disabled)
         {
             AddOrUpdateValue(DISABLE_PASSPHRASE_PREF, disabled);
         }
 
-        /*public static bool getUseCustomMmsc()
+        /*private static bool getUseCustomMmsc()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_HOST_PREF, legacy);
         }
 
-        public static void setUseCustomMmsc(bool value)
+        private static void setUseCustomMmsc(bool value)
         {
             AddOrUpdateValue(MMSC_CUSTOM_HOST_PREF, value);
         }
 
-        public static String getMmscUrl()
+        private static String getMmscUrl()
         {
             return GetValueOrDefault<string>(MMSC_HOST_PREF, "");
         }
 
-        public static void setMmscUrl(String mmsc)
+        private static void setMmscUrl(String mmsc)
         {
             AddOrUpdateValue(MMSC_HOST_PREF, mmsc);
         }
 
-        public static bool getUseCustomMmscProxy()
+        private static bool getUseCustomMmscProxy()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_PROXY_PREF, legacy);
         }
 
-        public static void setUseCustomMmscProxy(bool value)
+        private static void setUseCustomMmscProxy(bool value)
         {
             AddOrUpdateValue(MMSC_CUSTOM_PROXY_PREF, value);
         }
 
-        public static String getMmscProxy()
+        private static String getMmscProxy()
         {
             return GetValueOrDefault<string>(MMSC_PROXY_HOST_PREF, "");
         }
 
-        public static void setMmscProxy(String value)
+        private static void setMmscProxy(String value)
         {
             AddOrUpdateValue(MMSC_PROXY_HOST_PREF, value);
         }
 
-        public static bool getUseCustomMmscProxyPort()
+        private static bool getUseCustomMmscProxyPort()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_PROXY_PORT_PREF, legacy);
         }
 
-        public static void setUseCustomMmscProxyPort(bool value)
+        private static void setUseCustomMmscProxyPort(bool value)
         {
             AddOrUpdateValue(MMSC_CUSTOM_PROXY_PORT_PREF, value);
         }
 
-        public static String getMmscProxyPort()
+        private static String getMmscProxyPort()
         {
             return GetValueOrDefault<string>(MMSC_PROXY_PORT_PREF, "");
         }
 
-        public static void setMmscProxyPort(String value)
+        private static void setMmscProxyPort(String value)
         {
             AddOrUpdateValue(MMSC_PROXY_PORT_PREF, value);
         }
 
-        public static bool getUseCustomMmscUsername()
+        private static bool getUseCustomMmscUsername()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_USERNAME_PREF, legacy);
         }
 
-        public static void setUseCustomMmscUsername(bool value)
+        private static void setUseCustomMmscUsername(bool value)
         {
             AddOrUpdateValue(MMSC_CUSTOM_USERNAME_PREF, value);
         }
 
-        public static String getMmscUsername()
+        private static String getMmscUsername()
         {
             return GetValueOrDefault<string>(MMSC_USERNAME_PREF, "");
         }
 
-        public static void setMmscUsername(String value)
+        private static void setMmscUsername(String value)
         {
             AddOrUpdateValue(MMSC_USERNAME_PREF, value);
         }
 
-        public static bool getUseCustomMmscPassword()
+        private static bool getUseCustomMmscPassword()
         {
             bool legacy = TextSecurePreferences.isLegacyUseLocalApnsEnabled();
             return GetValueOrDefault<bool>(MMSC_CUSTOM_PASSWORD_PREF, legacy);
         }
 
-        public static void setUseCustomMmscPassword(bool value)
+        private static void setUseCustomMmscPassword(bool value)
         {
             AddOrUpdateValue(MMSC_CUSTOM_PASSWORD_PREF, value);
         }
 
-        public static String getMmscPassword()
+        private static String getMmscPassword()
         {
             return GetValueOrDefault<string>(MMSC_PASSWORD_PREF, "");
         }
 
-        public static void setMmscPassword(String value)
+        private static void setMmscPassword(String value)
         {
             AddOrUpdateValue(MMSC_PASSWORD_PREF, value);
         }
 
-        public static String getMmsUserAgent(String defaultUserAgent)
+        private static String getMmsUserAgent(String defaultUserAgent)
         {
             bool useCustom = GetValueOrDefault<bool>(MMS_CUSTOM_USER_AGENT, false);
 
@@ -402,32 +370,32 @@ namespace SignalTasks
             else return defaultUserAgent;
         }*/
 
-        public static String getIdentityContactUri()
+        private static String getIdentityContactUri()
         {
             return GetValueOrDefault<string>(IDENTITY_PREF, null);
         }
 
-        public static void setIdentityContactUri(String identityUri)
+        private static void setIdentityContactUri(String identityUri)
         {
             AddOrUpdateValue(IDENTITY_PREF, identityUri);
         }
 
-        public static bool isScreenSecurityEnabled()
+        private static bool isScreenSecurityEnabled()
         {
             return GetValueOrDefault<bool>(SCREEN_SECURITY_PREF, true);
         }
 
-        public static bool isLegacyUseLocalApnsEnabled()
+        private static bool isLegacyUseLocalApnsEnabled()
         {
             return GetValueOrDefault<bool>(ENABLE_MANUAL_MMS_PREF, false);
         }
 
-        public static int getLastVersionCode()
+        private static int getLastVersionCode()
         {
             return GetValueOrDefault<int>(LAST_VERSION_CODE_PREF, 0);
         }
 
-        public static void setLastVersionCode(int versionCode)// throws IOException
+        private static void setLastVersionCode(int versionCode)// throws IOException
         {
             if (!AddOrUpdateValue(LAST_VERSION_CODE_PREF, versionCode))
             {
@@ -435,133 +403,133 @@ namespace SignalTasks
             }
         }
 
-        public static String getTheme()
+        private static String getTheme()
         {
             return GetValueOrDefault<string>(THEME_PREF, "light");
         }
 
-        public static bool isVerifying()
+        private static bool isVerifying()
         {
             return GetValueOrDefault<bool>(VERIFYING_STATE_PREF, false);
         }
 
-        public static void setVerifying(bool verifying)
+        private static void setVerifying(bool verifying)
         {
             AddOrUpdateValue(VERIFYING_STATE_PREF, verifying);
         }
 
-        public static bool isPushRegistered()
+        private static bool isPushRegistered()
         {
             return GetValueOrDefault<bool>(REGISTERED_GCM_PREF, false);
         }
 
-        public static void setPushRegistered(bool registered)
+        private static void setPushRegistered(bool registered)
         {
             //Log.w("TextSecurePreferences", "Setting push registered: " + registered);
             AddOrUpdateValue(REGISTERED_GCM_PREF, registered);
         }
 
-        public static bool isPassphraseTimeoutEnabled()
+        private static bool isPassphraseTimeoutEnabled()
         {
             return GetValueOrDefault<bool>(PASSPHRASE_TIMEOUT_PREF, false);
         }
 
-        public static int getPassphraseTimeoutInterval()
+        private static int getPassphraseTimeoutInterval()
         {
             return GetValueOrDefault<int>(PASSPHRASE_TIMEOUT_INTERVAL_PREF, 5 * 60);
         }
 
-        public static void setPassphraseTimeoutInterval(int interval)
+        private static void setPassphraseTimeoutInterval(int interval)
         {
             AddOrUpdateValue(PASSPHRASE_TIMEOUT_INTERVAL_PREF, interval);
         }
 
-        public static String getLanguage()
+        private static String getLanguage()
         {
             return GetValueOrDefault<string>(LANGUAGE_PREF, "zz");
         }
 
-        public static void setLanguage(String language)
+        private static void setLanguage(String language)
         {
             AddOrUpdateValue(LANGUAGE_PREF, language);
         }
 
-        public static bool isSmsDeliveryReportsEnabled()
+        private static bool isSmsDeliveryReportsEnabled()
         {
             return GetValueOrDefault<bool>(SMS_DELIVERY_REPORT_PREF, false);
         }
 
-        public static bool hasPromptedPushRegistration()
+        private static bool hasPromptedPushRegistration()
         {
             return GetValueOrDefault<bool>(PROMPTED_PUSH_REGISTRATION_PREF, false);
         }
 
-        public static void setPromptedPushRegistration(bool value)
+        private static void setPromptedPushRegistration(bool value)
         {
             AddOrUpdateValue(PROMPTED_PUSH_REGISTRATION_PREF, value);
         }
 
-        public static bool hasPromptedDefaultSmsProvider()
+        private static bool hasPromptedDefaultSmsProvider()
         {
             return GetValueOrDefault<bool>(PROMPTED_DEFAULT_SMS_PREF, false);
         }
 
-        public static void setPromptedDefaultSmsProvider(bool value)
+        private static void setPromptedDefaultSmsProvider(bool value)
         {
             AddOrUpdateValue(PROMPTED_DEFAULT_SMS_PREF, value);
         }
 
-        public static bool isInterceptAllMmsEnabled()
+        private static bool isInterceptAllMmsEnabled()
         {
             return GetValueOrDefault<bool>(ALL_MMS_PREF, true);
         }
 
-        public static bool isInterceptAllSmsEnabled()
+        private static bool isInterceptAllSmsEnabled()
         {
             return GetValueOrDefault<bool>(ALL_SMS_PREF, true);
         }
 
-        public static bool isNotificationsEnabled()
+        private static bool isNotificationsEnabled()
         {
             return GetValueOrDefault<bool>(NOTIFICATION_PREF, true);
         }
 
-       /* public static String getNotificationRingtone()
+       /* private static String getNotificationRingtone()
         {
             return GetValueOrDefault<string>(RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
         }*/
 
-        public static bool isNotificationVibrateEnabled()
+        private static bool isNotificationVibrateEnabled()
         {
             return GetValueOrDefault<bool>(VIBRATE_PREF, true);
         }
 
-        public static String getNotificationLedColor()
+        private static String getNotificationLedColor()
         {
             return GetValueOrDefault<string>(LED_COLOR_PREF, "blue");
         }
 
-        public static String getNotificationLedPattern()
+        private static String getNotificationLedPattern()
         {
             return GetValueOrDefault<string>(LED_BLINK_PREF, "500,2000");
         }
 
-        public static String getNotificationLedPatternCustom()
+        private static String getNotificationLedPatternCustom()
         {
             return GetValueOrDefault<string>(LED_BLINK_PREF_CUSTOM, "500,2000");
         }
 
-        public static void setNotificationLedPatternCustom(String pattern)
+        private static void setNotificationLedPatternCustom(String pattern)
         {
             AddOrUpdateValue(LED_BLINK_PREF_CUSTOM, pattern);
         }
 
-        public static bool isThreadLengthTrimmingEnabled()
+        private static bool isThreadLengthTrimmingEnabled()
         {
             return GetValueOrDefault<bool>(THREAD_TRIM_ENABLED, false);
         }
 
-        /*public static int getThreadTrimLength()
+        /*private static int getThreadTrimLength()
         {
             return Integer.parseInt(GetValueOrDefault<string>(THREAD_TRIM_LENGTH, "500"));
         }*/

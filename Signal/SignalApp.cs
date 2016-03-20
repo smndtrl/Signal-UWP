@@ -14,6 +14,8 @@ namespace Signal
 {
     public abstract class SignalApp : Application
     {
+
+        public TaskHelper TaskHelper = TaskHelper.getInstance();
         public SignalApp()
         {
             this.Suspending += OnSuspending;
@@ -26,7 +28,7 @@ namespace Signal
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -46,6 +48,7 @@ namespace Signal
                 case ApplicationExecutionState.ClosedByUser:
                     break; // load saved application data and refresh content
                 case ApplicationExecutionState.NotRunning: // normal launch
+                    await TaskHelper.RegisterAll();
                     InitializeUi();
                     if (IsFirstLaunch()) OnFirstLaunch(args);
                     else OnNormalLaunch(args);
