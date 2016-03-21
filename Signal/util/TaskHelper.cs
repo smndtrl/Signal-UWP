@@ -75,8 +75,7 @@ namespace Signal.Util
             {
                 var reg =
                     await
-                        RegisterBackgroundTask(info.taskEntryPoint, info.name, info.trigger, info.condition,
-                            info.background);
+                        RegisterBackgroundTask(info);
             }
         }
 

@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
+using libtextsecure;
+using libtextsecure.messages;
+using Signal.Push;
+using Signal.Tasks;
+using Signal.Tasks.Library;
 using Signal.Util;
 using TextSecure.util;
 
@@ -16,6 +21,12 @@ namespace Signal
     {
 
         public TaskHelper TaskHelper = TaskHelper.getInstance();
+        public TaskWorker Worker { get; private set; }
+
+        protected TextSecureMessagePipe pipe;
+
+        public static string CurrentVersion => $"TextSecure for Windows {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}-{Package.Current.Id.Version.Revision}";
+
         public SignalApp()
         {
             this.Suspending += OnSuspending;
@@ -31,7 +42,7 @@ namespace Signal
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
 #if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 this.DebugSettings.EnableFrameRateCounter = false;
                 this.DebugSettings.IsBindingTracingEnabled = true;
@@ -63,6 +74,10 @@ namespace Signal
                     break;
             }
 
+            Worker = new TaskWorker();
+            Worker.Start();
+            
+
         }
 
         protected abstract void InitializeUi();
@@ -78,7 +93,7 @@ namespace Signal
 
         private bool IsFirstLaunch()
         {
-            return TextSecurePreferences.getLocalNumber() == string.Empty;
+            return TextSecurePreferences.getLocalNumber() == String.Empty;
         }
 
         protected override void OnActivated(IActivatedEventArgs args)
@@ -95,6 +110,29 @@ namespace Signal
                     break;
             }
             //base.OnActivated(args);
+        }
+
+        protected void RunWebsocket()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var messageReceiver = TextSecureCommunicationFactory.createReceiver();
+                    pipe = messageReceiver.createMessagePipe();
+                    pipe.MessageReceived += OnMessageRecevied;
+                }
+                catch (Exception ex) { Debug.WriteLine("Failed asd:" + ex.Message); }
+
+            });
+        }
+
+        private void OnMessageRecevied(TextSecureMessagePipe sender, TextSecureEnvelope envelope)
+        {
+            Log.Debug("Push message recieved");
+            var task = new PushContentReceiveTask();
+            task.handle(envelope, false);
+            //throw new NotImplementedException("OnMessageReceived");
         }
 
         /*
@@ -134,6 +172,5 @@ namespace Signal
             }
         }
         */
-
     }
 }

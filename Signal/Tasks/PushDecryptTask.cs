@@ -332,14 +332,7 @@ namespace Signal.Tasks
             var textMessageDatabase = DatabaseFactory.getTextMessageDatabase();
             String body = message.getBody().HasValue ? message.getBody().ForceGetValue() : "";
 
-            /*Pair<Long, Long> messageAndThreadId;
 
-            if (smsMessageId.hasValue)
-            {
-                messageAndThreadId = database.updateBundleMessageBody(masterSecret, smsMessageId.get(), body);
-            }
-            else
-            {*/
             IncomingTextMessage textMessage = new IncomingTextMessage(envelope.getSource(),
                                                                       envelope.getSourceDevice(),
                                                                       message.getTimestamp(), body,
@@ -347,9 +340,8 @@ namespace Signal.Tasks
 
             textMessage = new IncomingEncryptedMessage(textMessage, body);
             var messageAndThreadId = textMessageDatabase.InsertMessageInbox(textMessage);
-            /*}
-
-            MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().orNull(), messageAndThreadId.second);*/
+            
+            ToastHelper.NotifyNewMessage(messageAndThreadId.second());
         }
         private void handleInvalidVersionMessage(TextSecureEnvelope envelope,
                                             May<long> smsMessageId)

@@ -15,7 +15,36 @@ namespace Signal.Util
     public class ToastHelper
     {
 
+        public static void NotifyNewMessage(long threadId)
+        {
+            var content = new ToastContent()
+            {
+                Launch = new QueryString()
+                {
+                    {"action", "viewConversation" },
+                    { "threadId",  threadId.ToString() }
+                }.ToString(),
 
+                Visual = new ToastVisual()
+                {
+                    TitleText = new ToastText()
+                    {
+                        Text = $"Message received"
+                    },
+                },
+
+                /*Audio = new ToastAudio()
+                {
+                    Src = new Uri("ms-winsoundevent:Notification.IM")
+                }*/
+            };
+
+            var doc = content.GetXml();
+
+            // Generate WinRT notification
+            var noti = new ToastNotification(doc);
+            ToastNotificationManager.CreateToastNotifier().Show(noti);
+        }
 
         public static void NotifyMessageDeliveryFailed(Recipients recipients, long threadId)
         {
